@@ -3,7 +3,7 @@ import httpStatus from "http-status";
 import type { JwtPayload } from "jsonwebtoken";
 import type { UserRole } from "../../generated/prisma/enums";
 import config from "../config";
-import AppError from "../errors/AppError";
+import AppError from "../utils/AppError";
 import { prisma } from "../lib/prisma";
 import { catchAsync } from "../utils/catchAsync";
 import { jwtUtils } from "../utils/jwt";

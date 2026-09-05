@@ -1,11 +1,12 @@
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
 import config from "../../config";
-import AppError from "../../errors/AppError";
+
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import type { IRequestUser } from "./auth.interface";
 import { AuthService } from "./auth.service";
+import AppError from "../../utils/AppError";
 
 const isProduction = config.node_env === "production";
 
@@ -16,40 +17,74 @@ const getCookieOptions = (maxAge: number) => ({
 	maxAge,
 });
 
-const registerUser = catchAsync(async (req: Request, res: Response) => {
+const registerCandidate = catchAsync(async (req: Request, res: Response) => {
 	const payload = req.body;
-	const result = await AuthService.registerUser(payload);
-
-	const { accessToken, refreshToken, user, candidateProfile } = result;
-
-	res.cookie("accessToken", accessToken, getCookieOptions(1000 * 60 * 60 * 24)); // 1 day
-	res.cookie("refreshToken", refreshToken, getCookieOptions(1000 * 60 * 60 * 24 * 7)); // 7 days
+	await AuthService.registerCandidate(payload);
 
 	sendResponse(res, {
 		statusCode: httpStatus.CREATED,
 		success: true,
-		message: "User registered successfully",
-		data: {
-			accessToken,
-			refreshToken,
-			user,
-			candidateProfile,
-		},
+		message:
+			"Verification email sent successfully, please check your email inbox or spam folder",
+		data: null,
 	});
 });
+
+const verifyRegistrationEmail = catchAsync(
+	async (req: Request, res: Response) => {
+		const payload = req.body;
+		const result = await AuthService.verifyRegistrationEmail(payload);
+		const { accessToken, refreshToken, user, candidateProfile } = result;
+
+		res.cookie("accessToken", accessToken, getCookieOptions(1000 * 60 * 60 * 24));
+		res.cookie("refreshToken", refreshToken, getCookieOptions(1000 * 60 * 60 * 24 * 7));
+
+		sendResponse(res, {
+			statusCode: httpStatus.CREATED,
+			success: true,
+			message: "Email verified successfully",
+			data: {
+				accessToken,
+				refreshToken,
+				user,
+				candidateProfile,
+			},
+		});
+	},
+);
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
 	const payload = req.body;
 	const result = await AuthService.loginUser(payload);
 	const { accessToken, refreshToken, user } = result;
 
-	res.cookie("accessToken", accessToken, getCookieOptions(1000 * 60 * 60 * 24)); // 1 day
-	res.cookie("refreshToken", refreshToken, getCookieOptions(1000 * 60 * 60 * 24 * 7)); // 7 days
+	res.cookie("accessToken", accessToken, getCookieOptions(1000 * 60 * 60 * 24));
+	res.cookie("refreshToken", refreshToken, getCookieOptions(1000 * 60 * 60 * 24 * 7));
 
 	sendResponse(res, {
 		statusCode: httpStatus.OK,
 		success: true,
 		message: "User logged in successfully",
+		data: {
+			accessToken,
+			refreshToken,
+			user,
+		},
+	});
+});
+
+const googleLogin = catchAsync(async (req: Request, res: Response) => {
+	const token = req.body?.idToken || req.body?.token;
+	const result = await AuthService.googleLogin(token);
+	const { accessToken, refreshToken, user } = result;
+
+	res.cookie("accessToken", accessToken, getCookieOptions(1000 * 60 * 60 * 24));
+	res.cookie("refreshToken", refreshToken, getCookieOptions(1000 * 60 * 60 * 24 * 7));
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "User logged in with Google successfully",
 		data: {
 			accessToken,
 			refreshToken,
@@ -125,10 +160,38 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+const forgotPassword = catchAsync(async (req: Request, res: Response) => {
+	const payload = req.body;
+	await AuthService.forgotPassword(payload);
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: `OTP sent to ${payload.email} successfully, please check your email inbox or spam folder`,
+		data: null,
+	});
+});
+
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
+	const payload = req.body;
+	await AuthService.resetPassword(payload);
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "Password reset successfully",
+		data: null,
+	});
+});
+
 export const AuthController = {
-	registerUser,
+	registerCandidate,
+	registerPatient: registerCandidate,
+	registerUser: registerCandidate,
+	verifyRegistrationEmail,
 	loginUser,
+	googleLogin,
 	logoutUser,
 	getMe,
 	refreshToken,
+	forgotPassword,
+	resetPassword,
 };

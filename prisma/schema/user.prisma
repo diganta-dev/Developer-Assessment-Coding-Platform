@@ -3,6 +3,7 @@ model User {
   name     String
   email    String   @unique
   password String?
+  googleId String?  @unique
 
   role UserRole @default(CANDIDATE)
 

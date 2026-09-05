@@ -5,11 +5,26 @@ export interface ILoginUserPayload {
 	password: string;
 }
 
-export interface IRegisterUserPayload {
+export interface IRegisterCandidatePayload {
 	name: string;
 	email: string;
 	password: string;
-	role?: UserRole;
+	candidateProfile?: {
+		phone?: string;
+		contactNumber?: string;
+		bio?: string;
+		location?: string;
+		resumeUrl?: string;
+		githubUrl?: string;
+		linkedinUrl?: string;
+	};
+}
+
+export type IRegisterPatientPayload = IRegisterCandidatePayload;
+
+export interface IVerifyRegistrationEmailPayload {
+	email: string;
+	otp: string;
 }
 
 export interface IRequestUser {
@@ -17,4 +32,18 @@ export interface IRequestUser {
 	email: string;
 	name: string;
 	role: UserRole;
+}
+
+export interface IGoogleLoginPayload {
+	idToken: string;
+}
+
+export interface IForgotPasswordPayload {
+	email: string;
+}
+
+export interface IResetPasswordPayload {
+	email: string;
+	newPassword: string;
+	otp: string;
 }

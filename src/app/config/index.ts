@@ -4,6 +4,7 @@ import path from "path";
 dotenv.config({ path: path.join(process.cwd(), ".env") });
 
 export default {
+	app_name: process.env.APP_NAME || "Developer Assessment & Coding Platform",
 	node_env: process.env.NODE_ENV || "development",
 	port: process.env.PORT || 5000,
 	database_url: process.env.DATABASE_URL,
@@ -39,6 +40,7 @@ export default {
 	},
 
 	// SMTP / Email
+	SENDER_EMAIL_USER: process.env.SENDER_EMAIL_USER || process.env.SMTP_USER,
 	smtp: {
 		user: process.env.SMTP_USER,
 		password: process.env.SMTP_PASSWORD,

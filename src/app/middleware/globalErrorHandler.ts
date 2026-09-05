@@ -1,8 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
+import { ZodError } from "zod";
 import { Prisma } from "../../generated/prisma/client";
 import config from "../config";
-import AppError from "../errors/AppError";
+import AppError from "../utils/AppError";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const globalErrorHandler = async (
@@ -22,6 +23,11 @@ export const globalErrorHandler = async (
 	if (err instanceof AppError) {
 		statusCode = err.statusCode;
 		errorMessage = err.message;
+	} else if (err instanceof ZodError || err?.name === "ZodError") {
+		statusCode = httpStatus.BAD_REQUEST;
+		errorMessage = Array.isArray(err.issues)
+			? err.issues.map((issue: any) => issue.message).join(", ")
+			: "Validation Error";
 	} else if (err instanceof Prisma.PrismaClientValidationError) {
 		statusCode = httpStatus.BAD_REQUEST;
 		errorMessage = "You have provided incorrect field type or missing fields";

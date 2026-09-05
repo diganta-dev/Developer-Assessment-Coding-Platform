@@ -1,0 +1,313 @@
+{
+	"info": {
+		"_postman_id": "8a32d1e0-74e2-4d2a-bf34-9cf72834b9d1",
+		"name": "Developer Assessment & Coding Platform - Auth API",
+		"description": "Complete Postman Collection for Authentication & Authorization APIs.\nFeatures automated token management: Access and Refresh tokens are automatically saved to collection variables on successful login/verification.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "00. Health Check (Server Status)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/",
+					"host": ["{{baseUrl}}"],
+					"path": [""]
+				},
+				"description": "Check if the server is up and running."
+			},
+			"response": []
+		},
+		{
+			"name": "01. Register Candidate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"candidate@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"candidateProfile\": {\n    \"phone\": \"+1234567890\",\n    \"bio\": \"Full-stack developer passionate about building scalable web applications.\",\n    \"location\": \"Dhaka, Bangladesh\",\n    \"resumeUrl\": \"https://example.com/resume.pdf\",\n    \"githubUrl\": \"https://github.com/johndoe\",\n    \"linkedinUrl\": \"https://linkedin.com/in/johndoe\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/auth/register",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "auth", "register"]
+				},
+				"description": "Register a new candidate. Sends a 6-digit OTP to the provided email address (valid for 5 minutes)."
+			},
+			"response": []
+		},
+		{
+			"name": "02. Verify Registration Email (OTP)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 201) {",
+							"    const response = pm.response.json();",
+							"    if (response.data && response.data.accessToken) {",
+							"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+							"    }",
+							"    if (response.data && response.data.refreshToken) {",
+							"        pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+							"    }",
+							"    console.log('Tokens auto-saved to collection variables!');",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"candidate@example.com\",\n  \"otp\": \"123456\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/auth/verify-email",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "auth", "verify-email"]
+				},
+				"description": "Verifies registration OTP from email. Automatically creates the Candidate profile in the database and returns access & refresh tokens."
+			},
+			"response": []
+		},
+		{
+			"name": "03. Login User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {",
+							"    const response = pm.response.json();",
+							"    if (response.data && response.data.accessToken) {",
+							"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+							"    }",
+							"    if (response.data && response.data.refreshToken) {",
+							"        pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+							"    }",
+							"    console.log('Tokens auto-saved to collection variables!');",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"candidate@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/auth/login",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "auth", "login"]
+				},
+				"description": "Login with email and password. Sets HTTP-only cookies and returns accessToken + refreshToken."
+			},
+			"response": []
+		},
+		{
+			"name": "04. Google Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {",
+							"    const response = pm.response.json();",
+							"    if (response.data && response.data.accessToken) {",
+							"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+							"    }",
+							"    if (response.data && response.data.refreshToken) {",
+							"        pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+							"    }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"idToken\": \"PASTE_YOUR_GOOGLE_ID_TOKEN_HERE\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/auth/google",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "auth", "google"]
+				},
+				"description": "Login/register with Google OAuth ID Token."
+			},
+			"response": []
+		},
+		{
+			"name": "05. Get My Profile (Protected)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{accessToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/auth/me",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "auth", "me"]
+				},
+				"description": "Fetch current authenticated user profile, candidateProfile, and company memberships. Uses {{accessToken}} collection variable."
+			},
+			"response": []
+		},
+		{
+			"name": "06. Refresh Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {",
+							"    const response = pm.response.json();",
+							"    if (response.data && response.data.accessToken) {",
+							"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+							"    }",
+							"    if (response.data && response.data.refreshToken) {",
+							"        pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+							"    }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/auth/refresh-token",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "auth", "refresh-token"]
+				},
+				"description": "Generate new access and refresh tokens using an existing refresh token."
+			},
+			"response": []
+		},
+		{
+			"name": "07. Forgot Password",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"candidate@example.com\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/auth/forgot-password",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "auth", "forgot-password"]
+				},
+				"description": "Initiate password reset. Sends a 6-digit OTP to the user's email address."
+			},
+			"response": []
+		},
+		{
+			"name": "08. Reset Password",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"candidate@example.com\",\n  \"otp\": \"123456\",\n  \"newPassword\": \"NewSecurePass123!\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/auth/reset-password",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "auth", "reset-password"]
+				},
+				"description": "Reset account password using the received OTP."
+			},
+			"response": []
+		},
+		{
+			"name": "09. Logout User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/auth/logout",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "auth", "logout"]
+				},
+				"description": "Clears HTTP-Only accessToken and refreshToken authentication cookies."
+			},
+			"response": []
+		}
+	]
+}
