@@ -1,0 +1,16 @@
+model AntiCheatEvent {
+  id String @id @default(cuid())
+
+  attemptId String
+  attempt   AssessmentAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  type AntiCheatEventType
+
+  metadata Json?
+
+  occurredAt DateTime @default(now())
+
+  @@index([attemptId])
+  @@index([type])
+  @@index([occurredAt])
+}

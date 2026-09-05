@@ -1,0 +1,44 @@
+model Assessment {
+  id String @id @default(cuid())
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  creatorId String
+  creator   User    @relation("AssessmentCreator", fields: [creatorId], references: [id])
+
+  title       String
+  description String?
+
+  durationMinutes Int
+
+  totalMarks   Float  @default(0)
+  passingScore Float?
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  status AssessmentStatus @default(DRAFT)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Questions
+  problems AssessmentProblem[]
+
+  // Settings
+  settings AssessmentSetting?
+
+  // Candidates
+  invitations AssessmentInvitation[]
+
+  // Attempts
+  attempts AssessmentAttempt[]
+
+  // Report
+  report AssessmentReport?
+
+  @@index([companyId])
+  @@index([creatorId])
+  @@index([status])
+}

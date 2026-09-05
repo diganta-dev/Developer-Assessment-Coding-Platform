@@ -1,18 +1,91 @@
-enum Role {
+enum UserRole {
   SUPER_ADMIN
   ADMIN
-  DOCTOR
-  PATIENT
+  CANDIDATE
 }
 
-enum UserStatus {
+enum CompanyMemberRole {
+  OWNER
+  ADMIN
+  ASSESSMENT_CREATOR
+  EVALUATOR
+}
+
+enum ProblemType {
+  MCQ
+  WRITTEN
+  CODING
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum AssessmentStatus {
+  DRAFT
+  PUBLISHED
   ACTIVE
-  BLOCKED
-  DELETED
+  COMPLETED
+  ARCHIVED
 }
 
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+enum AttemptStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  SUBMITTED
+  EXPIRED
+  EVALUATED
+}
+
+enum SubmissionStatus {
+  PENDING
+  RUNNING
+  PASSED
+  FAILED
+  ERROR
+  EVALUATED
+}
+
+enum EvaluationType {
+  AUTOMATIC
+  MANUAL
+}
+
+enum EvaluationStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum ResultStatus {
+  PASSED
+  FAILED
+}
+
+enum TestCaseType {
+  PUBLIC
+  HIDDEN
+}
+
+enum TestCaseStatus {
+  PASSED
+  FAILED
+}
+
+enum AntiCheatEventType {
+  TAB_SWITCH
+  COPY
+  PASTE
+  FULLSCREEN_EXIT
+  MULTIPLE_TAB
+  WINDOW_BLUR
 }

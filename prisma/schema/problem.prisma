@@ -1,0 +1,36 @@
+model Problem {
+  id String @id @default(cuid())
+
+  title       String
+  description String
+
+  type       ProblemType
+  difficulty Difficulty @default(MEDIUM)
+
+  marks Float @default(1)
+
+  createdById String
+  createdBy   User   @relation("ProblemCreator", fields: [createdById], references: [id])
+
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Problem type specific relations
+  mcqQuestion     MCQQuestion?
+  writtenQuestion WrittenQuestion?
+  codingQuestion  CodingQuestion?
+
+  // Assessment relation
+  assessmentProblems AssessmentProblem[]
+
+  // Candidate submissions
+  submissions Submission[]
+
+  @@index([type])
+  @@index([difficulty])
+  @@index([createdById])
+  @@index([companyId])
+}

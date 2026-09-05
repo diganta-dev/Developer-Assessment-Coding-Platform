@@ -33,7 +33,7 @@ app.use("/api/v1/auth", AuthRoutes);
 app.get("/", async (req: Request, res: Response) => {
 	res.status(httpStatus.OK).json({
 		success: true,
-		message: "Welcome to PH Healthcare System Backend",
+		message: "Welcome to Developer Assessment & Coding Platform Backend",
 	});
 });
 

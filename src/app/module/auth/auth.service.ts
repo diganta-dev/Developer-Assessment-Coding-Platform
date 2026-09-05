@@ -1,17 +1,17 @@
 import bcrypt from "bcryptjs";
 import type { JwtPayload, SignOptions } from "jsonwebtoken";
-import { Role, UserStatus } from "../../../generated/prisma/enums";
+import { UserRole } from "../../../generated/prisma/enums";
 import config from "../../config";
 import { prisma } from "../../lib/prisma";
 import { jwtUtils } from "../../utils/jwt";
 import type {
 	ILoginUserPayload,
-	IRegisterPatientPayload,
+	IRegisterUserPayload,
 	IRequestUser,
 } from "./auth.interface";
 
-const registerPatient = async (payload: IRegisterPatientPayload) => {
-	const { name, password } = payload;
+const registerUser = async (payload: IRegisterUserPayload) => {
+	const { name, password, role = UserRole.CANDIDATE } = payload;
 	const email = payload.email.trim().toLowerCase();
 
 	const isUserExists = await prisma.user.findUnique({
@@ -22,25 +22,31 @@ const registerPatient = async (payload: IRegisterPatientPayload) => {
 		throw new Error("User with this email already exists");
 	}
 
-	const hashedPassword = await bcrypt.hash(password, 8);
+	const hashedPassword = await bcrypt.hash(password, 10);
 
 	const createdUser = await prisma.user.create({
 		data: {
 			name,
 			email,
 			password: hashedPassword,
-			role: Role.PATIENT,
-			status: UserStatus.ACTIVE,
-			emailVerified: false,
-			patient: {
-				create: { name, email },
-			},
+			role,
+			isActive: true,
+			isVerified: false,
+			...(role === UserRole.CANDIDATE
+				? {
+						candidateProfile: {
+							create: {},
+						},
+					}
+				: {}),
 		},
 		omit: { password: true },
-		include: { patient: true },
+		include: {
+			candidateProfile: true,
+		},
 	});
 
-	const { patient, ...user } = createdUser;
+	const { candidateProfile, ...user } = createdUser;
 	const jwtPayload = {
 		userId: user.id,
 		name: user.name,
@@ -62,7 +68,7 @@ const registerPatient = async (payload: IRegisterPatientPayload) => {
 
 	return {
 		user,
-		patient,
+		candidateProfile,
 		accessToken,
 		refreshToken,
 	};
@@ -80,12 +86,12 @@ const loginUser = async (payload: ILoginUserPayload) => {
 		throw new Error("User not found");
 	}
 
-	if (user.status === UserStatus.BLOCKED) {
-		throw new Error("User is blocked");
+	if (!user.isActive) {
+		throw new Error("Your account is deactivated");
 	}
 
-	if (user.isDeleted || user.status === UserStatus.DELETED) {
-		throw new Error("User is deleted");
+	if (!user.password) {
+		throw new Error("Account has no password set. Please log in with OAuth or reset password.");
 	}
 
 	const isPasswordMatched = await bcrypt.compare(password, user.password);
@@ -125,7 +131,12 @@ const getMe = async (user: IRequestUser) => {
 			id: user.userId,
 		},
 		include: {
-			patient: true,
+			candidateProfile: true,
+			companyMembers: {
+				include: {
+					company: true,
+				},
+			},
 		},
 		omit: {
 			password: true,
@@ -159,7 +170,7 @@ const refreshToken = async (token: string) => {
 		where: { id: data.userId },
 	});
 
-	if (!user || user.isDeleted || user.status !== UserStatus.ACTIVE) {
+	if (!user || !user.isActive) {
 		throw new Error("User is inactive or not found");
 	}
 
@@ -189,7 +200,7 @@ const refreshToken = async (token: string) => {
 };
 
 export const AuthService = {
-	registerPatient,
+	registerUser,
 	loginUser,
 	getMe,
 	refreshToken,

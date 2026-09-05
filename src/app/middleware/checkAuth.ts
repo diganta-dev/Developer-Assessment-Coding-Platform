@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import type { JwtPayload } from "jsonwebtoken";
-import type { Role } from "../../generated/prisma/enums";
+import type { UserRole } from "../../generated/prisma/enums";
 import config from "../config";
 import { prisma } from "../lib/prisma";
 import { catchAsync } from "../utils/catchAsync";
@@ -13,15 +13,13 @@ declare global {
 				email: string;
 				name: string;
 				userId: string;
-				role: Role;
+				role: UserRole;
 			};
 		}
 	}
 }
 
-// auth(Role.ADMIN, Role.USER, Role.Author)
-// auth() => ...requiredRoles => [Role.ADMIN, Role.USER, Role.AUTHOR]
-export const auth = (...requiredRoles: Role[]) => {
+export const auth = (...requiredRoles: UserRole[]) => {
 	return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 		const token = req.cookies.accessToken
 			? req.cookies.accessToken
@@ -52,9 +50,6 @@ export const auth = (...requiredRoles: Role[]) => {
 		const user = await prisma.user.findUnique({
 			where: {
 				id: userId,
-				email,
-				name,
-				role,
 			},
 		});
 
@@ -62,8 +57,8 @@ export const auth = (...requiredRoles: Role[]) => {
 			throw new Error("User not found. Please log in again.");
 		}
 
-		if (user.status === "BLOCKED") {
-			throw new Error("Your account has been blocked. Please contact support.");
+		if (!user.isActive) {
+			throw new Error("Your account is deactivated. Please contact support.");
 		}
 
 		req.user = {

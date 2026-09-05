@@ -1,0 +1,22 @@
+model AssessmentInvitation {
+  id String @id @default(cuid())
+
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  candidateId String
+  candidate   User   @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  email String
+  token String @unique
+
+  status InvitationStatus @default(PENDING)
+
+  invitedAt  DateTime  @default(now())
+  acceptedAt DateTime?
+  expiresAt  DateTime?
+
+  @@unique([assessmentId, candidateId])
+  @@index([assessmentId])
+  @@index([candidateId])
+}

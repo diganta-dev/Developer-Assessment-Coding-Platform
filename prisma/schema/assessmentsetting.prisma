@@ -1,0 +1,21 @@
+model AssessmentSetting {
+  id String @id @default(cuid())
+
+  assessmentId String     @unique
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  maxAttempts Int @default(1)
+
+  shuffleQuestions  Boolean @default(false)
+  shuffleMCQOptions Boolean @default(false)
+
+  allowMultipleAttempts Boolean @default(false)
+
+  preventCopyPaste  Boolean @default(false)
+  requireFullscreen Boolean @default(false)
+
+  autoSubmitOnExpiry Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
