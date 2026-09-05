@@ -7,6 +7,7 @@ const router = Router();
 
 router.post("/register", AuthController.registerUser);
 router.post("/login", AuthController.loginUser);
+router.post("/logout", AuthController.logoutUser);
 router.get(
 	"/me",
 	auth(UserRole.ADMIN, UserRole.CANDIDATE, UserRole.SUPER_ADMIN),
