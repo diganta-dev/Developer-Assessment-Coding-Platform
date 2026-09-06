@@ -4,7 +4,8 @@ model Company {
   name String
   slug String @unique
 
-  email       String?
+  email       String @unique
+  isVerified  Boolean @default(false)
   logoUrl     String?
   description String?
   website     String?

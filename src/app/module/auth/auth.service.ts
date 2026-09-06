@@ -324,12 +324,12 @@ const googleLogin = async (tokenOrPayload: string | { idToken: string }) => {
 		}
 
 		// Link Google ID or update avatar if not present
-		const updates: { googleId?: string; avatarUrl?: string; isVerified?: boolean } = {};
+		const updates: { googleId?: string; profilePictureUrl?: string; isVerified?: boolean } = {};
 		if (!user.googleId && googleIdTokenPayload.sub) {
 			updates.googleId = googleIdTokenPayload.sub;
 		}
-		if (!user.avatarUrl && googleIdTokenPayload.picture) {
-			updates.avatarUrl = googleIdTokenPayload.picture;
+		if (!user.profilePictureUrl && googleIdTokenPayload.picture) {
+			updates.profilePictureUrl = googleIdTokenPayload.picture;
 		}
 		if (!user.isVerified) {
 			updates.isVerified = true;
@@ -359,7 +359,7 @@ const googleLogin = async (tokenOrPayload: string | { idToken: string }) => {
 				role: UserRole.CANDIDATE,
 				isVerified: true,
 				isActive: true,
-				avatarUrl: googleIdTokenPayload.picture,
+				profilePictureUrl: googleIdTokenPayload.picture,
 				candidateProfile: {
 					create: {
 						profileImage: googleIdTokenPayload.picture,

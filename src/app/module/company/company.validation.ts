@@ -23,7 +23,13 @@ export const CreateCompanyZodSchema = z.object({
 
 export const UpdateCompanyZodSchema = CreateCompanyZodSchema.partial();
 
+export const VerifyCompanyZodSchema = z.object({
+  email: z.string().email("Follow the email format"),
+  otp: z.string().min(6, "OTP must be at least 6 characters"),
+});
+
 export const CompanyValidation = {
   CreateCompanyZodSchema,
   UpdateCompanyZodSchema,
+  VerifyCompanyZodSchema,
 };

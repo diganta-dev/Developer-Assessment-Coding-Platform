@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Company Registration Verification</title>
+  <!--[if mso]>
+  <style type="text/css">
+    body, table, td { font-family: Arial, Helvetica, sans-serif !important; }
+  </style>
+  <![endif]-->
+</head>
+<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #1e293b;">
+  <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f1f5f9; padding: 40px 15px;">
+    <tr>
+      <td align="center">
+        <!-- Main Email Container -->
+        <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 580px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0;">
+          
+          <!-- Top Accent Bar -->
+          <tr>
+            <td style="height: 5px; background: linear-gradient(90deg, #4f46e5 0%, #06b6d4 100%); background-color: #4f46e5;"></td>
+          </tr>
+
+          <!-- Header Section -->
+          <tr>
+            <td style="padding: 36px 40px 20px 40px; text-align: left;">
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td>
+                    <!-- Badge -->
+                    <span style="display: inline-block; padding: 5px 12px; background-color: #eef2ff; color: #4338ca; font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; border-radius: 20px; margin-bottom: 16px;">
+                      Company Onboarding
+                    </span>
+                    <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #0f172a; line-height: 1.3;">
+                      Verify Company Registration
+                    </h1>
+                    <p style="margin: 8px 0 0 0; font-size: 14px; color: #64748b; line-height: 1.5;">
+                      Developer Assessment &amp; Coding Platform
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Divider -->
+          <tr>
+            <td style="padding: 0 40px;">
+              <div style="border-bottom: 1px solid #f1f5f9;"></div>
+            </td>
+          </tr>
+
+          <!-- Body Content -->
+          <tr>
+            <td style="padding: 24px 40px 32px 40px; font-size: 15px; line-height: 1.6; color: #334155;">
+              <p style="margin: 0 0 16px 0;">
+                Hello <strong><%= name %></strong>,
+              </p>
+              <p style="margin: 0 0 24px 0; color: #475569;">
+                Thank you for choosing the <strong>Developer Assessment &amp; Coding Platform</strong> for your organization. To complete your company registration and secure your account workspace, please use the one-time verification code (OTP) below:
+              </p>
+
+              <!-- OTP Container -->
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 28px 0;">
+                <tr>
+                  <td align="center">
+                    <div style="background-color: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 10px; padding: 24px 20px; text-align: center; max-width: 380px;">
+                      <span style="display: block; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px;">
+                        One-Time Verification Code
+                      </span>
+                      <div style="font-family: 'Courier New', Courier, monospace, sans-serif; font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #4338ca; padding: 6px 0;">
+                        <%= otp %>
+                      </div>
+                      <span style="display: inline-block; margin-top: 10px; font-size: 12px; color: #64748b; background-color: #ffffff; padding: 4px 10px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                        ⏳ Valid for <strong>5 minutes</strong>
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Security Notice -->
+              <div style="background-color: #fefce8; border-left: 4px solid #eab308; padding: 14px 16px; border-radius: 4px; margin: 24px 0 0 0;">
+                <p style="margin: 0; font-size: 13px; color: #854d0e; line-height: 1.5;">
+                  <strong>Security Advisory:</strong> Never share this OTP with anyone. Our support team will never ask for your verification code. If you did not initiate this company registration, please disregard this email.
+                </p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Footer Section -->
+          <tr>
+            <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 24px 40px; text-align: center; font-size: 12px; color: #94a3b8; line-height: 1.6;">
+              <p style="margin: 0 0 6px 0; color: #64748b; font-weight: 500;">
+                Developer Assessment &amp; Coding Platform
+              </p>
+              <p style="margin: 0 0 10px 0;">
+                Empowering organizations to discover, evaluate, and hire top technical talent.
+              </p>
+              <p style="margin: 0; font-size: 11px; color: #94a3b8;">
+                This is an automated notification, please do not reply directly to this email.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

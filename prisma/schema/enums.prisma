@@ -5,11 +5,11 @@ enum UserRole {
 }
 
 enum CompanyMemberRole {
-  OWNER
-  ADMIN
+  COMPANY_OWNER
+  COMPANY_ADMIN
   ASSESSMENT_CREATOR
   EVALUATOR
-}
+} 
 
 enum ProblemType {
   MCQ

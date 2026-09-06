@@ -267,6 +267,9 @@
 									"    if (response.data && response.data.accessToken) {",
 									"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
 									"    }",
+									"    if (response.data && response.data.refreshToken) {",
+									"        pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+									"    }",
 									"}"
 								],
 								"type": "text/javascript"
