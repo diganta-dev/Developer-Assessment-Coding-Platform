@@ -6,6 +6,15 @@ import { jwtUtils } from "../../utils/jwt";
 import config from "../../config";
 import type { Request } from "express";
 
+const isProduction = config.node_env === "production";
+
+const getCookieOptions = (maxAge: number) => ({
+	httpOnly: true,
+	secure: isProduction,
+	sameSite: (isProduction ? "none" : "lax") as "none" | "lax",
+	maxAge,
+});
+
 // Helper to extract authenticated user's ID if token or session is provided
 const extractUserId = (req: Request): string | undefined => {
 	if (req.user?.userId) return req.user.userId;
@@ -35,8 +44,17 @@ const createCompany = catchAsync(async (req, res) => {
 });
 
 const verifyCompany = catchAsync(async (req, res) => {
-	const userId = req.user?.userId as string;
+	const userId = extractUserId(req);
 	const result = await CompanyService.verifyCompany(req.body, userId);
+	const { accessToken, refreshToken } = result;
+
+	if (accessToken) {
+		res.cookie("accessToken", accessToken, getCookieOptions(1000 * 60 * 60 * 24));
+	}
+	if (refreshToken) {
+		res.cookie("refreshToken", refreshToken, getCookieOptions(1000 * 60 * 60 * 24 * 7));
+	}
+
 	sendResponse(res, {
 		success: true,
 		statusCode: httpStatus.CREATED,

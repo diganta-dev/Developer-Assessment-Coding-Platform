@@ -11,6 +11,9 @@ import ejs from "ejs";
 import { slugify } from "../../utils/slug";
 import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums";
 
+import { jwtUtils } from "../../utils/jwt";
+import type { SignOptions } from "jsonwebtoken";
+
 const generateUniqueCompanySlug = async (name: string): Promise<string> => {
 	const baseSlug = slugify(name) || "company";
 	let slug = baseSlug;
@@ -204,7 +207,40 @@ const verifyCompany = async (payload: IVerifyCompanyPayload, verifierUserId?: st
 		html: html,
 	});
 
-	return createdCompany;
+	// Generate JWT for the company owner so they are immediately logged in
+	const ownerUser =
+		createdCompany.members.find((m) => m.userId === ownerUserId)?.user ||
+		(await prisma.user.findUnique({ where: { id: ownerUserId } }));
+
+	let accessToken: string | undefined;
+	let refreshToken: string | undefined;
+
+	if (ownerUser) {
+		const jwtPayload = {
+			userId: ownerUser.id,
+			name: ownerUser.name,
+			email: ownerUser.email,
+			role: ownerUser.role,
+		};
+
+		accessToken = jwtUtils.createToken(
+			jwtPayload,
+			config.jwt_access_secret,
+			config.jwt_access_expires_in as SignOptions,
+		);
+
+		refreshToken = jwtUtils.createToken(
+			jwtPayload,
+			config.jwt_refresh_secret,
+			config.jwt_refresh_expires_in as SignOptions,
+		);
+	}
+
+	return {
+		...createdCompany,
+		accessToken,
+		refreshToken,
+	};
 };
 
 const updateCompany = async (

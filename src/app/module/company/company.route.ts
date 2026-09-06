@@ -7,13 +7,13 @@ import { auth } from "../../middleware/checkAuth";
 const router = Router();
 
 router.post(
-	"/create-company",auth(),
+	"/create-company",
 	validateRequest(CompanyValidation.CreateCompanyZodSchema),
 	CompanyController.createCompany,
 );
 
 router.post(
-	"/verify-company",auth(),
+	"/verify-company",
 	validateRequest(CompanyValidation.VerifyCompanyZodSchema),
 	CompanyController.verifyCompany,
 );
@@ -26,3 +26,4 @@ router.patch(
 );
 
 export const CompanyRoutes = router;
+ 
