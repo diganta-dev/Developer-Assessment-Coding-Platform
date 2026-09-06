@@ -7,8 +7,8 @@ model User {
 
   role UserRole @default(CANDIDATE)
 
-  avatarUrl  String?
-  isVerified Boolean @default(false)
+  profilePictureUrl  String?
+  isVerified Boolean @default(false)  
   isActive   Boolean @default(true)
 
   createdAt DateTime @default(now())
