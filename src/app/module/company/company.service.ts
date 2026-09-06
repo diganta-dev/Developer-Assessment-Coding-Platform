@@ -768,6 +768,13 @@ const getCompanyMembers = async (
 	companyId: string,
 	currentUser: { userId: string; role: UserRole },
 ) => {
+	const company = await prisma.company.findUnique({
+		where: { id: companyId },
+	});
+	if (!company) {
+		throw new AppError(httpStatus.NOT_FOUND, "Company not found");
+	}
+
 	const isPlatformSuperAdmin = currentUser.role === UserRole.SUPER_ADMIN;
 
 	if (!isPlatformSuperAdmin) {
@@ -781,7 +788,22 @@ const getCompanyMembers = async (
 		});
 
 		if (!membership) {
-			throw new AppError(httpStatus.FORBIDDEN, "You are not a member of this company");
+			throw new AppError(
+				httpStatus.FORBIDDEN,
+				"You are not a member of this company",
+			);
+		}
+
+		const allowedRoles: CompanyMemberRole[] = [
+			CompanyMemberRole.COMPANY_OWNER,
+			CompanyMemberRole.COMPANY_ADMIN,
+		];
+
+		if (!allowedRoles.includes(membership.role)) {
+			throw new AppError(
+				httpStatus.FORBIDDEN,
+				"You don't have permission to view company members. Only company owner or admin can perform this action.",
+			);
 		}
 	}
 

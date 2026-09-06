@@ -586,7 +586,7 @@
 								"members"
 							]
 						},
-						"description": "Lists all members of the specified company."
+						"description": "Lists all members of the specified company. Allowed roles: COMPANY_OWNER and COMPANY_ADMIN."
 					},
 					"response": []
 				},
