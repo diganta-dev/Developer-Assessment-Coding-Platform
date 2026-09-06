@@ -1,18 +1,41 @@
 model User {
-  id                 String     @id @default(uuid())
-  name               String
-  email              String
-  password           String
-  emailVerified      Boolean    @default(false)
-  role               Role       @default(PATIENT)
-  status             UserStatus @default(ACTIVE)
-  needPasswordChange Boolean    @default(false)
-  isDeleted          Boolean    @default(false)
-  deletedAt          DateTime?
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
-  patient            Patient?
+  id       String   @id @default(cuid())
+  name     String
+  email    String   @unique
+  password String?
+  googleId String?  @unique
 
-  @@unique([email])
-  @@map("users")
+  role UserRole @default(CANDIDATE)
+
+  profilePictureUrl  String?
+  isVerified Boolean @default(false)  
+  isActive   Boolean @default(true)
+  tokenVersion Int     @default(1)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Candidate
+  candidateProfile CandidateProfile?
+
+  // Company
+  companyMembers CompanyMember[]
+
+  // Assessment creator
+  createdAssessments Assessment[] @relation("AssessmentCreator")
+
+  // Problem creator
+  createdProblems Problem[] @relation("ProblemCreator")
+
+  // Assessment invitations
+  invitations AssessmentInvitation[]
+
+  // Attempts
+  attempts AssessmentAttempt[]
+
+  // Evaluations
+  evaluations Evaluation[] @relation("Evaluator")
+
+  @@index([email])
+  @@index([role])
 }

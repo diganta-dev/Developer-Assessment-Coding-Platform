@@ -1,0 +1,28 @@
+model AssessmentReport {
+  id String @id @default(cuid())
+
+  assessmentId String     @unique
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  totalCandidates     Int @default(0)
+  invitedCandidates   Int @default(0)
+  startedCandidates   Int @default(0)
+  completedCandidates Int @default(0)
+
+  passedCandidates Int @default(0)
+  failedCandidates Int @default(0)
+
+  averageScore Float?
+  highestScore Float?
+  lowestScore  Float?
+
+  completionRate Float?
+  passRate       Float?
+
+  questionPerformance Json?
+  scoreDistribution   Json?
+  antiCheatStatistics Json?
+
+  generatedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

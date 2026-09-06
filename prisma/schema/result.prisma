@@ -1,0 +1,20 @@
+model Result {
+  id String @id @default(cuid())
+
+  attemptId String            @unique
+  attempt   AssessmentAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  totalMarks    Float
+  obtainedMarks Float
+  percentage    Float
+
+  passingScore Float?
+  rank         Int?
+
+  status ResultStatus
+
+  publishedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

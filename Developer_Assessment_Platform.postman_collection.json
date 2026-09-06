@@ -1,0 +1,656 @@
+{
+	"info": {
+		"_postman_id": "8a32d1e0-74e2-4d2a-bf34-9cf72834b9d1",
+		"name": "Developer Assessment & Coding Platform API",
+		"description": "Complete Postman Collection for Developer Assessment & Coding Platform (Auth, Candidate & Company Management).\nFeatures automated token management: Access and Refresh tokens are automatically saved to collection variables on successful login/verification.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "companyId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "00. Health Check (Server Status)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						""
+					]
+				},
+				"description": "Check if the server is up and running."
+			},
+			"response": []
+		},
+		{
+			"name": "01. Authentication & Candidate",
+			"description": "Candidate registration, email verification, login, profile, and password recovery.",
+			"item": [
+				{
+					"name": "01. Register Candidate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"candidate@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"candidateProfile\": {\n    \"phone\": \"+1234567890\",\n    \"bio\": \"Full-stack developer passionate about building scalable web applications.\",\n    \"location\": \"Dhaka, Bangladesh\",\n    \"resumeUrl\": \"https://example.com/resume.pdf\",\n    \"githubUrl\": \"https://github.com/johndoe\",\n    \"linkedinUrl\": \"https://linkedin.com/in/johndoe\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new candidate. Sends a 6-digit OTP to the provided email address (valid for 5 minutes)."
+					},
+					"response": []
+				},
+				{
+					"name": "02. Verify Registration Email (OTP)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.accessToken) {",
+									"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+									"    }",
+									"    if (response.data && response.data.refreshToken) {",
+									"        pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+									"    }",
+									"    console.log('Tokens auto-saved to collection variables!');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"candidate@example.com\",\n  \"otp\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/verify-email",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"verify-email"
+							]
+						},
+						"description": "Verifies registration OTP from email. Automatically creates the Candidate profile in the database and returns access & refresh tokens."
+					},
+					"response": []
+				},
+				{
+					"name": "03. Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.accessToken) {",
+									"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+									"    }",
+									"    if (response.data && response.data.refreshToken) {",
+									"        pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+									"    }",
+									"    console.log('Tokens auto-saved to collection variables!');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"candidate@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with email and password. Sets HTTP-only cookies and returns accessToken + refreshToken."
+					},
+					"response": []
+				},
+				{
+					"name": "04. Google OAuth Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.accessToken) {",
+									"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+									"    }",
+									"    if (response.data && response.data.refreshToken) {",
+									"        pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idToken\": \"PASTE_YOUR_GOOGLE_ID_TOKEN_HERE\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/google",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"google"
+							]
+						},
+						"description": "Login/register with Google OAuth ID Token."
+					},
+					"response": []
+				},
+				{
+					"name": "05. Get My Profile (Protected)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						},
+						"description": "Fetch current authenticated user profile, candidateProfile, and company memberships. Uses {{accessToken}} collection variable."
+					},
+					"response": []
+				},
+				{
+					"name": "06. Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.accessToken) {",
+									"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+									"    }",
+									"    if (response.data && response.data.refreshToken) {",
+									"        pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/refresh-token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"refresh-token"
+							]
+						},
+						"description": "Generate new access and refresh tokens using an existing refresh token."
+					},
+					"response": []
+				},
+				{
+					"name": "07. Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"candidate@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/forgot-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"forgot-password"
+							]
+						},
+						"description": "Initiate password reset. Sends a 6-digit OTP to the user's email address."
+					},
+					"response": []
+				},
+				{
+					"name": "08. Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"candidate@example.com\",\n  \"otp\": \"123456\",\n  \"newPassword\": \"NewSecurePass123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/reset-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"reset-password"
+							]
+						},
+						"description": "Reset account password using the received OTP."
+					},
+					"response": []
+				},
+				{
+					"name": "09. Logout User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Clears HTTP-Only accessToken and refreshToken authentication cookies."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "02. Company Management",
+			"description": "Company registration, verification (auto-slug), and profile management.",
+			"item": [
+				{
+					"name": "01. Register Company (Send OTP)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text",
+								"description": "Required: Must be a logged-in user to create a company"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Acme Technologies\",\n  \"email\": \"company@acmetech.com\",\n  \"website\": \"https://acmetech.com\",\n  \"description\": \"Leading global developer assessment organization\",\n  \"logoUrl\": \"https://acmetech.com/logo.png\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/company/create-company",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"company",
+								"create-company"
+							]
+						},
+						"description": "Registers company temporary data in Redis and triggers OTP email to company. Requires authenticated user."
+					},
+					"response": []
+				},
+				{
+					"name": "02. Verify Company Email (Auto Slug & Save to DB)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('companyId', response.data.id);",
+									"        console.log('companyId auto-saved:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text",
+								"description": "Required: Must be the logged-in user who initiated company registration"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"company@acmetech.com\",\n  \"otp\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/company/verify-company",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"company",
+								"verify-company"
+							]
+						},
+						"description": "Verifies company registration OTP from Redis, creates company in DB, and assigns authenticated user as COMPANY_OWNER."
+					},
+					"response": []
+				},
+				{
+					"name": "03. Update Company Profile",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Acme Technologies Global\",\n  \"website\": \"https://global.acmetech.com\",\n  \"description\": \"Updated global enterprise engineering assessments\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/company/update-company/{{companyId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"company",
+								"update-company",
+								"{{companyId}}"
+							]
+						},
+						"description": "Updates company profile information using the {{companyId}} variable."
+					},
+					"response": []
+				},
+				{
+					"name": "04. Get My Company (Protected)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('companyId', response.data.id);",
+									"        console.log('companyId auto-saved from getMyCompany:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/company/my-company",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"company",
+								"my-company"
+							]
+						},
+						"description": "Fetches the current user's associated company and auto-saves companyId to collection variables."
+					},
+					"response": []
+				},
+				{
+					"name": "05. Add Company Member (Existing User Only)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"candidate@example.com\",\n  \"role\": \"ASSESSMENT_CREATOR\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/company/add-member/{{companyId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"company",
+								"add-member",
+								"{{companyId}}"
+							]
+						},
+						"description": "Adds an existing registered user to the company with a specified role (COMPANY_ADMIN, ASSESSMENT_CREATOR, EVALUATOR). Requester must be OWNER or ADMIN."
+					},
+					"response": []
+				},
+				{
+					"name": "06. Get Company Members",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/company/{{companyId}}/members",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"company",
+								"{{companyId}}",
+								"members"
+							]
+						},
+						"description": "Lists all members of the specified company. Allowed roles: COMPANY_OWNER and COMPANY_ADMIN."
+					},
+					"response": []
+				},
+				{
+					"name": "07. Update Member Role (Triggers Token Invalidation)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"role\": \"COMPANY_ADMIN\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/company/{{companyId}}/members/MEMBER_USER_ID_HERE",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"company",
+								"{{companyId}}",
+								"members",
+								"MEMBER_USER_ID_HERE"
+							]
+						},
+						"description": "Updates a member's role (COMPANY_ADMIN, ASSESSMENT_CREATOR, EVALUATOR). Increments tokenVersion to invalidate outdated tokens immediately."
+					},
+					"response": []
+				},
+				{
+					"name": "08. Remove Company Member",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/company/{{companyId}}/members/MEMBER_USER_ID_HERE",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"company",
+								"{{companyId}}",
+								"members",
+								"MEMBER_USER_ID_HERE"
+							]
+						},
+						"description": "Removes a member from the company and increments tokenVersion to immediately revoke their company access."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

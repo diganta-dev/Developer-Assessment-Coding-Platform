@@ -1,0 +1,24 @@
+model Evaluation {
+  id String @id @default(cuid())
+
+  submissionId String
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  evaluatorId String?
+  evaluator   User?   @relation("Evaluator", fields: [evaluatorId], references: [id])
+
+  type   EvaluationType
+  status EvaluationStatus @default(PENDING)
+
+  marks    Float
+  feedback String?
+
+  evaluatedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([submissionId])
+  @@index([evaluatorId])
+  @@index([status])
+}

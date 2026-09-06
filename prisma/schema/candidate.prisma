@@ -1,0 +1,17 @@
+model CandidateProfile {
+  id String @id @default(cuid())
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  phone        String?
+  bio          String?
+  location     String?
+  profileImage String?
+  resumeUrl    String?
+  githubUrl    String?
+  linkedinUrl  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

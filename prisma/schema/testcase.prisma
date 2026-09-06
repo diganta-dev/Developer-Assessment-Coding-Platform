@@ -1,0 +1,18 @@
+model TestCase {
+  id String @id @default(cuid())
+
+  codingQuestionId String
+  codingQuestion   CodingQuestion @relation(fields: [codingQuestionId], references: [id], onDelete: Cascade)
+
+  type TestCaseType
+
+  input          String
+  expectedOutput String
+
+  timeLimitMs   Int?
+  memoryLimitMb Int?
+
+  createdAt DateTime @default(now())
+
+  @@index([codingQuestionId])
+}

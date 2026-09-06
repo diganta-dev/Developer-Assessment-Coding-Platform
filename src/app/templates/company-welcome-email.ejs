@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Welcome to <%= appName || 'Developer Assessment & Coding Platform' %></title>
+  <!--[if mso]>
+  <style type="text/css">
+    body, table, td { font-family: Arial, Helvetica, sans-serif !important; }
+  </style>
+  <![endif]-->
+</head>
+<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #1e293b;">
+  <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f1f5f9; padding: 40px 15px;">
+    <tr>
+      <td align="center">
+        <!-- Main Container -->
+        <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0;">
+          
+          <!-- Gradient Top Accent Bar -->
+          <tr>
+            <td style="height: 6px; background: linear-gradient(90deg, #4f46e5 0%, #06b6d4 100%); background-color: #4f46e5;"></td>
+          </tr>
+
+          <!-- Header Section -->
+          <tr>
+            <td style="padding: 36px 40px 24px 40px; text-align: left;">
+              <!-- Verification Success Badge -->
+              <span style="display: inline-block; padding: 6px 14px; background-color: #ecfdf5; color: #047857; font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; border-radius: 20px; border: 1px solid #a7f3d0; margin-bottom: 16px;">
+                ✓ Organization Verified
+              </span>
+              <h1 style="margin: 0; font-size: 26px; font-weight: 800; color: #0f172a; line-height: 1.3;">
+                Welcome to <%= appName || 'Developer Assessment & Coding Platform' %>!
+              </h1>
+              <p style="margin: 8px 0 0 0; font-size: 14px; color: #64748b; line-height: 1.5;">
+                Your company workspace is now fully active and ready to use.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Divider -->
+          <tr>
+            <td style="padding: 0 40px;">
+              <div style="border-bottom: 1px solid #f1f5f9;"></div>
+            </td>
+          </tr>
+
+          <!-- Body Content -->
+          <tr>
+            <td style="padding: 28px 40px 32px 40px; font-size: 15px; line-height: 1.6; color: #334155;">
+              <p style="margin: 0 0 16px 0;">
+                Dear <strong><%= name %></strong> Team,
+              </p>
+              <p style="margin: 0 0 24px 0; color: #475569;">
+                Congratulations! Your company profile has been successfully verified. You now have access to enterprise-grade assessment tools designed to evaluate, interview, and hire top-tier engineering talent seamlessly.
+              </p>
+
+              <% if (typeof generatedPassword !== 'undefined' && generatedPassword) { %>
+              <!-- Owner Account Credentials Box -->
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 20px; margin: 20px 0 28px 0;">
+                <tr>
+                  <td>
+                    <span style="display: block; font-size: 12px; font-weight: 700; color: #15803d; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;">
+                      🔑 Your Platform Owner Account
+                    </span>
+                    <p style="margin: 0 0 10px 0; font-size: 14px; color: #166534; line-height: 1.5;">
+                      A verified owner account has been automatically provisioned for you. Use these credentials to sign in:
+                    </p>
+                    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border: 1px solid #dcfce7; border-radius: 8px; padding: 14px 18px;">
+                      <tr>
+                        <td>
+                          <p style="margin: 0 0 8px 0; font-size: 14px; color: #334155;">
+                            <strong>Login Email:</strong> <code style="color: #0f172a; font-size: 14px; font-weight: 600;"><%= email %></code>
+                          </p>
+                          <p style="margin: 0; font-size: 14px; color: #334155;">
+                            <strong>Temporary Password:</strong> <code style="color: #4f46e5; font-size: 15px; font-weight: 700; background-color: #eef2ff; padding: 2px 8px; border-radius: 4px;"><%= generatedPassword %></code>
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="margin: 10px 0 0 0; font-size: 12px; color: #65a30d; line-height: 1.4;">
+                      * For security, please log in and update your password from your account settings.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              <% } %>
+
+              <!-- Feature Highlights Box -->
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; margin: 24px 0 28px 0;">
+                <tr>
+                  <td>
+                    <span style="display: block; font-size: 12px; font-weight: 700; color: #4338ca; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px;">
+                      What You Can Do Next:
+                    </span>
+
+                    <!-- Item 1 -->
+                    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 12px;">
+                      <tr>
+                        <td width="28" valign="top" style="font-size: 16px; line-height: 1;">⚡</td>
+                        <td style="font-size: 14px; color: #334155; line-height: 1.5;">
+                          <strong style="color: #0f172a;">Build Custom Assessments:</strong> Assemble coding challenges, multiple-choice questions, and technical assessments tailored to your roles.
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Item 2 -->
+                    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 12px;">
+                      <tr>
+                        <td width="28" valign="top" style="font-size: 16px; line-height: 1;">👥</td>
+                        <td style="font-size: 14px; color: #334155; line-height: 1.5;">
+                          <strong style="color: #0f172a;">Invite Team Members:</strong> Add hiring managers, interviewers, and evaluators with granular role-based permissions.
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Item 3 -->
+                    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td width="28" valign="top" style="font-size: 16px; line-height: 1;">📊</td>
+                        <td style="font-size: 14px; color: #334155; line-height: 1.5;">
+                          <strong style="color: #0f172a;">Review Detailed Analytics:</strong> Track automated test runs, anti-cheating insights, and in-depth candidate performance reports.
+                        </td>
+                      </tr>
+                    </table>
+
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Call To Action Button -->
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 28px 0 20px 0;">
+                <tr>
+                  <td align="center">
+                    <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td align="center" style="border-radius: 8px; background: linear-gradient(90deg, #4f46e5 0%, #4338ca 100%); background-color: #4f46e5;">
+                          <a href="#" target="_blank" style="display: inline-block; padding: 14px 32px; font-size: 15px; font-weight: 700; color: #ffffff; text-decoration: none; border-radius: 8px; letter-spacing: 0.3px;">
+                            Go to Company Dashboard &rarr;
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Support Note -->
+              <p style="margin: 24px 0 0 0; font-size: 13px; color: #64748b; line-height: 1.6; text-align: center;">
+                Need help setting up your first assessment or onboarding your team? Reach out to our dedicated support team at any time.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer Section -->
+          <tr>
+            <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 28px 40px; text-align: center; font-size: 12px; color: #94a3b8; line-height: 1.6;">
+              <p style="margin: 0 0 6px 0; color: #64748b; font-weight: 600;">
+                <%= appName || 'Developer Assessment & Coding Platform' %>
+              </p>
+              <p style="margin: 0 0 12px 0;">
+                Empowering world-class companies to hire exceptional engineering talent.
+              </p>
+              <p style="margin: 0; font-size: 11px; color: #94a3b8;">
+                &copy; <%= new Date().getFullYear() %> <%= appName || 'Developer Assessment & Coding Platform' %>. All rights reserved.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

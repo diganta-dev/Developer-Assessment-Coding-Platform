@@ -1,0 +1,13 @@
+model MCQOption {
+  id String @id @default(cuid())
+
+  mcqQuestionId String
+  mcqQuestion   MCQQuestion @relation(fields: [mcqQuestionId], references: [id], onDelete: Cascade)
+
+  optionText String
+  isCorrect  Boolean @default(false)
+  optionOrder Int
+
+  @@unique([mcqQuestionId, optionOrder])
+  @@index([mcqQuestionId])
+}

@@ -1,0 +1,13 @@
+model MCQQuestion {
+  id String @id @default(cuid())
+
+  problemId String  @unique
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  explanation String?
+
+  options MCQOption[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
