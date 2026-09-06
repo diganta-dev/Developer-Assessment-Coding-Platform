@@ -244,11 +244,20 @@ const loginUser = async (payload: ILoginUserPayload) => {
 		throw new AppError(httpStatus.UNAUTHORIZED, "Invalid credentials");
 	}
 
+	const primaryMembership = user.companyMembers?.[0];
+
 	const jwtPayload = {
 		userId: user.id,
 		name: user.name,
 		email: user.email,
 		role: user.role,
+		tokenVersion: user.tokenVersion,
+		...(primaryMembership
+			? {
+					companyId: primaryMembership.companyId,
+					companyRole: primaryMembership.role,
+				}
+			: {}),
 	};
 
 	const accessToken = jwtUtils.createToken(
@@ -393,11 +402,20 @@ const googleLogin = async (tokenOrPayload: string | { idToken: string }) => {
 		});
 	}
 
+	const primaryMembership = user.companyMembers?.[0];
+
 	const jwtPayload = {
 		userId: user.id,
 		name: user.name,
 		email: user.email,
 		role: user.role,
+		tokenVersion: user.tokenVersion,
+		...(primaryMembership
+			? {
+					companyId: primaryMembership.companyId,
+					companyRole: primaryMembership.role,
+				}
+			: {}),
 	};
 
 	const accessToken = jwtUtils.createToken(
@@ -461,7 +479,10 @@ const refreshToken = async (token: string) => {
 		);
 	}
 
-	const data = verifiedRefreshToken.data as JwtPayload;
+	const data = verifiedRefreshToken.data as JwtPayload & {
+		userId: string;
+		tokenVersion?: number;
+	};
 
 	const user = await prisma.user.findUnique({
 		where: { id: data.userId },
@@ -485,11 +506,30 @@ const refreshToken = async (token: string) => {
 		);
 	}
 
+	if (
+		typeof data.tokenVersion === "number" &&
+		data.tokenVersion !== user.tokenVersion
+	) {
+		throw new AppError(
+			httpStatus.UNAUTHORIZED,
+			"Refresh token is revoked or outdated. Please log in again.",
+		);
+	}
+
+	const primaryMembership = user.companyMembers?.[0];
+
 	const jwtPayload = {
 		userId: user.id,
 		name: user.name,
 		email: user.email,
 		role: user.role,
+		tokenVersion: user.tokenVersion,
+		...(primaryMembership
+			? {
+					companyId: primaryMembership.companyId,
+					companyRole: primaryMembership.role,
+				}
+			: {}),
 	};
 
 	const accessToken = jwtUtils.createToken(

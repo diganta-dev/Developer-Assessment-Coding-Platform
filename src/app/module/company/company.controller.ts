@@ -33,7 +33,7 @@ const extractUserId = (req: Request): string | undefined => {
 };
 
 const createCompany = catchAsync(async (req, res) => {
-	const userId = extractUserId(req);
+	const userId = req.user!.userId;
 	const result = await CompanyService.createCompany(req.body, userId);
 	sendResponse(res, {
 		success: true,
@@ -44,7 +44,7 @@ const createCompany = catchAsync(async (req, res) => {
 });
 
 const verifyCompany = catchAsync(async (req, res) => {
-	const userId = extractUserId(req);
+	const userId = req.user!.userId;
 	const result = await CompanyService.verifyCompany(req.body, userId);
 	const { accessToken, refreshToken } = result;
 
@@ -74,9 +74,83 @@ const updateCompany = catchAsync(async (req, res) => {
 		data: result,
 	});
 });
+const getMyCompany = catchAsync(async (req, res) => {
+	const userId = req.user?.userId as string;
+	const result = await CompanyService.getMyCompany(userId);
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: "My company fetched successfully",
+		data: result,
+	});
+});
+
+const addCompanyMember = catchAsync(async (req, res) => {
+	const companyId = (req.params.companyId || req.params.id) as string;
+	const user = req.user!;
+	const result = await CompanyService.addCompanyMember(companyId, user, req.body);
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.CREATED,
+		message: "Company member added successfully",
+		data: result,
+	});
+});
+
+const updateMemberRole = catchAsync(async (req, res) => {
+	const companyId = req.params.companyId as string;
+	const memberUserId = req.params.memberUserId as string;
+	const user = req.user!;
+	const result = await CompanyService.updateMemberRole(
+		companyId,
+		user,
+		memberUserId,
+		req.body.role,
+	);
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: "Company member role updated successfully",
+		data: result,
+	});
+});
+
+const removeCompanyMember = catchAsync(async (req, res) => {
+	const companyId = req.params.companyId as string;
+	const memberUserId = req.params.memberUserId as string;
+	const user = req.user!;
+	const result = await CompanyService.removeCompanyMember(
+		companyId,
+		user,
+		memberUserId,
+	);
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: "Company member removed successfully",
+		data: result,
+	});
+});
+
+const getCompanyMembers = catchAsync(async (req, res) => {
+	const companyId = req.params.companyId as string;
+	const user = req.user!;
+	const result = await CompanyService.getCompanyMembers(companyId, user);
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: "Company members fetched successfully",
+		data: result,
+	});
+});
 
 export const CompanyController = {
 	createCompany,
 	verifyCompany,
 	updateCompany,
+	getMyCompany,
+	addCompanyMember,
+	updateMemberRole,
+	removeCompanyMember,
+	getCompanyMembers,
 };

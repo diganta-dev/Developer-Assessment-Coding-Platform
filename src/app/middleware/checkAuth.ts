@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import type { JwtPayload } from "jsonwebtoken";
-import type { UserRole } from "../../generated/prisma/enums";
+import type { CompanyMemberRole, UserRole } from "../../generated/prisma/enums";
 import config from "../config";
 import AppError from "../utils/AppError";
 import { prisma } from "../lib/prisma";
@@ -16,6 +16,9 @@ declare global {
 				name: string;
 				userId: string;
 				role: UserRole;
+				tokenVersion?: number;
+				companyId?: string;
+				companyRole?: CompanyMemberRole;
 			};
 		}
 	}
@@ -45,11 +48,26 @@ export const auth = (...requiredRoles: UserRole[]) => {
 			);
 		}
 
-		const { email, name, userId } = verifiedToken.data as JwtPayload;
+		const decoded = verifiedToken.data as JwtPayload & {
+			userId: string;
+			email: string;
+			name: string;
+			role: UserRole;
+			tokenVersion?: number;
+			companyId?: string;
+			companyRole?: CompanyMemberRole;
+		};
 
 		const user = await prisma.user.findUnique({
 			where: {
-				id: userId,
+				id: decoded.userId,
+			},
+			include: {
+				companyMembers: {
+					include: {
+						company: true,
+					},
+				},
 			},
 		});
 
@@ -67,6 +85,17 @@ export const auth = (...requiredRoles: UserRole[]) => {
 			);
 		}
 
+		// Token Version check: If the token version is outdated, invalidate the request
+		if (
+			typeof decoded.tokenVersion === "number" &&
+			decoded.tokenVersion !== user.tokenVersion
+		) {
+			throw new AppError(
+				httpStatus.UNAUTHORIZED,
+				"Your session or role has changed. Please refresh your token.",
+			);
+		}
+
 		if (requiredRoles.length && !requiredRoles.includes(user.role)) {
 			throw new AppError(
 				httpStatus.FORBIDDEN,
@@ -74,11 +103,16 @@ export const auth = (...requiredRoles: UserRole[]) => {
 			);
 		}
 
+		const primaryMembership = user.companyMembers?.[0];
+
 		req.user = {
 			email: user.email,
 			name: user.name,
 			userId: user.id,
 			role: user.role,
+			tokenVersion: user.tokenVersion,
+			companyId: primaryMembership?.companyId,
+			companyRole: primaryMembership?.role,
 		};
 
 		next();

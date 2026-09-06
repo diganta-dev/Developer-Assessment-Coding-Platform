@@ -56,6 +56,37 @@
                 Congratulations! Your company profile has been successfully verified. You now have access to enterprise-grade assessment tools designed to evaluate, interview, and hire top-tier engineering talent seamlessly.
               </p>
 
+              <% if (typeof generatedPassword !== 'undefined' && generatedPassword) { %>
+              <!-- Owner Account Credentials Box -->
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 20px; margin: 20px 0 28px 0;">
+                <tr>
+                  <td>
+                    <span style="display: block; font-size: 12px; font-weight: 700; color: #15803d; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;">
+                      🔑 Your Platform Owner Account
+                    </span>
+                    <p style="margin: 0 0 10px 0; font-size: 14px; color: #166534; line-height: 1.5;">
+                      A verified owner account has been automatically provisioned for you. Use these credentials to sign in:
+                    </p>
+                    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border: 1px solid #dcfce7; border-radius: 8px; padding: 14px 18px;">
+                      <tr>
+                        <td>
+                          <p style="margin: 0 0 8px 0; font-size: 14px; color: #334155;">
+                            <strong>Login Email:</strong> <code style="color: #0f172a; font-size: 14px; font-weight: 600;"><%= email %></code>
+                          </p>
+                          <p style="margin: 0; font-size: 14px; color: #334155;">
+                            <strong>Temporary Password:</strong> <code style="color: #4f46e5; font-size: 15px; font-weight: 700; background-color: #eef2ff; padding: 2px 8px; border-radius: 4px;"><%= generatedPassword %></code>
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="margin: 10px 0 0 0; font-size: 12px; color: #65a30d; line-height: 1.4;">
+                      * For security, please log in and update your password from your account settings.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              <% } %>
+
               <!-- Feature Highlights Box -->
               <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; margin: 24px 0 28px 0;">
                 <tr>
