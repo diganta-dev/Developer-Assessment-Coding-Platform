@@ -9,20 +9,25 @@ import { catchAsync } from "../utils/catchAsync";
 import { jwtUtils } from "../utils/jwt";
 
 declare global {
+	export interface RequestUser {
+		email: string;
+		name: string;
+		userId: string;
+		role: UserRole;
+		tokenVersion?: number;
+		companyId?: string;
+		companyRole?: CompanyMemberRole;
+	}
+
 	namespace Express {
 		interface Request {
-			user?: {
-				email: string;
-				name: string;
-				userId: string;
-				role: UserRole;
-				tokenVersion?: number;
-				companyId?: string;
-				companyRole?: CompanyMemberRole;
-			};
+			user?: RequestUser;
 		}
 	}
 }
+
+export type { RequestUser };
+
 
 export const auth = (...requiredRoles: UserRole[]) => {
 	return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
