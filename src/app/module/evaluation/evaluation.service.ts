@@ -1,4 +1,4 @@
-import httpStatus from "http-status";
+ import httpStatus from "http-status";
 import {
 	EvaluationStatus,
 	EvaluationType,
@@ -72,10 +72,12 @@ const manualEvaluateSubmission = async (
 	submissionId: string,
 	payload: IManualEvaluationPayload,
 ) => {
+	const marks = Number(payload.marks);
 	if (
 		payload.marks === undefined ||
 		payload.marks === null ||
-		payload.marks < 0
+		Number.isNaN(marks) ||
+		marks < 0
 	) {
 		throw new AppError(
 			httpStatus.BAD_REQUEST,
@@ -123,20 +125,20 @@ const manualEvaluateSubmission = async (
 	);
 	const maxMarks = assessmentProblem?.marks ?? submission.problem.marks;
 
-	if (payload.marks > maxMarks) {
+	if (marks > maxMarks) {
 		throw new AppError(
 			httpStatus.BAD_REQUEST,
-			`Assigned marks (${payload.marks}) cannot exceed the maximum allowed marks (${maxMarks}) for this problem.`,
+			`Assigned marks (${marks}) cannot exceed the maximum allowed marks (${maxMarks}) for this problem.`,
 		);
 	}
 
-	const isCorrect = payload.marks === maxMarks;
+	const isCorrect = marks === maxMarks;
 
 	// Update Submission outcome
 	await prisma.submission.update({
 		where: { id: submission.id },
 		data: {
-			marks: payload.marks,
+			marks,
 			isCorrect,
 			status: SubmissionStatus.EVALUATED,
 		},
@@ -154,7 +156,7 @@ const manualEvaluateSubmission = async (
 		return await prisma.evaluation.update({
 			where: { id: existingEvaluation.id },
 			data: {
-				marks: payload.marks,
+				marks,
 				feedback: payload.feedback?.trim() || null,
 				evaluatorId: user.userId,
 				status: EvaluationStatus.COMPLETED,
@@ -179,7 +181,7 @@ const manualEvaluateSubmission = async (
 			evaluatorId: user.userId,
 			type: EvaluationType.MANUAL,
 			status: EvaluationStatus.COMPLETED,
-			marks: payload.marks,
+			marks,
 			feedback: payload.feedback?.trim() || null,
 			evaluatedAt: new Date(),
 		},

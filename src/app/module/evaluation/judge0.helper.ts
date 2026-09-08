@@ -123,9 +123,12 @@ const pollSubmission = async (
 	token: string,
 	maxAttempts = 5,
 	delayMs = 1000,
+	customBaseUrl?: string,
 ): Promise<IJudge0SubmissionResponse> => {
-	const baseUrl = config.judge0.api_url.replace(/\/+$/, "");
-	const headers = getJudge0Headers();
+	const baseUrl = (customBaseUrl || config.judge0.api_url).replace(/\/+$/, "");
+	const headers = baseUrl.includes("rapidapi.com")
+		? getJudge0Headers()
+		: { "Content-Type": "application/json" };
 
 	for (let attempt = 0; attempt < maxAttempts; attempt++) {
 		await new Promise((resolve) => setTimeout(resolve, delayMs));
@@ -200,6 +203,7 @@ export const executeJudge0TestCase = async (
 	};
 
 	let rawResponse: Response;
+	let usedBaseUrl = baseUrl;
 	try {
 		rawResponse = await fetch(
 			`${baseUrl}/submissions?base64_encoded=true&wait=true`,
@@ -217,6 +221,29 @@ export const executeJudge0TestCase = async (
 		);
 	}
 
+	// If RapidAPI rejected (e.g. 403 not subscribed), fallback to public community CE instance
+	if (
+		!rawResponse.ok &&
+		(baseUrl.includes("rapidapi.com") || rawResponse.status === 403)
+	) {
+		try {
+			const fallbackResponse = await fetch(
+				"https://ce.judge0.com/submissions?base64_encoded=true&wait=true",
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(payload),
+				},
+			);
+			if (fallbackResponse.ok) {
+				rawResponse = fallbackResponse;
+				usedBaseUrl = "https://ce.judge0.com";
+			}
+		} catch {
+			// Keep original response for error handling below
+		}
+	}
+
 	if (!rawResponse.ok) {
 		const errorBody = await rawResponse.text();
 		throw new AppError(
@@ -229,7 +256,7 @@ export const executeJudge0TestCase = async (
 
 	// If still in queue / processing, poll until done
 	if (result.status && result.status.id <= 2 && result.token) {
-		result = await pollSubmission(result.token);
+		result = await pollSubmission(result.token, 5, 1000, usedBaseUrl);
 	}
 
 	// Decode outputs
