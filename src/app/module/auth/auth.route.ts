@@ -25,6 +25,18 @@ router.post(
 	AuthController.loginUser,
 );
 
+router.post(
+	"/verify-login-otp",
+	validateRequest(UserValidation.VerifyOtpZodSchema),
+	AuthController.verifyLoginOtp,
+);
+
+router.post(
+	"/resend-login-otp",
+	validateRequest(UserValidation.ResendOtpZodSchema),
+	AuthController.resendLoginOtp,
+);
+
 router.post("/google", AuthController.googleLogin);
 router.post("/google-login", AuthController.googleLogin);
 

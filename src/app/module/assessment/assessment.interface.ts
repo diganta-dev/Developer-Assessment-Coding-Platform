@@ -1,6 +1,7 @@
 import type {
 	AssessmentStatus,
 	ResultStatus,
+	TestCaseType,
 } from "../../../generated/prisma/enums";
 
 export interface IAssessmentProblemInput {
@@ -31,7 +32,6 @@ export interface ICreateAssessmentPayload {
 	endDate?: string | Date | null;
 	status?: AssessmentStatus;
 	settings?: IAssessmentSettingInput;
-	problems?: IAssessmentProblemInput[];
 }
 
 export interface IAssessmentFilterOptions {
@@ -116,4 +116,61 @@ export interface IResultOverview {
 	averageScore: number;
 	highestScore: number;
 	lowestScore: number;
+}
+export interface ISanitizeAssessmentInput {
+	settings?: {
+		shuffleQuestions?: boolean | null;
+		shuffleMCQOptions?: boolean | null;
+	} | null;
+	problems: Array<{
+		id: string;
+		assessmentId: string;
+		problemId: string;
+		questionOrder: number;
+		marks: number;
+		isRequired: boolean;
+		problem: {
+			id: string;
+			title: string;
+			description: string;
+			type: string;
+			difficulty: string;
+			marks: number;
+			mcqQuestion?: {
+				id: string;
+				explanation?: string | null;
+				options: Array<{
+					id: string;
+					optionText: string;
+					optionOrder: number;
+					isCorrect?: boolean;
+				}>;
+			} | null;
+			codingQuestion?: {
+				id: string;
+				inputFormat?: string | null;
+				outputFormat?: string | null;
+				constraints?: string | null;
+				starterCode?: unknown;
+				supportedLanguages: string[];
+				timeLimitMs: number;
+				memoryLimitMb: number;
+				testCases: Array<{
+					id: string;
+					type: TestCaseType;
+					input: string;
+					expectedOutput: string;
+					timeLimitMs?: number | null;
+					memoryLimitMb?: number | null;
+				}>;
+			} | null;
+			writtenQuestion?: {
+				id: string;
+				wordLimit?: number | null;
+				expectedAnswer?: string | null;
+			} | null;
+		};
+		[key: string]: unknown;
+	}>;
+	[key: string]: unknown;
 }
