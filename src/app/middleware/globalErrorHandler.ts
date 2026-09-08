@@ -34,7 +34,8 @@ export const globalErrorHandler = async (
 	} else if (err instanceof Prisma.PrismaClientKnownRequestError) {
 		if (err.code === "P2002") {
 			statusCode = httpStatus.CONFLICT;
-			errorMessage = "Duplicate key error: A record with this value already exists";
+			errorMessage =
+				"Duplicate key error: A record with this value already exists";
 		} else if (err.code === "P2003") {
 			statusCode = httpStatus.BAD_REQUEST;
 			errorMessage = "Foreign key constraint failed";

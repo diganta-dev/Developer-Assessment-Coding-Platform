@@ -8,6 +8,7 @@ import {
 import { prisma } from "../../lib/prisma";
 import type { RequestUser } from "../../middleware/checkAuth";
 import AppError from "../../utils/AppError";
+import { CodingEvaluationService } from "../evaluation/codingEvaluation.service";
 import type {
 	ICreateSubmissionPayload,
 	ISubmissionFilterQuery,
@@ -70,10 +71,7 @@ const createSubmission = async (
 	});
 
 	if (!attempt) {
-		throw new AppError(
-			httpStatus.NOT_FOUND,
-			"Assessment attempt not found.",
-		);
+		throw new AppError(httpStatus.NOT_FOUND, "Assessment attempt not found.");
 	}
 
 	const isCandidateOwner = attempt.candidateId === user.userId;
@@ -285,7 +283,11 @@ const createSubmission = async (
 	// ─── 7. Return Submission ────────────────────────────────────────────────
 	// If candidate is actively taking the assessment, sanitize evaluation details to prevent cheating
 	if (isCandidateOwner && attempt.status === AttemptStatus.IN_PROGRESS) {
-		const { marks: _marks, isCorrect: _isCorrect, ...candidateSafeSubmission } = submission;
+		const {
+			marks: _marks,
+			isCorrect: _isCorrect,
+			...candidateSafeSubmission
+		} = submission;
 		return candidateSafeSubmission;
 	}
 
@@ -352,7 +354,11 @@ const getSubmissionById = async (user: RequestUser, submissionId: string) => {
 		isCandidateOwner &&
 		submission.attempt.status === AttemptStatus.IN_PROGRESS
 	) {
-		const { marks: _marks, isCorrect: _isCorrect, ...candidateSafeSubmission } = submission;
+		const {
+			marks: _marks,
+			isCorrect: _isCorrect,
+			...candidateSafeSubmission
+		} = submission;
 		return candidateSafeSubmission;
 	}
 
@@ -381,10 +387,7 @@ const getAttemptSubmissions = async (user: RequestUser, attemptId: string) => {
 	});
 
 	if (!attempt) {
-		throw new AppError(
-			httpStatus.NOT_FOUND,
-			"Assessment attempt not found.",
-		);
+		throw new AppError(httpStatus.NOT_FOUND, "Assessment attempt not found.");
 	}
 
 	const isCandidateOwner = attempt.candidateId === user.userId;
@@ -484,7 +487,12 @@ const getMySubmissions = async (
 		};
 	}
 
-	const allowedSortFields = ["submittedAt", "status", "marks", "executionTimeMs"];
+	const allowedSortFields = [
+		"submittedAt",
+		"status",
+		"marks",
+		"executionTimeMs",
+	];
 	const sortBy =
 		options.sortBy && allowedSortFields.includes(options.sortBy)
 			? options.sortBy
@@ -789,16 +797,48 @@ const submitSubmission = async (
 		},
 	});
 
+	let finalSubmission = updatedSubmission;
+
+	// Automatically run Judge0 evaluation if the problem is a CODING problem
+	if (submission.problem.type === ProblemType.CODING) {
+		try {
+			await CodingEvaluationService.evaluateCodingSubmission(
+				submission.id,
+				user.userId,
+			);
+			// Fetch the evaluated submission with updated stats & marks
+			const evaluated = await prisma.submission.findUnique({
+				where: { id: submission.id },
+				include: {
+					problem: {
+						select: {
+							id: true,
+							title: true,
+							type: true,
+							difficulty: true,
+							marks: true,
+						},
+					},
+				},
+			});
+			if (evaluated) {
+				finalSubmission = evaluated;
+			}
+		} catch (error) {
+			console.error("Automated Judge0 evaluation error:", error);
+		}
+	}
+
 	// 7. Security: Conceal evaluation scores for active candidates
 	if (
 		isCandidateOwner &&
 		submission.attempt.status === AttemptStatus.IN_PROGRESS
 	) {
-		const { marks: _m, isCorrect: _c, ...safeSubmission } = updatedSubmission;
+		const { marks: _m, isCorrect: _c, ...safeSubmission } = finalSubmission;
 		return safeSubmission;
 	}
 
-	return updatedSubmission;
+	return finalSubmission;
 };
 
 export const SubmissionService = {

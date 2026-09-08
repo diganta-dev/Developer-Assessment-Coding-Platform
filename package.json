@@ -12,10 +12,10 @@
         "prisma:migrate": "node ./node_modules/prisma/build/index.js migrate dev",
         "prisma:studio": "node ./node_modules/prisma/build/index.js studio",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "format:check": "npx @biomejs/biome format ./src",
-        "format:fix": "npx @biomejs/biome format --write ./src",
-        "lint:check": "npx @biomejs/biome lint ./src",
-        "lint:fix": "npx @biomejs/biome lint --write ./src"
+        "format:check": "node ./node_modules/@biomejs/biome/bin/biome format ./src",
+        "format:fix": "node ./node_modules/@biomejs/biome/bin/biome format --write ./src",
+        "lint:check": "node ./node_modules/@biomejs/biome/bin/biome lint ./src",
+        "lint:fix": "node ./node_modules/@biomejs/biome/bin/biome lint --write ./src"
     },
     "keywords": [],
     "author": "",

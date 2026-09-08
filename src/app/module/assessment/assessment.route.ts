@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { auth } from "../../middleware/checkAuth";
 import { validateRequest } from "../../middleware/validateRequest";
-import { AssessmentController } from "./assessment.controller";
 import { SubmissionController } from "../submission/submission.controller";
 import { createSubmissionValidation } from "../submission/submission.validation";
+import { AssessmentController } from "./assessment.controller";
 import {
 	addProblemsValidation,
 	createAssessmentValidation,
@@ -42,11 +42,7 @@ router.post(
 	AssessmentController.createAssessment,
 );
 
-router.get(
-	"/",
-	auth(),
-	AssessmentController.getMyAssessments,
-);
+router.get("/", auth(), AssessmentController.getMyAssessments);
 
 // ─── CANDIDATE SELF-SERVICE (must be before /:id to avoid shadow) ─────────────
 

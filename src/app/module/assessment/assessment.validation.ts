@@ -116,11 +116,11 @@ export const createAssessmentValidation = z
 		}
 
 		// Validate passing score against total marks
-		if (
-			data.passingScore !== undefined &&
-			data.passingScore !== null
-		) {
-			if (data.totalMarks !== undefined && data.passingScore > data.totalMarks) {
+		if (data.passingScore !== undefined && data.passingScore !== null) {
+			if (
+				data.totalMarks !== undefined &&
+				data.passingScore > data.totalMarks
+			) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message: "Passing score cannot exceed total marks",
@@ -130,8 +130,7 @@ export const createAssessmentValidation = z
 			if (data.totalMarks === 0 && data.passingScore > 0) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
-					message:
-						"Passing score cannot be specified when total marks is 0",
+					message: "Passing score cannot be specified when total marks is 0",
 					path: ["passingScore"],
 				});
 			}

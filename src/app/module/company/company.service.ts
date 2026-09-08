@@ -1,18 +1,22 @@
-import { prisma } from "../../lib/prisma";
-import AppError from "../../utils/AppError";
-import httpStatus from "http-status";
-import { IAddCompanyMemberPayload, ICompanyPayload, IUpdateCompanyPayload, IVerifyCompanyPayload } from "./company.interface"
-import redisClient from "../../lib/redis";
-import path from "path";
 import crypto from "crypto";
-import { transporter } from "../../lib/nodemailer";
-import config from "../../config";
 import ejs from "ejs";
-import { slugify } from "../../utils/slug";
-import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums";
-
-import { jwtUtils } from "../../utils/jwt";
+import httpStatus from "http-status";
 import type { SignOptions } from "jsonwebtoken";
+import path from "path";
+import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums";
+import config from "../../config";
+import { transporter } from "../../lib/nodemailer";
+import { prisma } from "../../lib/prisma";
+import redisClient from "../../lib/redis";
+import AppError from "../../utils/AppError";
+import { jwtUtils } from "../../utils/jwt";
+import { slugify } from "../../utils/slug";
+import type {
+	IAddCompanyMemberPayload,
+	ICompanyPayload,
+	IUpdateCompanyPayload,
+	IVerifyCompanyPayload,
+} from "./company.interface";
 
 const generateUniqueCompanySlug = async (name: string): Promise<string> => {
 	const baseSlug = slugify(name) || "company";
@@ -27,7 +31,10 @@ const generateUniqueCompanySlug = async (name: string): Promise<string> => {
 	return slug;
 };
 
-const createCompany = async (payload: ICompanyPayload, creatorUserId: string) => {
+const createCompany = async (
+	payload: ICompanyPayload,
+	creatorUserId: string,
+) => {
 	const name = payload.name.trim();
 	const email = payload.email.trim().toLowerCase();
 
@@ -128,7 +135,10 @@ const createCompany = async (payload: ICompanyPayload, creatorUserId: string) =>
 };
 
 // verify company registration otp and assign registered creator as COMPANY_OWNER
-const verifyCompany = async (payload: IVerifyCompanyPayload, verifierUserId: string) => {
+const verifyCompany = async (
+	payload: IVerifyCompanyPayload,
+	verifierUserId: string,
+) => {
 	const { otp } = payload;
 	const email = payload.email.trim().toLowerCase();
 	const company = await prisma.company.findUnique({
@@ -171,10 +181,7 @@ const verifyCompany = async (payload: IVerifyCompanyPayload, verifierUserId: str
 		where: { id: verifierUserId },
 	});
 	if (!ownerUser) {
-		throw new AppError(
-			httpStatus.NOT_FOUND,
-			"Registered user not found",
-		);
+		throw new AppError(httpStatus.NOT_FOUND, "Registered user not found");
 	}
 
 	// Auto generate unique slug for the company
@@ -377,7 +384,7 @@ const getMyCompany = async (userId: string) => {
 					CompanyMemberRole.COMPANY_OWNER,
 					CompanyMemberRole.COMPANY_ADMIN,
 					CompanyMemberRole.ASSESSMENT_CREATOR,
-					CompanyMemberRole.EVALUATOR
+					CompanyMemberRole.EVALUATOR,
 				],
 			},
 		},
@@ -576,7 +583,10 @@ const updateMemberRole = async (
 		});
 
 		if (!requesterMembership) {
-			throw new AppError(httpStatus.FORBIDDEN, "You are not a member of this company");
+			throw new AppError(
+				httpStatus.FORBIDDEN,
+				"You are not a member of this company",
+			);
 		}
 
 		const allowedRequesterRoles: CompanyMemberRole[] = [
@@ -610,7 +620,8 @@ const updateMemberRole = async (
 	if (
 		!isPlatformSuperAdmin &&
 		requesterRole === CompanyMemberRole.COMPANY_ADMIN &&
-		(newRole === CompanyMemberRole.COMPANY_OWNER || targetMembership.role === CompanyMemberRole.COMPANY_OWNER)
+		(newRole === CompanyMemberRole.COMPANY_OWNER ||
+			targetMembership.role === CompanyMemberRole.COMPANY_OWNER)
 	) {
 		throw new AppError(
 			httpStatus.FORBIDDEN,
@@ -618,7 +629,10 @@ const updateMemberRole = async (
 		);
 	}
 
-	if (targetMembership.role === CompanyMemberRole.COMPANY_OWNER && newRole !== CompanyMemberRole.COMPANY_OWNER) {
+	if (
+		targetMembership.role === CompanyMemberRole.COMPANY_OWNER &&
+		newRole !== CompanyMemberRole.COMPANY_OWNER
+	) {
 		const ownerCount = await prisma.companyMember.count({
 			where: {
 				companyId,
@@ -697,7 +711,10 @@ const removeCompanyMember = async (
 		});
 
 		if (!requesterMembership) {
-			throw new AppError(httpStatus.FORBIDDEN, "You are not a member of this company");
+			throw new AppError(
+				httpStatus.FORBIDDEN,
+				"You are not a member of this company",
+			);
 		}
 
 		const allowedRequesterRoles: CompanyMemberRole[] = [
@@ -729,7 +746,10 @@ const removeCompanyMember = async (
 	}
 
 	if (targetMembership.role === CompanyMemberRole.COMPANY_OWNER) {
-		throw new AppError(httpStatus.BAD_REQUEST, "Cannot remove the company owner.");
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"Cannot remove the company owner.",
+		);
 	}
 
 	if (

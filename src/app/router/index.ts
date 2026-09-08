@@ -2,7 +2,8 @@ import { Router } from "express";
 import { AssessmentRoutes } from "../module/assessment/assessment.route";
 import { AuthRoutes } from "../module/auth/auth.route";
 import { CompanyRoutes } from "../module/company/company.route";
-import { ProblemRoute } from "../module/Problem Bank/problem.route";
+import { EvaluationRoutes } from "../module/evaluation/evaluation.route";
+import { ProblemRoute } from "../module/problem-bank/problem.route";
 import { SubmissionRoutes } from "../module/submission/submission.route";
 
 const router = Router();
@@ -27,7 +28,11 @@ const routes = [
 	{
 		path: "/submission",
 		route: SubmissionRoutes,
-	}
+	},
+	{
+		path: "/evaluation",
+		route: EvaluationRoutes,
+	},
 ];
 
 routes.forEach((route) => {

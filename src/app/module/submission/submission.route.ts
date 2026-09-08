@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { auth } from "../../middleware/checkAuth";
 import { validateRequest } from "../../middleware/validateRequest";
+import { EvaluationController } from "../evaluation/evaluation.controller";
 import { SubmissionController } from "./submission.controller";
 import {
 	createSubmissionByParamValidation,
@@ -44,6 +45,13 @@ router.post(
 	auth(),
 	validateRequest(submitSubmissionValidation),
 	SubmissionController.submitSubmission,
+);
+
+// evaluate coding submission by ID
+router.post(
+	"/:id/evaluate",
+	auth(),
+	EvaluationController.evaluateCodingSubmission,
 );
 
 // ─── Read Submissions ─────────────────────────────────────────────────────────

@@ -73,14 +73,11 @@ export const submitSubmissionValidation = z
 		sourceCode: z.string().trim().min(1).optional().nullable(),
 		language: z.string().trim().min(1).optional().nullable(),
 	})
-	.refine(
-		(data) => data.submissionId || (data.attemptId && data.problemId),
-		{
-			message:
-				"Either 'submissionId' or both 'attemptId' and 'problemId' must be provided",
-			path: ["submissionId"],
-		},
-	);
+	.refine((data) => data.submissionId || (data.attemptId && data.problemId), {
+		message:
+			"Either 'submissionId' or both 'attemptId' and 'problemId' must be provided",
+		path: ["submissionId"],
+	});
 
 export const SubmissionValidation = {
 	createSubmissionValidation,
