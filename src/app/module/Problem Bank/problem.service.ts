@@ -15,7 +15,7 @@ import type {
 	IProblemFilterRequest,
 	IUpdateProblemPayload,
 } from "./problem.interface";
-import { ProblemWhereInput } from "../../../generated/prisma/models";
+import type { ProblemWhereInput } from "../../../generated/prisma/models";
 
 // Standard relation inclusion for detailed problem response
 const problemInclude = {
