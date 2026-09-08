@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Technical Assessment Invitation</title>
+</head>
+
+<body
+	style="margin: 0; padding: 0; background-color: #f4f6f8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e293b;">
+	<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
+		style="background-color: #f4f6f8; padding: 32px 16px;">
+		<tr>
+			<td align="center">
+				<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
+					style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0;">
+					<!-- Header -->
+					<tr>
+						<td
+							style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 32px 24px; text-align: center; color: #ffffff;">
+							<% if (companyLogoUrl) { %>
+								<img src="<%= companyLogoUrl %>" alt="<%= companyName %>"
+									style="max-height: 48px; max-width: 160px; margin-bottom: 12px; border-radius: 6px; background-color: #ffffff; padding: 4px;" />
+								<% } %>
+									<h1 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.02em;">
+										Developer Assessment Invitation</h1>
+									<p style="margin: 6px 0 0 0; font-size: 14px; opacity: 0.9;">
+										<%= companyName %>
+									</p>
+						</td>
+					</tr>
+
+					<!-- Content Body -->
+					<tr>
+						<td style="padding: 32px 28px;">
+							<p style="margin: 0 0 16px 0; font-size: 16px; line-height: 1.5;">Hello <strong>
+									<%= candidateName %>
+								</strong>,</p>
+							<p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #475569;">
+								You have been invited by <strong>
+									<%= companyName %>
+								</strong> to participate in the technical assessment <strong>
+									<%= assessmentTitle %>
+								</strong>.
+							</p>
+
+							<!-- Assessment Details Box -->
+							<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
+								style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 24px;">
+								<tr>
+									<td style="padding: 16px 20px;">
+										<h3
+											style="margin: 0 0 12px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b;">
+											Assessment Details</h3>
+										<p style="margin: 6px 0; font-size: 14px; color: #334155;">
+											<strong>Assessment:</strong>
+											<%= assessmentTitle %>
+										</p>
+										<p style="margin: 6px 0; font-size: 14px; color: #334155;">
+											<strong>Company:</strong>
+											<%= companyName %>
+										</p>
+										<p style="margin: 6px 0; font-size: 14px; color: #334155;">
+											<strong>Duration:</strong>
+											<%= durationMinutes %> minutes
+										</p>
+										<p style="margin: 6px 0; font-size: 14px; color: #334155;"><strong>Total
+												Marks:</strong>
+											<%= totalMarks %>
+										</p>
+										<p style="margin: 6px 0; font-size: 14px; color: #334155;"><strong>Valid
+												Until:</strong>
+											<%= expiresAt %>
+										</p>
+									</td>
+								</tr>
+							</table>
+
+							<!-- Account Credentials (If New User) -->
+							<% if (isNewAccount && temporaryPassword) { %>
+								<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
+									style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; margin-bottom: 24px;">
+									<tr>
+										<td style="padding: 20px;">
+											<h3
+												style="margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: #1e40af;">
+												🔐 Your Account Credentials</h3>
+											<p
+												style="margin: 0 0 12px 0; font-size: 14px; color: #1e3a8a; line-height: 1.5;">
+												An account has been created for you. <strong>This is your account email
+													and password. Please login and change the password:</strong></p>
+
+											<div
+												style="background-color: #ffffff; padding: 14px 18px; border-radius: 6px; border: 1px dashed #93c5fd; margin-bottom: 12px;">
+												<p style="margin: 4px 0; font-size: 14px; color: #1e293b;">
+													<strong>Email:</strong> <span
+														style="font-family: monospace; color: #2563eb; font-weight: 600;">
+														<%= candidateEmail %>
+													</span></p>
+												<p style="margin: 6px 0; font-size: 14px; color: #1e293b;">
+													<strong>Password:</strong> <span
+														style="font-family: monospace; background-color: #f1f5f9; padding: 3px 8px; border-radius: 4px; font-weight: 700; color: #dc2626;">
+														<%= temporaryPassword %>
+													</span></p>
+												<p style="margin: 6px 0 4px 0; font-size: 14px; color: #1e293b;">
+													<strong>Login Link:</strong> <a href="<%= loginUrl %>"
+														style="color: #2563eb; font-weight: 600; text-decoration: underline;">
+														<%= loginUrl %>
+													</a></p>
+											</div>
+
+											<div style="margin: 12px 0;">
+												<a href="<%= loginUrl %>"
+													style="display: inline-block; background-color: #1e40af; color: #ffffff; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none;">Login
+													to Your Account</a>
+											</div>
+
+											<p
+												style="margin: 10px 0 0 0; font-size: 13px; font-weight: 600; color: #b45309;">
+												⚠️ This is your account email and password. Please login and change the
+												password.</p>
+										</td>
+									</tr>
+								</table>
+								<% } %>
+
+									<!-- Call to Action -->
+									<p style="margin: 0 0 16px 0; font-size: 15px; line-height: 1.6; color: #475569;">
+										When you are ready in a quiet environment with a stable internet connection,
+										click the button below to review instructions and start your test:
+									</p>
+
+									<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
+										style="margin: 28px 0;">
+										<tr>
+											<td align="center">
+												<a href="<%= invitationUrl %>"
+													style="display: inline-block; background-color: #2563eb; color: #ffffff; font-weight: 600; font-size: 15px; text-decoration: none; padding: 14px 32px; border-radius: 8px; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);">Start
+													Assessment</a>
+											</td>
+										</tr>
+									</table>
+
+									<p style="margin: 24px 0 0 0; font-size: 13px; line-height: 1.5; color: #64748b;">
+										If the button above does not work, copy and paste the following URL into your
+										browser:<br />
+										<a href="<%= invitationUrl %>" style="color: #2563eb; word-break: break-all;">
+											<%= invitationUrl %>
+										</a>
+									</p>
+						</td>
+					</tr>
+
+					<!-- Footer -->
+					<tr>
+						<td
+							style="background-color: #f8fafc; padding: 20px 24px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #94a3b8;">
+							<p style="margin: 0 0 4px 0;">This invitation was generated by <%= companyName %> via
+									Developer Assessment Platform.</p>
+							<p style="margin: 0;">Please do not reply directly to this automated email.</p>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</body>
+
+</html>

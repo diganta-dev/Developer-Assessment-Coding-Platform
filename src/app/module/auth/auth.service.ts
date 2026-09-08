@@ -1,30 +1,29 @@
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
+import ejs from "ejs";
+import type { TokenPayload } from "google-auth-library";
 import httpStatus from "http-status";
 import type { JwtPayload, SignOptions } from "jsonwebtoken";
+import path from "path";
 import { UserRole } from "../../../generated/prisma/enums";
 import config from "../../config";
+import { googleClient } from "../../lib/googleAuth";
+import { transporter } from "../../lib/nodemailer";
 import { prisma } from "../../lib/prisma";
+import redisClient from "../../lib/redis";
+import AppError from "../../utils/AppError";
 import { jwtUtils } from "../../utils/jwt";
 import type {
 	IForgotPasswordPayload,
+	ILoginResult,
 	ILoginUserPayload,
 	IRegisterCandidatePayload,
-	IRegisterPatientPayload,
 	IRequestUser,
+	IResendLoginOtpPayload,
 	IResetPasswordPayload,
+	IVerifyLoginOtpPayload,
 	IVerifyRegistrationEmailPayload,
 } from "./auth.interface";
-import type { TokenPayload } from "google-auth-library";
-
-import crypto from "crypto";
-
-import path from "path";
-import ejs from "ejs";
-import AppError from "../../utils/AppError";
-import redisClient from "../../lib/redis";
-import { transporter } from "../../lib/nodemailer";
-import { googleClient } from "../../lib/googleAuth";
-
 
 const registerCandidate = async (payload: IRegisterCandidatePayload) => {
 	const { name, password, candidateProfile } = payload;
@@ -63,12 +62,16 @@ const registerCandidate = async (payload: IRegisterCandidatePayload) => {
 		candidateProfile,
 	};
 	const userRegistrationKey = `register-user:${email}`;
-	await redisClient.set(userRegistrationKey, JSON.stringify(redisPayloadUserData), {
-		expiration: {
-			type: "EX",
-			value: expirationSeconds,
+	await redisClient.set(
+		userRegistrationKey,
+		JSON.stringify(redisPayloadUserData),
+		{
+			expiration: {
+				type: "EX",
+				value: expirationSeconds,
+			},
 		},
-	});
+	);
 
 	const templatePath = path.join(
 		process.cwd(),
@@ -137,7 +140,9 @@ const verifyRegistrationEmail = async (
 			isVerified: true,
 			candidateProfile: {
 				create: {
-					phone: userData.candidateProfile?.phone || userData.candidateProfile?.contactNumber,
+					phone:
+						userData.candidateProfile?.phone ||
+						userData.candidateProfile?.contactNumber,
 					bio: userData.candidateProfile?.bio,
 					location: userData.candidateProfile?.location,
 					resumeUrl: userData.candidateProfile?.resumeUrl,
@@ -197,7 +202,49 @@ const verifyRegistrationEmail = async (
 	};
 };
 
-const loginUser = async (payload: ILoginUserPayload) => {
+const sendLoginVerificationOtp = async (user: {
+	email: string;
+	name: string;
+}) => {
+	const cleanEmail = user.email.trim().toLowerCase();
+	const otp = crypto.randomInt(100000, 999999).toString();
+	const expirationSeconds = 5 * 60; // 5 minutes
+
+	await redisClient.set(`login-verify-otp:${cleanEmail}`, otp, {
+		expiration: {
+			type: "EX",
+			value: expirationSeconds,
+		},
+	});
+
+	await redisClient.set(`login-verify-otp-cooldown:${cleanEmail}`, "1", {
+		expiration: {
+			type: "EX",
+			value: 60, // 60 seconds anti-abuse cooldown
+		},
+	});
+
+	const templatePath = path.join(
+		process.cwd(),
+		"src/app/templates/login-verification-otp.ejs",
+	);
+	const templateData = {
+		name: user.name,
+		otp,
+		appName: config.app_name || "Developer Assessment Platform",
+		expiresIn: "5 minutes",
+	};
+	const html = await ejs.renderFile(templatePath, templateData);
+
+	await transporter.sendMail({
+		from: config.SENDER_EMAIL_USER,
+		to: cleanEmail,
+		subject: "Login Verification Code",
+		html,
+	});
+};
+
+const loginUser = async (payload: ILoginUserPayload): Promise<ILoginResult> => {
 	const { password } = payload;
 	const email = payload.email.trim().toLowerCase();
 
@@ -235,13 +282,25 @@ const loginUser = async (payload: ILoginUserPayload) => {
 		);
 	}
 
-	const isPasswordMatched = await bcrypt.compare(
-		password,
-		user.password,
-	);
+	const isPasswordMatched = await bcrypt.compare(password, user.password);
 
 	if (!isPasswordMatched) {
 		throw new AppError(httpStatus.UNAUTHORIZED, "Invalid credentials");
+	}
+
+	// Step-Up Authentication: If candidate or user email is unverified, challenge with OTP
+	if (!user.isVerified) {
+		await sendLoginVerificationOtp({
+			email: user.email,
+			name: user.name,
+		});
+
+		return {
+			requiresVerification: true,
+			email: user.email,
+			message:
+				"Your email is not verified. A 6-digit verification code has been sent to your email. Please verify to complete login.",
+		};
 	}
 
 	const primaryMembership = user.companyMembers?.[0];
@@ -275,14 +334,154 @@ const loginUser = async (payload: ILoginUserPayload) => {
 	const { password: _, ...userData } = user;
 
 	return {
+		requiresVerification: false,
 		user: userData,
 		accessToken,
 		refreshToken,
 	};
 };
 
+const verifyLoginOtp = async (payload: IVerifyLoginOtpPayload) => {
+	const { otp } = payload;
+	const cleanEmail = payload.email.trim().toLowerCase();
+
+	const storedOtp = await redisClient.get(`login-verify-otp:${cleanEmail}`);
+	if (!storedOtp) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"Verification code has expired or does not exist. Please request a new code.",
+		);
+	}
+
+	if (storedOtp !== otp) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"Invalid verification code. Please try again.",
+		);
+	}
+
+	const user = await prisma.user.findUnique({
+		where: { email: cleanEmail },
+		include: {
+			candidateProfile: true,
+			companyMembers: {
+				include: {
+					company: true,
+				},
+			},
+		},
+	});
+
+	if (!user) {
+		throw new AppError(httpStatus.NOT_FOUND, "User not found");
+	}
+
+	if (!user.isActive) {
+		throw new AppError(httpStatus.FORBIDDEN, "Your account is deactivated");
+	}
+
+	// Update user isVerified status to true
+	const updatedUser = await prisma.user.update({
+		where: { id: user.id },
+		data: { isVerified: true },
+		include: {
+			candidateProfile: true,
+			companyMembers: {
+				include: {
+					company: true,
+				},
+			},
+		},
+	});
+
+	// Cleanup Redis verification keys
+	await redisClient.del(`login-verify-otp:${cleanEmail}`);
+	await redisClient.del(`login-verify-otp-cooldown:${cleanEmail}`);
+
+	const primaryMembership = updatedUser.companyMembers?.[0];
+
+	const jwtPayload = {
+		userId: updatedUser.id,
+		name: updatedUser.name,
+		email: updatedUser.email,
+		role: updatedUser.role,
+		tokenVersion: updatedUser.tokenVersion,
+		...(primaryMembership
+			? {
+					companyId: primaryMembership.companyId,
+					companyRole: primaryMembership.role,
+				}
+			: {}),
+	};
+
+	const accessToken = jwtUtils.createToken(
+		jwtPayload,
+		config.jwt_access_secret,
+		config.jwt_access_expires_in as SignOptions,
+	);
+
+	const refreshToken = jwtUtils.createToken(
+		jwtPayload,
+		config.jwt_refresh_secret,
+		config.jwt_refresh_expires_in as SignOptions,
+	);
+
+	const { password: _, ...userData } = updatedUser;
+
+	return {
+		user: userData,
+		accessToken,
+		refreshToken,
+	};
+};
+
+const resendLoginOtp = async (payload: IResendLoginOtpPayload) => {
+	const cleanEmail = payload.email.trim().toLowerCase();
+
+	const user = await prisma.user.findUnique({
+		where: { email: cleanEmail },
+	});
+
+	if (!user) {
+		throw new AppError(httpStatus.NOT_FOUND, "User not found");
+	}
+
+	if (!user.isActive) {
+		throw new AppError(httpStatus.FORBIDDEN, "Your account is deactivated");
+	}
+
+	if (user.isVerified) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"User email is already verified. Please log in directly.",
+		);
+	}
+
+	const isCooldown = await redisClient.get(
+		`login-verify-otp-cooldown:${cleanEmail}`,
+	);
+	if (isCooldown) {
+		throw new AppError(
+			httpStatus.TOO_MANY_REQUESTS,
+			"Please wait at least 60 seconds before requesting a new verification code.",
+		);
+	}
+
+	await sendLoginVerificationOtp({
+		email: user.email,
+		name: user.name,
+	});
+
+	return {
+		message: "A new verification code has been sent to your email.",
+	};
+};
+
 const googleLogin = async (tokenOrPayload: string | { idToken: string }) => {
-	const token = typeof tokenOrPayload === "string" ? tokenOrPayload : tokenOrPayload.idToken;
+	const token =
+		typeof tokenOrPayload === "string"
+			? tokenOrPayload
+			: tokenOrPayload.idToken;
 
 	if (!token) {
 		throw new AppError(httpStatus.BAD_REQUEST, "Google ID token is required");
@@ -333,7 +532,11 @@ const googleLogin = async (tokenOrPayload: string | { idToken: string }) => {
 		}
 
 		// Link Google ID or update avatar if not present
-		const updates: { googleId?: string; profilePictureUrl?: string; isVerified?: boolean } = {};
+		const updates: {
+			googleId?: string;
+			profilePictureUrl?: string;
+			isVerified?: boolean;
+		} = {};
 		if (!user.googleId && googleIdTokenPayload.sub) {
 			updates.googleId = googleIdTokenPayload.sub;
 		}
@@ -670,6 +873,8 @@ export const AuthService = {
 	registerUser: registerCandidate,
 	verifyRegistrationEmail,
 	loginUser,
+	verifyLoginOtp,
+	resendLoginOtp,
 	getMe,
 	refreshToken,
 	googleLogin,

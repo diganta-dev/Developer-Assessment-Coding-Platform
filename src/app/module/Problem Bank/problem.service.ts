@@ -878,9 +878,4 @@ const deleteProblem = async (user: RequestUser, id: string) => {
 
 export const ProblemService = {
 	createProblem,
-	getAllProblems,
-	getCompanyProblems,
-	getSingleProblem,
-	updateProblem,
-	deleteProblem,
-};                                
+};
