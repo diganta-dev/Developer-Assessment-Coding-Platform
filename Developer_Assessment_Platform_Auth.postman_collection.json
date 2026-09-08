@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "8a32d1e0-74e2-4d2a-bf34-9cf72834b9d1",
 		"name": "Developer Assessment & Coding Platform API",
-		"description": "Complete Postman Collection for Developer Assessment & Coding Platform (Auth, Candidate & Company Management).\nFeatures automated token management: Access and Refresh tokens are automatically saved to collection variables on successful login/verification.",
+		"description": "Complete Postman Collection for Developer Assessment & Coding Platform (Auth, Candidate, Company Management & Problem Bank).\nFeatures automated token management: Access and Refresh tokens, company ID, and problem ID are automatically saved to collection variables.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -23,6 +23,11 @@
 		},
 		{
 			"key": "companyId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "problemId",
 			"value": "",
 			"type": "string"
 		}
@@ -647,6 +652,352 @@
 							]
 						},
 						"description": "Removes a member from the company and increments tokenVersion to immediately revoke their company access."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "03. Problem Bank",
+			"description": "Problem Bank management supporting MCQ, Coding, and Written questions with automated test case validation and role-based access control.",
+			"item": [
+				{
+					"name": "01. Create Problem - MCQ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('problemId', response.data.id);",
+									"        console.log('problemId auto-saved:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Time Complexity of Binary Search\",\n  \"description\": \"What is the worst-case time complexity of searching an element in a sorted array of size N using binary search?\",\n  \"type\": \"MCQ\",\n  \"difficulty\": \"EASY\",\n  \"marks\": 2,\n  \"companyId\": \"{{companyId}}\",\n  \"mcq\": {\n    \"explanation\": \"Binary search halves the search space in each step, giving O(log N) time complexity.\",\n    \"options\": [\n      {\n        \"optionText\": \"O(1)\",\n        \"isCorrect\": false,\n        \"optionOrder\": 1\n      },\n      {\n        \"optionText\": \"O(log N)\",\n        \"isCorrect\": true,\n        \"optionOrder\": 2\n      },\n      {\n        \"optionText\": \"O(N)\",\n        \"isCorrect\": false,\n        \"optionOrder\": 3\n      },\n      {\n        \"optionText\": \"O(N log N)\",\n        \"isCorrect\": false,\n        \"optionOrder\": 4\n      }\n    ]\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/problem/create-problem",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"problem",
+								"create-problem"
+							]
+						},
+						"description": "Create a Multiple Choice Question (MCQ) in the problem bank. Requires authentication (Platform Admin or Company Member with OWNER, ADMIN, or ASSESSMENT_CREATOR role). Auto-saves problemId to collection variable."
+					},
+					"response": []
+				},
+				{
+					"name": "02. Create Problem - Coding",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('problemId', response.data.id);",
+									"        console.log('problemId auto-saved:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Two Sum Problem\",\n  \"description\": \"Given an array of integers `nums` and an integer `target`, return the indices of the two numbers such that they add up to `target`.\\n\\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\",\n  \"type\": \"CODING\",\n  \"difficulty\": \"MEDIUM\",\n  \"marks\": 10,\n  \"companyId\": \"{{companyId}}\",\n  \"coding\": {\n    \"inputFormat\": \"First line contains integer n (array length) and target separated by space. Second line contains n space-separated integers.\",\n    \"outputFormat\": \"Two space-separated integers representing the indices.\",\n    \"constraints\": \"2 <= nums.length <= 10^4\\n-10^9 <= nums[i] <= 10^9\\n-10^9 <= target <= 10^9\",\n    \"starterCode\": {\n      \"javascript\": \"function twoSum(nums, target) {\\n  // Write your code here\\n}\",\n      \"python\": \"def two_sum(nums, target):\\n    # Write your code here\\n    pass\",\n      \"cpp\": \"#include <vector>\\nusing namespace std;\\n\\nvector<int> twoSum(vector<int>& nums, int target) {\\n    // Write your code here\\n}\"\n    },\n    \"supportedLanguages\": [\n      \"javascript\",\n      \"typescript\",\n      \"python\",\n      \"cpp\"\n    ],\n    \"timeLimitMs\": 2000,\n    \"memoryLimitMb\": 256,\n    \"testCases\": [\n      {\n        \"type\": \"PUBLIC\",\n        \"input\": \"4 9\\n2 7 11 15\",\n        \"expectedOutput\": \"0 1\",\n        \"timeLimitMs\": 2000,\n        \"memoryLimitMb\": 256\n      },\n      {\n        \"type\": \"HIDDEN\",\n        \"input\": \"3 6\\n3 2 4\",\n        \"expectedOutput\": \"1 2\",\n        \"timeLimitMs\": 2000,\n        \"memoryLimitMb\": 256\n      }\n    ]\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/problem/create-problem",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"problem",
+								"create-problem"
+							]
+						},
+						"description": "Create a Coding challenge with input/output format, starter code, supported languages, and public/hidden test cases. Auto-saves problemId to collection variable."
+					},
+					"response": []
+				},
+				{
+					"name": "03. Create Problem - Written",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('problemId', response.data.id);",
+									"        console.log('problemId auto-saved:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Explain Database Indexing and B-Trees\",\n  \"description\": \"Explain how database indexes work under the hood. Specifically discuss how B-Tree indexes speed up lookups and range queries, and explain the trade-offs on write operations.\",\n  \"type\": \"WRITTEN\",\n  \"difficulty\": \"MEDIUM\",\n  \"marks\": 5,\n  \"companyId\": \"{{companyId}}\",\n  \"written\": {\n    \"wordLimit\": 500,\n    \"expectedAnswer\": \"Database indexes are specialized data structures (commonly B-Trees or B+ Trees) that allow logarithmic search time O(log N) rather than full table scans O(N)...\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/problem/create-problem",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"problem",
+								"create-problem"
+							]
+						},
+						"description": "Create a Written / Subjective question with wordLimit and expected answer for manual evaluation. Auto-saves problemId to collection variable."
+					},
+					"response": []
+				},
+				{
+					"name": "04. Get All Problems (Super Admin & Admin Only)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/problem?page=1&limit=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"problem"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page"
+								},
+								{
+									"key": "searchTerm",
+									"value": "",
+									"description": "Search in title and description",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "MCQ",
+									"description": "Filter by type (MCQ, CODING, WRITTEN)",
+									"disabled": true
+								},
+								{
+									"key": "difficulty",
+									"value": "MEDIUM",
+									"description": "Filter by difficulty (EASY, MEDIUM, HARD)",
+									"disabled": true
+								},
+								{
+									"key": "companyId",
+									"value": "{{companyId}}",
+									"description": "Filter by specific company (optional for Admin)",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Strictly restricted to platform SUPER_ADMIN and ADMIN. Retrieves all questions across the platform with pagination and filters."
+					},
+					"response": []
+				},
+				{
+					"name": "05. Get My Company Problems (Owner, Admin & Creator Only)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/problem/company-problems?page=1&limit=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"problem",
+								"company-problems"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page"
+								},
+								{
+									"key": "searchTerm",
+									"value": "",
+									"description": "Search in problem title or description",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "MCQ",
+									"description": "Filter by type (MCQ, CODING, WRITTEN)",
+									"disabled": true
+								},
+								{
+									"key": "difficulty",
+									"value": "MEDIUM",
+									"description": "Filter by difficulty (EASY, MEDIUM, HARD)",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Strictly restricted to the logged-in user's company (COMPANY_OWNER, COMPANY_ADMIN, ASSESSMENT_CREATOR). Retrieves questions created by that company."
+					},
+					"response": []
+				},
+				{
+					"name": "06. Get Single Problem by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/problem/{{problemId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"problem",
+								"{{problemId}}"
+							]
+						},
+						"description": "Retrieves complete details of a single problem by its ID (including MCQ options, coding test cases, written criteria, creator, and company details). Protected by multi-tenancy access control."
+					},
+					"response": []
+				},
+				{
+					"name": "07. Update Problem by ID",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Problem Title\",\n  \"description\": \"Updated detailed problem description.\",\n  \"difficulty\": \"MEDIUM\",\n  \"marks\": 5,\n  \"mcq\": {\n    \"explanation\": \"Updated explanation for the correct answer.\",\n    \"options\": [\n      {\n        \"optionText\": \"Option A\",\n        \"isCorrect\": false,\n        \"optionOrder\": 1\n      },\n      {\n        \"optionText\": \"Option B (Correct)\",\n        \"isCorrect\": true,\n        \"optionOrder\": 2\n      },\n      {\n        \"optionText\": \"Option C\",\n        \"isCorrect\": false,\n        \"optionOrder\": 3\n      }\n    ]\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/problem/{{problemId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"problem",
+								"{{problemId}}"
+							]
+						},
+						"description": "Updates an existing problem and its nested type data (MCQ options, coding config/test cases, or written criteria) atomically in a database transaction. Restricted to Platform Admins or the problem's Company Owner/Admin/Creator."
+					},
+					"response": []
+				},
+				{
+					"name": "08. Delete Problem by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/problem/{{problemId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"problem",
+								"{{problemId}}"
+							]
+						},
+						"description": "Deletes a problem by its ID. Features integrity guards preventing deletion if the problem is already linked to assessments or candidate submissions. Authorized for Platform Admins or the problem's Company Owner/Admin/Creator."
 					},
 					"response": []
 				}

@@ -137,6 +137,7 @@ export interface ICreateProblemPayload {
 export interface IUpdateProblemPayload {
 	title?: string;
 	description?: string;
+	type?: ProblemType;
 	difficulty?: Difficulty;
 	marks?: number;
 	companyId?: string;
@@ -155,4 +156,11 @@ export interface IProblemFilterRequest {
 	difficulty?: Difficulty;
 	companyId?: string;
 	createdById?: string;
+}
+
+export interface IPaginationOptions {
+	page?: number;
+	limit?: number;
+	sortBy?: string;
+	sortOrder?: "asc" | "desc";
 }
