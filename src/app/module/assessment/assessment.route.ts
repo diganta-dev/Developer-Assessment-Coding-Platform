@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { auth } from "../../middleware/checkAuth";
 import { validateRequest } from "../../middleware/validateRequest";
+import { SubmissionController } from "../submission/submission.controller";
+import { createSubmissionValidation } from "../submission/submission.validation";
 import { AssessmentController } from "./assessment.controller";
 import {
 	addProblemsValidation,
@@ -27,11 +29,20 @@ const router = Router();
 // ─── STATIC PATHS ────────────────────────────────────────────────────────────
 
 router.post(
+	"/",
+	auth(),
+	validateRequest(createAssessmentValidation),
+	AssessmentController.createAssessment,
+);
+
+router.post(
 	"/create-assessment",
 	auth(),
 	validateRequest(createAssessmentValidation),
 	AssessmentController.createAssessment,
 );
+
+router.get("/", auth(), AssessmentController.getMyAssessments);
 
 // ─── CANDIDATE SELF-SERVICE (must be before /:id to avoid shadow) ─────────────
 
@@ -82,10 +93,23 @@ router.post(
 	AssessmentController.submitAssessmentAttempt,
 );
 
+router.post(
+	"/attempts/:attemptId/submissions",
+	auth(),
+	validateRequest(createSubmissionValidation),
+	SubmissionController.createSubmission,
+);
+
 router.get(
 	"/attempts/:attemptId/result",
 	auth(),
 	AssessmentController.getAttemptResult,
+);
+
+router.post(
+	"/attempts/:attemptId/calculate-score",
+	auth(),
+	AssessmentController.calculateAttemptScore,
 );
 
 router.get(

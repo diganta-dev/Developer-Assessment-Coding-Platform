@@ -1,4 +1,4 @@
-import { isAfter, toDate } from "date-fns";
+import { isAfter, isPast, toDate } from "date-fns";
 import { z } from "zod";
 
 export const assessmentProblemInputSchema = z.object({
@@ -57,7 +57,10 @@ export const createAssessmentValidation = z
 			.int("Duration must be an integer")
 			.min(5, "Assessment duration must be at least 5 minutes")
 			.max(1440, "Assessment duration cannot exceed 24 hours (1440 minutes)"),
-		totalMarks: z.number().positive("Total marks must be positive").optional(),
+		totalMarks: z
+			.number()
+			.nonnegative("Total marks must be a non-negative number")
+			.optional(),
 		passingScore: z
 			.number()
 			.positive("Passing score must be positive")
@@ -74,18 +77,31 @@ export const createAssessmentValidation = z
 			.optional()
 			.nullable(),
 		status: z
-			.enum(["DRAFT", "PUBLISHED", "ACTIVE", "COMPLETED", "ARCHIVED"])
+			.literal("DRAFT", {
+				message:
+					"New assessments must always be created in DRAFT status. Please publish after adding problems.",
+			})
 			.optional()
 			.default("DRAFT"),
 		settings: assessmentSettingInputSchema.optional(),
 		problems: z
-			.never({
-				message:
-					"Problems cannot be added directly during assessment creation. Please create the assessment first, then add problems using the add-problems endpoint.",
-			})
+			.array(z.any())
+			.max(
+				0,
+				"Problems cannot be added directly during assessment creation. Please create the assessment first, then add problems using the add-problems endpoint.",
+			)
 			.optional(),
 	})
 	.superRefine((data, ctx) => {
+		// Validate endDate is not in the past
+		if (data.endDate && isPast(toDate(data.endDate))) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: "End date must be in the future",
+				path: ["endDate"],
+			});
+		}
+
 		// Validate date chronology
 		if (data.startDate && data.endDate) {
 			const start = toDate(data.startDate);
@@ -99,16 +115,22 @@ export const createAssessmentValidation = z
 			}
 		}
 
-		// Validate passing score does not exceed explicit totalMarks
-		if (
-			data.totalMarks !== undefined &&
-			data.passingScore !== undefined &&
-			data.passingScore !== null
-		) {
-			if (data.passingScore > data.totalMarks) {
+		// Validate passing score against total marks
+		if (data.passingScore !== undefined && data.passingScore !== null) {
+			if (
+				data.totalMarks !== undefined &&
+				data.passingScore > data.totalMarks
+			) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message: "Passing score cannot exceed total marks",
+					path: ["passingScore"],
+				});
+			}
+			if (data.totalMarks === 0 && data.passingScore > 0) {
+				ctx.addIssue({
+					code: z.ZodIssueCode.custom,
+					message: "Passing score cannot be specified when total marks is 0",
 					path: ["passingScore"],
 				});
 			}

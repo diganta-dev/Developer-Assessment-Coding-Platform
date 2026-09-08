@@ -1,10 +1,10 @@
+import type { Request } from "express";
+import httpStatus from "http-status";
+import config from "../../config";
 import { catchAsync } from "../../utils/catchAsync";
+import { jwtUtils } from "../../utils/jwt";
 import { sendResponse } from "../../utils/sendResponse";
 import { CompanyService } from "./company.service";
-import httpStatus from "http-status";
-import { jwtUtils } from "../../utils/jwt";
-import config from "../../config";
-import type { Request } from "express";
 
 const isProduction = config.node_env === "production";
 
@@ -16,7 +16,7 @@ const getCookieOptions = (maxAge: number) => ({
 });
 
 // Helper to extract authenticated user's ID if token or session is provided
-const extractUserId = (req: Request): string | undefined => {
+const _extractUserId = (req: Request): string | undefined => {
 	if (req.user?.userId) return req.user.userId;
 	const token =
 		req.cookies?.accessToken ||
@@ -49,10 +49,18 @@ const verifyCompany = catchAsync(async (req, res) => {
 	const { accessToken, refreshToken } = result;
 
 	if (accessToken) {
-		res.cookie("accessToken", accessToken, getCookieOptions(1000 * 60 * 60 * 24));
+		res.cookie(
+			"accessToken",
+			accessToken,
+			getCookieOptions(1000 * 60 * 60 * 24),
+		);
 	}
 	if (refreshToken) {
-		res.cookie("refreshToken", refreshToken, getCookieOptions(1000 * 60 * 60 * 24 * 7));
+		res.cookie(
+			"refreshToken",
+			refreshToken,
+			getCookieOptions(1000 * 60 * 60 * 24 * 7),
+		);
 	}
 
 	sendResponse(res, {
@@ -88,7 +96,11 @@ const getMyCompany = catchAsync(async (req, res) => {
 const addCompanyMember = catchAsync(async (req, res) => {
 	const companyId = (req.params.companyId || req.params.id) as string;
 	const user = req.user!;
-	const result = await CompanyService.addCompanyMember(companyId, user, req.body);
+	const result = await CompanyService.addCompanyMember(
+		companyId,
+		user,
+		req.body,
+	);
 	sendResponse(res, {
 		success: true,
 		statusCode: httpStatus.CREATED,

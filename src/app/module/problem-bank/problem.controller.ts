@@ -4,7 +4,10 @@ import type { Difficulty, ProblemType } from "../../../generated/prisma/enums";
 import type { RequestUser } from "../../middleware/checkAuth";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
-import type { IPaginationOptions, IProblemFilterRequest } from "./problem.interface";
+import type {
+	IPaginationOptions,
+	IProblemFilterRequest,
+} from "./problem.interface";
 import { ProblemService } from "./problem.service";
 
 const createProblem = catchAsync(async (req: Request, res: Response) => {
@@ -29,7 +32,9 @@ const getAllProblems = catchAsync(async (req: Request, res: Response) => {
 		type: req.query.type as ProblemType | undefined,
 		difficulty: req.query.difficulty as Difficulty | undefined,
 		companyId: req.query.companyId ? String(req.query.companyId) : undefined,
-		createdById: req.query.createdById ? String(req.query.createdById) : undefined,
+		createdById: req.query.createdById
+			? String(req.query.createdById)
+			: undefined,
 	};
 
 	const options: IPaginationOptions = {
@@ -57,7 +62,9 @@ const getCompanyProblems = catchAsync(async (req: Request, res: Response) => {
 		searchTerm: req.query.searchTerm ? String(req.query.searchTerm) : undefined,
 		type: req.query.type as ProblemType | undefined,
 		difficulty: req.query.difficulty as Difficulty | undefined,
-		createdById: req.query.createdById ? String(req.query.createdById) : undefined,
+		createdById: req.query.createdById
+			? String(req.query.createdById)
+			: undefined,
 	};
 
 	const options: IPaginationOptions = {
@@ -67,7 +74,11 @@ const getCompanyProblems = catchAsync(async (req: Request, res: Response) => {
 		sortOrder: req.query.sortOrder === "asc" ? "asc" : "desc",
 	};
 
-	const result = await ProblemService.getCompanyProblems(user, filters, options);
+	const result = await ProblemService.getCompanyProblems(
+		user,
+		filters,
+		options,
+	);
 
 	sendResponse(res, {
 		statusCode: httpStatus.OK,

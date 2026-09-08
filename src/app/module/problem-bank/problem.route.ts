@@ -32,11 +32,7 @@ router.get(
 );
 
 // Get problems created by the logged-in user's company (Company Owner, Admin, Assessment Creator)
-router.get(
-	"/company-problems",
-	auth(),
-	ProblemController.getCompanyProblems,
-);
+router.get("/company-problems", auth(), ProblemController.getCompanyProblems);
 
 router.get(
 	"/my-company-problems",
@@ -45,11 +41,7 @@ router.get(
 );
 
 // Get single problem by ID (defined after static routes to avoid URL collisions)
-router.get(
-	"/:id",
-	auth(),
-	ProblemController.getSingleProblem,
-);
+router.get("/:id", auth(), ProblemController.getSingleProblem);
 
 // Update problem by ID (Platform Admins or Company Owner/Admin/Creator)
 router.patch(
@@ -60,10 +52,6 @@ router.patch(
 );
 
 // Delete problem by ID (Platform Admins or Company Owner/Admin/Creator)
-router.delete(
-	"/:id",
-	auth(),
-	ProblemController.deleteProblem,
-);
+router.delete("/:id", auth(), ProblemController.deleteProblem);
 
 export const ProblemRoute = router;

@@ -1,8 +1,8 @@
-import type { ZodTypeAny } from "zod";
+import type { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
+import type { ZodTypeAny } from "zod";
 import { AppError } from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
-import type { NextFunction, Request, Response } from "express";
 
 export const validateRequest = (zodSchema: ZodTypeAny) => {
 	return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -11,7 +11,7 @@ export const validateRequest = (zodSchema: ZodTypeAny) => {
 		if (typeof req.body?.data === "string") {
 			try {
 				payload = JSON.parse(req.body.data);
-			} catch (err) {
+			} catch (_err) {
 				throw new AppError(
 					httpStatus.BAD_REQUEST,
 					"Invalid JSON format in data field",

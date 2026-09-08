@@ -3,8 +3,8 @@ import httpStatus from "http-status";
 import type { JwtPayload } from "jsonwebtoken";
 import type { CompanyMemberRole, UserRole } from "../../generated/prisma/enums";
 import config from "../config";
-import AppError from "../utils/AppError";
 import { prisma } from "../lib/prisma";
+import AppError from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
 import { jwtUtils } from "../utils/jwt";
 
@@ -27,7 +27,6 @@ declare global {
 }
 
 export type { RequestUser };
-
 
 export const auth = (...requiredRoles: UserRole[]) => {
 	return catchAsync(async (req: Request, res: Response, next: NextFunction) => {

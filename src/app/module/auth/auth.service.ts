@@ -504,7 +504,7 @@ const googleLogin = async (tokenOrPayload: string | { idToken: string }) => {
 		);
 	}
 
-	if (!googleIdTokenPayload || !googleIdTokenPayload.email) {
+	if (!googleIdTokenPayload?.email) {
 		throw new AppError(
 			httpStatus.BAD_REQUEST,
 			"Invalid Google token payload or email not found",
@@ -702,7 +702,7 @@ const refreshToken = async (token: string) => {
 		},
 	});
 
-	if (!user || !user.isActive) {
+	if (!user?.isActive) {
 		throw new AppError(
 			httpStatus.UNAUTHORIZED,
 			"User is inactive or not found",

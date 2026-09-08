@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { CompanyController } from "./company.controller";
-import { validateRequest } from "../../middleware/validateRequest";
-import { CompanyValidation } from "./company.validation";
 import { auth } from "../../middleware/checkAuth";
+import { validateRequest } from "../../middleware/validateRequest";
+import { CompanyController } from "./company.controller";
+import { CompanyValidation } from "./company.validation";
 
 const router = Router();
 
@@ -23,7 +23,7 @@ router.post(
 router.patch(
 	"/update-company/:id",
 	auth(),
-	validateRequest(CompanyValidation.UpdateCompanyZodSchema), 
+	validateRequest(CompanyValidation.UpdateCompanyZodSchema),
 	CompanyController.updateCompany,
 );
 router.get("/my-company", auth(), CompanyController.getMyCompany);
@@ -42,11 +42,7 @@ router.post(
 	CompanyController.addCompanyMember,
 );
 
-router.get(
-	"/:companyId/members",
-	auth(),
-	CompanyController.getCompanyMembers,
-);
+router.get("/:companyId/members", auth(), CompanyController.getCompanyMembers);
 
 router.patch(
 	"/:companyId/members/:memberUserId",
@@ -62,4 +58,3 @@ router.delete(
 );
 
 export const CompanyRoutes = router;
- 

@@ -1,11 +1,12 @@
 import httpStatus from "http-status";
+import type { Prisma } from "../../../generated/prisma/client";
 import {
 	CompanyMemberRole,
 	ProblemType,
 	TestCaseType,
 	UserRole,
 } from "../../../generated/prisma/enums";
-import type { Prisma } from "../../../generated/prisma/client";
+import type { ProblemWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
 import type { RequestUser } from "../../middleware/checkAuth";
 import AppError from "../../utils/AppError";
@@ -15,7 +16,6 @@ import type {
 	IProblemFilterRequest,
 	IUpdateProblemPayload,
 } from "./problem.interface";
-import type { ProblemWhereInput } from "../../../generated/prisma/models";
 
 // Standard relation inclusion for detailed problem response
 const problemInclude = {
@@ -158,7 +158,7 @@ const createProblem = async (
 				);
 			}
 
-			// Ensure sequential unique optionOrder to respect database constraint @@unique([mcqQuestionId, optionOrder]) 
+			// Ensure sequential unique optionOrder to respect database constraint @@unique([mcqQuestionId, optionOrder])
 			const normalizedOptions = payload.mcq.options.map((opt, index) => ({
 				optionText: opt.optionText.trim(),
 				isCorrect: Boolean(opt.isCorrect),
@@ -414,9 +414,7 @@ const getCompanyProblems = async (
 	const sortOrder = options.sortOrder === "asc" ? "asc" : "desc";
 
 	// 4. Build WHERE conditions strictly scoped to the user's company
-	const andConditions:ProblemWhereInput[] = [
-		{ companyId: targetCompanyId },
-	];
+	const andConditions: ProblemWhereInput[] = [{ companyId: targetCompanyId }];
 
 	if (filters.searchTerm?.trim()) {
 		andConditions.push({
@@ -449,7 +447,7 @@ const getCompanyProblems = async (
 		andConditions.push({ createdById: filters.createdById });
 	}
 
-	const where:ProblemWhereInput = { AND: andConditions };
+	const where: ProblemWhereInput = { AND: andConditions };
 
 	// 5. Execute count and findMany in parallel
 	const [total, data] = await Promise.all([
@@ -658,17 +656,15 @@ const updateProblem = async (
 							where: { mcqQuestionId },
 						});
 
-						const normalizedOptions = payload.mcq.options.map(
-							(opt, index) => ({
-								mcqQuestionId,
-								optionText: opt.optionText ? opt.optionText.trim() : "",
-								isCorrect: Boolean(opt.isCorrect),
-								optionOrder:
-									typeof opt.optionOrder === "number"
-										? opt.optionOrder
-										: index + 1,
-							}),
-						);
+						const normalizedOptions = payload.mcq.options.map((opt, index) => ({
+							mcqQuestionId,
+							optionText: opt.optionText ? opt.optionText.trim() : "",
+							isCorrect: Boolean(opt.isCorrect),
+							optionOrder:
+								typeof opt.optionOrder === "number"
+									? opt.optionOrder
+									: index + 1,
+						}));
 
 						// Ensure sequential unique optionOrder
 						const orderSet = new Set(
