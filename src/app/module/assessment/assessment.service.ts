@@ -26,6 +26,7 @@ import { transporter } from "../../lib/nodemailer";
 import { prisma } from "../../lib/prisma";
 import type { RequestUser } from "../../middleware/checkAuth";
 import AppError from "../../utils/AppError";
+import { AttemptScoreService } from "../evaluation/attemptScore.service";
 import type {
 	IAddProblemsPayload,
 	IAssessmentFilterOptions,
@@ -2945,6 +2946,13 @@ const getDetailedResultReport = async (
 	};
 };
 
+/**
+ * Calculates, aggregates, and updates the total score and results for an assessment attempt.
+ */
+const calculateAttemptScore = async (attemptId: string, user?: RequestUser) => {
+	return await AttemptScoreService.calculateAttemptScore(attemptId, user);
+};
+
 export const AssessmentService = {
 	createAssessment,
 	getMyAssessments,
@@ -2961,6 +2969,7 @@ export const AssessmentService = {
 	getAssessmentAttempts,
 	getMyAttempts,
 	calculateAssessmentRanks,
+	calculateAttemptScore,
 	publishAssessmentResults,
 	getAttemptResult,
 	getAssessmentResults,

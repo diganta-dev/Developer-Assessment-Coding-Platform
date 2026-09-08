@@ -11,11 +11,38 @@ router.post(
 	EvaluationController.evaluateCodingSubmission,
 );
 
+// Automated MCQ Evaluation
+router.post(
+	"/mcq/:submissionId",
+	auth(),
+	EvaluationController.evaluateMCQSubmission,
+);
+
+// Written Question Evaluation
+router.post(
+	"/written/:submissionId",
+	auth(),
+	EvaluationController.evaluateWrittenSubmission,
+);
+
 // Manual Evaluation (Written questions / Manual grading)
 router.post(
 	"/manual/:submissionId",
 	auth(),
 	EvaluationController.manualEvaluateSubmission,
+);
+
+// Calculate Attempt Total Score & Aggregate Results
+router.post(
+	"/attempt/:attemptId/score",
+	auth(),
+	EvaluationController.calculateAttemptScore,
+);
+
+router.get(
+	"/attempt/:attemptId/score",
+	auth(),
+	EvaluationController.calculateAttemptScore,
 );
 
 // Query all evaluations (paginated, filtered)

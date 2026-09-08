@@ -297,6 +297,28 @@ const getDetailedResultReport = catchAsync(
 	},
 );
 
+/**
+ * Calculates, aggregates, and updates the score for an assessment attempt.
+ */
+const calculateAttemptScore = catchAsync(
+	async (req: Request, res: Response) => {
+		const user = req.user as RequestUser;
+		const attemptId = req.params.attemptId as string;
+
+		const result = await AssessmentService.calculateAttemptScore(
+			attemptId,
+			user,
+		);
+
+		sendResponse(res, {
+			statusCode: httpStatus.OK,
+			success: true,
+			message: "Assessment attempt score calculated successfully",
+			data: result,
+		});
+	},
+);
+
 export const AssessmentController = {
 	createAssessment,
 	getMyAssessments,
@@ -312,6 +334,7 @@ export const AssessmentController = {
 	submitAssessmentAttempt,
 	getAssessmentAttempts,
 	getMyAttempts,
+	calculateAttemptScore,
 	publishAssessmentResults,
 	getAttemptResult,
 	getAssessmentResults,

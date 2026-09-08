@@ -106,6 +106,12 @@ router.get(
 	AssessmentController.getAttemptResult,
 );
 
+router.post(
+	"/attempts/:attemptId/calculate-score",
+	auth(),
+	AssessmentController.calculateAttemptScore,
+);
+
 router.get(
 	"/attempts/:attemptId/detailed-report",
 	auth(),

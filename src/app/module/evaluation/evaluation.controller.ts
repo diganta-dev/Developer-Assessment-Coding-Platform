@@ -30,6 +30,53 @@ const evaluateCodingSubmission = catchAsync(
 );
 
 /**
+ * Automatically evaluates an MCQ submission.
+ */
+const evaluateMCQSubmission = catchAsync(
+	async (req: Request, res: Response) => {
+		const user = req.user as RequestUser;
+		const submissionId =
+			(req.params.submissionId as string) || (req.params.id as string);
+
+		const result = await EvaluationService.evaluateMCQSubmission(
+			user,
+			submissionId,
+		);
+
+		sendResponse(res, {
+			statusCode: httpStatus.OK,
+			success: true,
+			message: "MCQ submission evaluated successfully",
+			data: result,
+		});
+	},
+);
+
+/**
+ * Evaluates a written question submission with marks, feedback, and word count analytics.
+ */
+const evaluateWrittenSubmission = catchAsync(
+	async (req: Request, res: Response) => {
+		const user = req.user as RequestUser;
+		const submissionId =
+			(req.params.submissionId as string) || (req.params.id as string);
+
+		const result = await EvaluationService.evaluateWrittenSubmission(
+			user,
+			submissionId,
+			req.body,
+		);
+
+		sendResponse(res, {
+			statusCode: httpStatus.OK,
+			success: true,
+			message: "Written submission evaluated successfully",
+			data: result,
+		});
+	},
+);
+
+/**
  * Evaluates a written submission or manually updates marks/feedback for a submission.
  */
 const manualEvaluateSubmission = catchAsync(
@@ -88,9 +135,35 @@ const getEvaluationById = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+/**
+ * Calculates, aggregates, and retrieves the overall score for an assessment attempt.
+ */
+const calculateAttemptScore = catchAsync(
+	async (req: Request, res: Response) => {
+		const user = req.user as RequestUser;
+		const attemptId =
+			(req.params.attemptId as string) || (req.params.id as string);
+
+		const result = await EvaluationService.calculateAttemptScore(
+			user,
+			attemptId,
+		);
+
+		sendResponse(res, {
+			statusCode: httpStatus.OK,
+			success: true,
+			message: "Assessment attempt score calculated successfully",
+			data: result,
+		});
+	},
+);
+
 export const EvaluationController = {
 	evaluateCodingSubmission,
+	evaluateMCQSubmission,
+	evaluateWrittenSubmission,
 	manualEvaluateSubmission,
+	calculateAttemptScore,
 	getAllEvaluations,
 	getEvaluationById,
 };

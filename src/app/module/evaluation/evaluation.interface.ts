@@ -1,6 +1,10 @@
 import type {
+	AttemptStatus,
+	Difficulty,
 	EvaluationStatus,
 	EvaluationType,
+	ProblemType,
+	ResultStatus,
 	SubmissionStatus,
 	TestCaseType,
 } from "../../../generated/prisma/enums";
@@ -64,4 +68,83 @@ export interface IEvaluationFilterQuery {
 	limit?: number | string;
 	sortBy?: string;
 	sortOrder?: "asc" | "desc";
+}
+
+export interface IMCQEvaluationResult {
+	submissionId: string;
+	problemId: string;
+	selectedOptionId: string | null;
+	selectedOptionText?: string | null;
+	isCorrect?: boolean;
+	earnedMarks?: number;
+	totalMarks: number;
+	status: SubmissionStatus;
+	correctOptionId?: string;
+	explanation?: string | null;
+	feedback?: string;
+	evaluationId?: string;
+}
+
+export interface IWrittenEvaluationPayload {
+	marks: number;
+	feedback?: string;
+}
+
+export interface IWrittenEvaluationResult {
+	submissionId: string;
+	problemId: string;
+	answerText: string | null;
+	wordCount: number;
+	wordLimit: number | null;
+	isWordLimitExceeded: boolean;
+	expectedAnswer: string | null;
+	earnedMarks: number;
+	totalMarks: number;
+	isCorrect: boolean;
+	status: SubmissionStatus;
+	feedback: string | null;
+	evaluationId: string;
+	evaluator: {
+		id: string;
+		name: string;
+		email: string;
+	};
+}
+
+export interface IAttemptProblemScoreBreakdown {
+	problemId: string;
+	questionOrder: number;
+	title: string;
+	type: ProblemType;
+	difficulty: Difficulty;
+	maxMarks: number;
+	obtainedMarks: number;
+	isCorrect: boolean;
+	submissionStatus: string;
+	submissionId: string | null;
+}
+
+export interface IAttemptScoreResult {
+	attemptId: string;
+	assessmentId: string;
+	candidateId: string;
+	candidate: {
+		id: string;
+		name: string;
+		email: string;
+	};
+	totalMarks: number;
+	obtainedMarks: number;
+	percentage: number;
+	passingScore: number | null;
+	isPassed: boolean;
+	resultStatus: ResultStatus;
+	attemptStatus: AttemptStatus;
+	isFullyEvaluated: boolean;
+	totalProblems: number;
+	evaluatedProblems: number;
+	pendingProblems: number;
+	breakdown: IAttemptProblemScoreBreakdown[];
+	resultId?: string;
+	calculatedAt: Date;
 }

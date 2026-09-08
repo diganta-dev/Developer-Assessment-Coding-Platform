@@ -1,4 +1,4 @@
- import httpStatus from "http-status";
+import httpStatus from "http-status";
 import {
 	EvaluationStatus,
 	EvaluationType,
@@ -8,11 +8,15 @@ import {
 import { prisma } from "../../lib/prisma";
 import type { RequestUser } from "../../middleware/checkAuth";
 import AppError from "../../utils/AppError";
+import { AttemptScoreService } from "./attemptScore.service";
 import { CodingEvaluationService } from "./codingEvaluation.service";
 import type {
 	IEvaluationFilterQuery,
 	IManualEvaluationPayload,
+	IWrittenEvaluationPayload,
 } from "./evaluation.interface";
+import { MCQEvaluationService } from "./mcqEvaluation.service";
+import { WrittenEvaluationService } from "./writtenEvaluation.service";
 
 /**
  * Evaluates a coding submission using Judge0 CE sandbox execution.
@@ -61,6 +65,73 @@ const evaluateCodingSubmission = async (
 	return await CodingEvaluationService.evaluateCodingSubmission(
 		submissionId,
 		user.userId,
+	);
+};
+
+/**
+ * Evaluates an MCQ submission automatically.
+ * Validates permission and computes score based on the candidate's selected option.
+ */
+const evaluateMCQSubmission = async (
+	user: RequestUser,
+	submissionId: string,
+) => {
+	const submission = await prisma.submission.findUnique({
+		where: { id: submissionId },
+		include: {
+			attempt: {
+				include: {
+					assessment: true,
+				},
+			},
+		},
+	});
+
+	if (!submission) {
+		throw new AppError(httpStatus.NOT_FOUND, "Submission not found.");
+	}
+
+	const isCandidateOwner = submission.attempt.candidateId === user.userId;
+	const isPlatformAdmin =
+		user.role === UserRole.SUPER_ADMIN || user.role === UserRole.ADMIN;
+	const isCompanyMember =
+		user.companyId &&
+		user.companyId === submission.attempt.assessment.companyId;
+	const isAssessmentCreator =
+		submission.attempt.assessment.creatorId === user.userId;
+
+	if (
+		!isCandidateOwner &&
+		!isPlatformAdmin &&
+		!isCompanyMember &&
+		!isAssessmentCreator
+	) {
+		throw new AppError(
+			httpStatus.FORBIDDEN,
+			"You do not have permission to evaluate this submission.",
+		);
+	}
+
+	return await MCQEvaluationService.evaluateMCQSubmission(
+		submissionId,
+		user.userId,
+		isCandidateOwner,
+	);
+};
+
+/**
+ * Evaluates a written submission.
+ * Enforces role guards and delegates to WrittenEvaluationService.
+ */
+const evaluateWrittenSubmission = async (
+	user: RequestUser,
+	submissionId: string,
+	payload: IWrittenEvaluationPayload,
+) => {
+	return await WrittenEvaluationService.evaluateWrittenSubmission(
+		user,
+		submissionId,
+		payload,
 	);
 };
 
@@ -356,11 +427,26 @@ const getEvaluationById = async (user: RequestUser, id: string) => {
 	return evaluation;
 };
 
+/**
+ * Calculates, aggregates, and updates the total score and results for an assessment attempt.
+ */
+const calculateAttemptScore = async (user: RequestUser, attemptId: string) => {
+	return await AttemptScoreService.calculateAttemptScore(attemptId, user);
+};
+
 export const EvaluationService = {
 	evaluateCodingSubmission,
+	evaluateMCQSubmission,
+	evaluateWrittenSubmission,
 	manualEvaluateSubmission,
+	calculateAttemptScore,
 	getAllEvaluations,
 	getEvaluationById,
 };
 
-export { CodingEvaluationService };
+export {
+	AttemptScoreService,
+	CodingEvaluationService,
+	MCQEvaluationService,
+	WrittenEvaluationService,
+};
