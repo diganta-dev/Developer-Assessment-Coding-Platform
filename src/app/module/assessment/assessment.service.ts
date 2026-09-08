@@ -1,4 +1,15 @@
+import path from "path";
+import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import ejs from "ejs";
+import {
+	addDays,
+	addMinutes,
+	isAfter,
+	isBefore,
+	isPast,
+	toDate,
+} from "date-fns";
 import httpStatus from "http-status";
 import {
 	AssessmentStatus,
@@ -23,6 +34,7 @@ import type {
 	IInviteCandidatesPayload,
 	IPublishResultsPayload,
 	IResultFilterOptions,
+	ISanitizeAssessmentInput,
 	IStartAttemptPayload,
 	ISubmitAttemptPayload,
 	IUpdateAssessmentPayload,
@@ -122,103 +134,61 @@ const resolveAndVerifyCompanyAccess = async (
 };
 
 /**
- * Creates a new technical assessment with settings and optional problems.
+ * Creates a new technical assessment with settings.
+ * Problems must be attached later via addProblemsToAssessment.
  * Executed atomically in a database transaction.
  */
 const createAssessment = async (
 	user: RequestUser,
 	payload: ICreateAssessmentPayload,
 ) => {
+	// Guard: Direct problem inclusion is disallowed during assessment creation
+	const rawPayload = payload as unknown as Record<string, unknown>;
+	if (
+		"problems" in rawPayload &&
+		Array.isArray(rawPayload.problems) &&
+		rawPayload.problems.length > 0
+	) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"Problems cannot be added directly during assessment creation. Please create the assessment first, then add problems using the add-problems endpoint.",
+		);
+	}
+
 	const companyId = await resolveAndVerifyCompanyAccess(
 		user,
 		payload.companyId,
 	);
 
-	// 2. Validate and prepare problems if provided
-	type PreparedProblem = {
-		problemId: string;
-		marks: number;
-		questionOrder: number;
-		isRequired: boolean;
-	};
+	const initialTotalMarks = payload.totalMarks ?? 0;
 
-	const preparedProblems: PreparedProblem[] = [];
-	let calculatedTotalMarks = payload.totalMarks ?? 0;
-
-	if (payload.problems && payload.problems.length > 0) {
-		const problemIds = payload.problems.map((p) => p.problemId);
-
-		const existingProblems = await prisma.problem.findMany({
-			where: { id: { in: problemIds } },
-			select: {
-				id: true,
-				title: true,
-				marks: true,
-				companyId: true,
-			},
-		});
-
-		const problemMap = new Map(existingProblems.map((p) => [p.id, p]));
-
-		// Ensure all problems exist
-		const missingProblemIds = problemIds.filter((id) => !problemMap.has(id));
-		if (missingProblemIds.length > 0) {
-			throw new AppError(
-				httpStatus.BAD_REQUEST,
-				`The following problem(s) were not found: ${missingProblemIds.join(", ")}`,
-			);
-		}
-
-		// Ensure tenant isolation: problems must be global (null) or belong to this company
-		for (const problem of existingProblems) {
-			if (problem.companyId && problem.companyId !== companyId) {
-				throw new AppError(
-					httpStatus.FORBIDDEN,
-					`Problem '${problem.title}' belongs to another organization and cannot be used in this assessment.`,
-				);
-			}
-		}
-
-		// Prepare problem entries with order and marks
-		let totalScoreFromProblems = 0;
-		payload.problems.forEach((item, index) => {
-			const dbProblem = problemMap.get(item.problemId);
-			if (!dbProblem) return;
-
-			const marks = item.marks ?? dbProblem.marks ?? 1;
-			const questionOrder = item.questionOrder ?? index + 1;
-			const isRequired = item.isRequired !== undefined ? item.isRequired : true;
-
-			totalScoreFromProblems += marks;
-			preparedProblems.push({
-				problemId: item.problemId,
-				marks,
-				questionOrder,
-				isRequired,
-			});
-		});
-
-		// If totalMarks wasn't explicitly supplied, derive it from the problems
-		if (!payload.totalMarks) {
-			calculatedTotalMarks = totalScoreFromProblems;
-		}
-	}
-
-	// 3. Validate passing score relative to total marks
+	// Validate passing score relative to total marks if provided
 	if (
 		payload.passingScore !== undefined &&
 		payload.passingScore !== null &&
-		calculatedTotalMarks > 0
+		initialTotalMarks > 0
 	) {
-		if (payload.passingScore > calculatedTotalMarks) {
+		if (payload.passingScore > initialTotalMarks) {
 			throw new AppError(
 				httpStatus.BAD_REQUEST,
-				`Passing score (${payload.passingScore}) cannot be greater than total marks (${calculatedTotalMarks}).`,
+				`Passing score (${payload.passingScore}) cannot be greater than total marks (${initialTotalMarks}).`,
 			);
 		}
 	}
 
-	// 4. Atomic assessment creation inside database transaction
+	// Validate date chronology with date-fns
+	if (payload.startDate && payload.endDate) {
+		const start = toDate(payload.startDate);
+		const end = toDate(payload.endDate);
+		if (!isAfter(end, start)) {
+			throw new AppError(
+				httpStatus.BAD_REQUEST,
+				"End date must be after the start date.",
+			);
+		}
+	}
+
+	// Atomic assessment creation inside database transaction
 	const result = await prisma.$transaction(async (tx) => {
 		// Create the assessment header & default settings
 		const newAssessment = await tx.assessment.create({
@@ -228,10 +198,10 @@ const createAssessment = async (
 				companyId,
 				creatorId: user.userId,
 				durationMinutes: payload.durationMinutes,
-				totalMarks: calculatedTotalMarks,
+				totalMarks: initialTotalMarks,
 				passingScore: payload.passingScore ?? null,
-				startDate: payload.startDate ? new Date(payload.startDate) : null,
-				endDate: payload.endDate ? new Date(payload.endDate) : null,
+				startDate: payload.startDate ? toDate(payload.startDate) : null,
+				endDate: payload.endDate ? toDate(payload.endDate) : null,
 				status: payload.status ?? AssessmentStatus.DRAFT,
 				settings: {
 					create: {
@@ -247,19 +217,6 @@ const createAssessment = async (
 				},
 			},
 		});
-
-		// Link problems if any were attached
-		if (preparedProblems.length > 0) {
-			await tx.assessmentProblem.createMany({
-				data: preparedProblems.map((problem) => ({
-					assessmentId: newAssessment.id,
-					problemId: problem.problemId,
-					marks: problem.marks,
-					questionOrder: problem.questionOrder,
-					isRequired: problem.isRequired,
-				})),
-			});
-		}
 
 		// Return fully populated assessment
 		return await tx.assessment.findUnique({
@@ -447,30 +404,30 @@ const getSingleAssessment = async (user: RequestUser, assessmentId: string) => {
 					// MCQ: hide which option is correct and explanation
 					mcqQuestion: problem.mcqQuestion
 						? {
-								...problem.mcqQuestion,
-								explanation: undefined,
-								options: problem.mcqQuestion.options.map((opt) => ({
-									id: opt.id,
-									optionText: opt.optionText,
-									optionOrder: opt.optionOrder,
-								})),
-							}
+							...problem.mcqQuestion,
+							explanation: undefined,
+							options: problem.mcqQuestion.options.map((opt) => ({
+								id: opt.id,
+								optionText: opt.optionText,
+								optionOrder: opt.optionOrder,
+							})),
+						}
 						: null,
 					// Coding: hide hidden test cases from candidates
 					codingQuestion: problem.codingQuestion
 						? {
-								...problem.codingQuestion,
-								testCases: problem.codingQuestion.testCases.filter(
-									(tc) => tc.type === "PUBLIC",
-								),
-							}
+							...problem.codingQuestion,
+							testCases: problem.codingQuestion.testCases.filter(
+								(tc) => tc.type === "PUBLIC",
+							),
+						}
 						: null,
 					// Written: hide expected answer
 					writtenQuestion: problem.writtenQuestion
 						? {
-								...problem.writtenQuestion,
-								expectedAnswer: undefined,
-							}
+							...problem.writtenQuestion,
+							expectedAnswer: undefined,
+						}
 						: null,
 				},
 			};
@@ -745,6 +702,27 @@ const updateAssessment = async (
 			});
 		}
 
+		// Validate date chronology if dates are updated
+		const finalStartDate =
+			payload.startDate !== undefined
+				? payload.startDate
+					? toDate(payload.startDate)
+					: null
+				: existingAssessment.startDate;
+		const finalEndDate =
+			payload.endDate !== undefined
+				? payload.endDate
+					? toDate(payload.endDate)
+					: null
+				: existingAssessment.endDate;
+
+		if (finalStartDate && finalEndDate && !isAfter(finalEndDate, finalStartDate)) {
+			throw new AppError(
+				httpStatus.BAD_REQUEST,
+				"End date must be after the start date.",
+			);
+		}
+
 		// Update assessment attributes
 		const updateData: Record<string, unknown> = {};
 		if (payload.title !== undefined) updateData.title = payload.title.trim();
@@ -758,10 +736,10 @@ const updateAssessment = async (
 			updateData.passingScore = payload.passingScore;
 		if (payload.startDate !== undefined)
 			updateData.startDate = payload.startDate
-				? new Date(payload.startDate)
+				? toDate(payload.startDate)
 				: null;
 		if (payload.endDate !== undefined)
-			updateData.endDate = payload.endDate ? new Date(payload.endDate) : null;
+			updateData.endDate = payload.endDate ? toDate(payload.endDate) : null;
 		if (payload.status !== undefined) updateData.status = payload.status;
 
 		await tx.assessment.update({
@@ -950,10 +928,22 @@ const publishAssessment = async (user: RequestUser, assessmentId: string) => {
 		);
 	}
 
-	if (assessment.endDate && new Date(assessment.endDate) <= new Date()) {
+	if (assessment.endDate && (isPast(assessment.endDate) || !isAfter(assessment.endDate, new Date()))) {
 		throw new AppError(
 			httpStatus.BAD_REQUEST,
 			"Cannot publish an assessment whose end date is already in the past. Please update the end date first.",
+		);
+	}
+
+	if (
+		assessment.passingScore !== null &&
+		assessment.passingScore !== undefined &&
+		assessment.totalMarks > 0 &&
+		assessment.passingScore > assessment.totalMarks
+	) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			`Passing score (${assessment.passingScore}) cannot be greater than total marks (${assessment.totalMarks}). Please adjust passing score or add more problems.`,
 		);
 	}
 
@@ -1122,6 +1112,8 @@ const addProblemsToAssessment = async (
 		if (!questionOrder || usedOrders.has(questionOrder)) {
 			currentMaxOrder += 1;
 			questionOrder = currentMaxOrder;
+		} else if (questionOrder > currentMaxOrder) {
+			currentMaxOrder = questionOrder;
 		}
 		usedOrders.add(questionOrder);
 
@@ -1231,7 +1223,7 @@ const inviteCandidates = async (
 		);
 	}
 
-	if (assessment.endDate && new Date(assessment.endDate) <= new Date()) {
+	if (assessment.endDate && (isPast(assessment.endDate) || !isAfter(assessment.endDate, new Date()))) {
 		throw new AppError(
 			httpStatus.BAD_REQUEST,
 			"Cannot invite candidates because the assessment deadline has already passed.",
@@ -1259,11 +1251,11 @@ const inviteCandidates = async (
 
 	// Expiry determination
 	const defaultExpiresAt = assessment.endDate
-		? new Date(assessment.endDate)
-		: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
+		? toDate(assessment.endDate)
+		: addDays(new Date(), 7); // 7 days from now
 
 	const expiresAt = payload.expiresAt
-		? new Date(payload.expiresAt)
+		? toDate(payload.expiresAt)
 		: defaultExpiresAt;
 
 	// 5. Process invitations
@@ -1275,12 +1267,20 @@ const inviteCandidates = async (
 			where: { email: candidateEmail },
 		});
 
+		let temporaryPassword: string | null = null;
+
 		if (!candidateUser) {
+			// Generate secure temporary password for new candidate
+			temporaryPassword = `${crypto.randomBytes(4).toString("hex")}@Pass1`;
+			const saltRounds = Number(config.bcrypt_salt_rounds) || 10;
+			const hashedPassword = await bcrypt.hash(temporaryPassword, saltRounds);
+
 			candidateUser = await prisma.user.create({
 				data: {
 					email: candidateEmail,
 					name: candidateEmail.split("@")[0],
 					role: UserRole.CANDIDATE,
+					password: hashedPassword,
 					isVerified: false,
 				},
 			});
@@ -1323,33 +1323,36 @@ const inviteCandidates = async (
 			},
 		});
 
-		// Dispatch email invitation
+		// Dispatch email invitation using EJS template
 		const frontendUrl = config.frontend_url || "http://localhost:3000";
 		const invitationUrl = `${frontendUrl}/assessment/invitation?token=${token}`;
 
 		try {
+			const templatePath = path.join(
+				process.cwd(),
+				"src/app/templates/assessment-invitation.ejs",
+			);
+
+			const html = await ejs.renderFile(templatePath, {
+				candidateName: candidateUser.name,
+				candidateEmail,
+				assessmentTitle: assessment.title,
+				companyName: assessment.company.name,
+				companyLogoUrl: assessment.company.logoUrl,
+				durationMinutes: assessment.durationMinutes,
+				totalMarks: assessment.totalMarks,
+				expiresAt: expiresAt.toLocaleString(),
+				invitationUrl,
+				loginUrl: `${frontendUrl}/login`,
+				temporaryPassword,
+				isNewAccount: Boolean(temporaryPassword),
+			});
+
 			await transporter.sendMail({
 				from: config.SENDER_EMAIL_USER,
 				to: candidateEmail,
 				subject: `Technical Assessment Invitation: ${assessment.title} - ${assessment.company.name}`,
-				html: `
-					<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #24292e; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e1e4e8; border-radius: 8px;">
-						<h2 style="color: #0366d6; margin-top: 0;">Developer Assessment Invitation</h2>
-						<p>Hello <strong>${candidateUser.name}</strong>,</p>
-						<p>You have been invited by <strong>${assessment.company.name}</strong> to undertake the technical assessment <strong>${assessment.title}</strong>.</p>
-						<div style="background-color: #f6f8fa; padding: 16px; border-radius: 6px; margin: 20px 0;">
-							<p style="margin: 6px 0;"><strong>Assessment:</strong> ${assessment.title}</p>
-							<p style="margin: 6px 0;"><strong>Duration:</strong> ${assessment.durationMinutes} minutes</p>
-							<p style="margin: 6px 0;"><strong>Total Marks:</strong> ${assessment.totalMarks}</p>
-							<p style="margin: 6px 0;"><strong>Expires On:</strong> ${expiresAt.toLocaleString()}</p>
-						</div>
-						<p>Click the button below when you are ready to review the assessment instructions and start your test:</p>
-						<div style="text-align: center; margin: 28px 0;">
-							<a href="${invitationUrl}" style="background-color: #2ea44f; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">Take Assessment</a>
-						</div>
-						<p style="font-size: 13px; color: #586069;">If you encounter any issues with the button, open this link directly in your browser:<br/><a href="${invitationUrl}" style="color: #0366d6;">${invitationUrl}</a></p>
-					</div>
-				`,
+				html,
 			});
 		} catch (mailError) {
 			console.warn(
@@ -1427,63 +1430,7 @@ const getAssessmentInvitations = async (
 	return invitations;
 };
 
-interface ISanitizeAssessmentInput {
-	settings?: {
-		shuffleQuestions?: boolean | null;
-		shuffleMCQOptions?: boolean | null;
-	} | null;
-	problems: Array<{
-		id: string;
-		assessmentId: string;
-		problemId: string;
-		questionOrder: number;
-		marks: number;
-		isRequired: boolean;
-		problem: {
-			id: string;
-			title: string;
-			description: string;
-			type: string;
-			difficulty: string;
-			marks: number;
-			mcqQuestion?: {
-				id: string;
-				explanation?: string | null;
-				options: Array<{
-					id: string;
-					optionText: string;
-					optionOrder: number;
-					isCorrect?: boolean;
-				}>;
-			} | null;
-			codingQuestion?: {
-				id: string;
-				inputFormat?: string | null;
-				outputFormat?: string | null;
-				constraints?: string | null;
-				starterCode?: unknown;
-				supportedLanguages: string[];
-				timeLimitMs: number;
-				memoryLimitMb: number;
-				testCases: Array<{
-					id: string;
-					type: TestCaseType;
-					input: string;
-					expectedOutput: string;
-					timeLimitMs?: number | null;
-					memoryLimitMb?: number | null;
-				}>;
-			} | null;
-			writtenQuestion?: {
-				id: string;
-				wordLimit?: number | null;
-				expectedAnswer?: string | null;
-			} | null;
-		};
-		[key: string]: unknown;
-	}>;
-	[key: string]: unknown;
-}
+
 
 /**
  * Sanitizes assessment and problem content for candidate consumption to prevent cheating.
@@ -1521,17 +1468,17 @@ const sanitizeAssessmentForCandidate = <T extends ISanitizeAssessmentInput>(
 				mcqQuestion,
 				codingQuestion: problem.codingQuestion
 					? {
-							...problem.codingQuestion,
-							testCases: problem.codingQuestion.testCases.filter(
-								(tc) => tc.type === TestCaseType.PUBLIC,
-							),
-						}
+						...problem.codingQuestion,
+						testCases: problem.codingQuestion.testCases.filter(
+							(tc) => tc.type === TestCaseType.PUBLIC,
+						),
+					}
 					: null,
 				writtenQuestion: problem.writtenQuestion
 					? {
-							...problem.writtenQuestion,
-							expectedAnswer: undefined,
-						}
+						...problem.writtenQuestion,
+						expectedAnswer: undefined,
+					}
 					: null,
 			},
 		};
@@ -1618,14 +1565,14 @@ const startAttempt = async (
 	}
 
 	const now = new Date();
-	if (assessment.startDate && assessment.startDate > now) {
+	if (assessment.startDate && isAfter(assessment.startDate, now)) {
 		throw new AppError(
 			httpStatus.BAD_REQUEST,
 			`This assessment has not started yet. It will open at ${assessment.startDate.toISOString()}.`,
 		);
 	}
 
-	if (assessment.endDate && assessment.endDate <= now) {
+	if (assessment.endDate && !isAfter(assessment.endDate, now)) {
 		throw new AppError(
 			httpStatus.BAD_REQUEST,
 			"The deadline for this assessment has already passed.",
@@ -1712,9 +1659,9 @@ const startAttempt = async (
 			// Idempotently resume existing in-progress attempt
 			const remainingSeconds = activeAttempt.expiresAt
 				? Math.max(
-						0,
-						Math.floor((activeAttempt.expiresAt.getTime() - Date.now()) / 1000),
-					)
+					0,
+					Math.floor((activeAttempt.expiresAt.getTime() - Date.now()) / 1000),
+				)
 				: null;
 
 			return {
@@ -1752,13 +1699,12 @@ const startAttempt = async (
 	// 5. Create new attempt with server-controlled timer
 	const attemptNumber = previousAttempts.length + 1;
 	const startedAt = new Date();
-	const durationMs = assessment.durationMinutes * 60 * 1000;
-	let expiresAt = new Date(startedAt.getTime() + durationMs);
+	let expiresAt = addMinutes(startedAt, assessment.durationMinutes);
 
 	// Clamp to assessment deadline if sooner
 	if (
 		assessment.endDate &&
-		assessment.endDate.getTime() < expiresAt.getTime()
+		isBefore(assessment.endDate, expiresAt)
 	) {
 		expiresAt = assessment.endDate;
 	}
@@ -2429,9 +2375,9 @@ const publishAssessmentResults = async (
 	const averageScore =
 		completedCount > 0
 			? Math.round(
-					(marksList.reduce((acc, curr) => acc + curr, 0) / completedCount) *
-						100,
-				) / 100
+				(marksList.reduce((acc, curr) => acc + curr, 0) / completedCount) *
+				100,
+			) / 100
 			: 0;
 	const highestScore = marksList.length > 0 ? Math.max(...marksList) : 0;
 	const lowestScore = marksList.length > 0 ? Math.min(...marksList) : 0;
@@ -2635,39 +2581,39 @@ const getAttemptResult = async (user: RequestUser, attemptId: string) => {
 			mcqDetails,
 			codingDetails: problem.codingQuestion
 				? {
-						supportedLanguages: problem.codingQuestion.supportedLanguages,
-						timeLimitMs: problem.codingQuestion.timeLimitMs,
-						memoryLimitMb: problem.codingQuestion.memoryLimitMb,
-						publicTestCases: problem.codingQuestion.testCases
-							.filter((tc) => tc.type === TestCaseType.PUBLIC)
-							.map((tc) => ({
-								input: tc.input,
-								expectedOutput: tc.expectedOutput,
-							})),
-					}
+					supportedLanguages: problem.codingQuestion.supportedLanguages,
+					timeLimitMs: problem.codingQuestion.timeLimitMs,
+					memoryLimitMb: problem.codingQuestion.memoryLimitMb,
+					publicTestCases: problem.codingQuestion.testCases
+						.filter((tc) => tc.type === TestCaseType.PUBLIC)
+						.map((tc) => ({
+							input: tc.input,
+							expectedOutput: tc.expectedOutput,
+						})),
+				}
 				: null,
 			writtenDetails: problem.writtenQuestion
 				? {
-						wordLimit: problem.writtenQuestion.wordLimit,
-						expectedAnswer:
-							!isCandidate || isPublished
-								? problem.writtenQuestion.expectedAnswer
-								: undefined,
-					}
+					wordLimit: problem.writtenQuestion.wordLimit,
+					expectedAnswer:
+						!isCandidate || isPublished
+							? problem.writtenQuestion.expectedAnswer
+							: undefined,
+				}
 				: null,
 			candidateSubmission: submission
 				? {
-						id: submission.id,
-						selectedOptionId: submission.selectedOptionId,
-						answerText: submission.answerText,
-						sourceCode: submission.sourceCode,
-						language: submission.language,
-						status: submission.status,
-						marksObtained: submission.marks,
-						isCorrect: submission.isCorrect,
-						submittedAt: submission.submittedAt,
-						evaluations: submission.evaluations,
-					}
+					id: submission.id,
+					selectedOptionId: submission.selectedOptionId,
+					answerText: submission.answerText,
+					sourceCode: submission.sourceCode,
+					language: submission.language,
+					status: submission.status,
+					marksObtained: submission.marks,
+					isCorrect: submission.isCorrect,
+					submittedAt: submission.submittedAt,
+					evaluations: submission.evaluations,
+				}
 				: null,
 		};
 	});
@@ -2691,10 +2637,10 @@ const getAttemptResult = async (user: RequestUser, attemptId: string) => {
 			durationMinutes:
 				attempt.startedAt && attempt.submittedAt
 					? Math.round(
-							((attempt.submittedAt.getTime() - attempt.startedAt.getTime()) /
-								60000) *
-								10,
-						) / 10
+						((attempt.submittedAt.getTime() - attempt.startedAt.getTime()) /
+							60000) *
+						10,
+					) / 10
 					: null,
 		},
 		result: attempt.result,
@@ -2960,10 +2906,10 @@ const getDetailedResultReport = async (
 			durationMinutes:
 				attempt.startedAt && attempt.submittedAt
 					? Math.round(
-							((attempt.submittedAt.getTime() - attempt.startedAt.getTime()) /
-								60000) *
-								10,
-						) / 10
+						((attempt.submittedAt.getTime() - attempt.startedAt.getTime()) /
+							60000) *
+						10,
+					) / 10
 					: null,
 		},
 		result: attempt.result,

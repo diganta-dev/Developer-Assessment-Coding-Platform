@@ -47,3 +47,25 @@ export interface IResetPasswordPayload {
 	newPassword: string;
 	otp: string;
 }
+
+export interface IVerifyLoginOtpPayload {
+	email: string;
+	otp: string;
+}
+
+export interface IResendLoginOtpPayload {
+	email: string;
+}
+
+export type ILoginResult =
+	| {
+			requiresVerification: false;
+			user: Record<string, unknown>;
+			accessToken: string;
+			refreshToken: string;
+	  }
+	| {
+			requiresVerification: true;
+			email: string;
+			message: string;
+	  };

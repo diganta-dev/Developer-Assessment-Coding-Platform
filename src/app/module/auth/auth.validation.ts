@@ -17,9 +17,7 @@ export const CandidateRegistrationZodSchema = z.object({
 		.string()
 		.min(3, "Name must be at least 3 characters")
 		.max(50, "Name must be at most 50 characters"),
-	email: z
-		.string()
-		.email("follow the email format"),
+	email: z.string().email("follow the email format"),
 	password: passwordSchema,
 	candidateProfile: z
 		.object({
@@ -37,49 +35,37 @@ export const CandidateRegistrationZodSchema = z.object({
 export const PatientRegistrationZodSchema = CandidateRegistrationZodSchema;
 
 export const VerifyOtpZodSchema = z.object({
-	email: z
-		.string()
-		.email("follow the email format"),
-	otp: z
-		.string()
-		.length(6, "OTP must be exactly 6 digits"),
+	email: z.string().email("follow the email format"),
+	otp: z.string().length(6, "OTP must be exactly 6 digits"),
 });
 
 export const patientValidationZodSchema = VerifyOtpZodSchema;
 
 export const LoginZodSchema = z.object({
-	email: z
-		.string()
-		.email("follow the email format"),
-	password: z
-		.string()
-		.min(8, "Password Must Minimum 8 Characters Long."),
+	email: z.string().email("follow the email format"),
+	password: z.string().min(8, "Password Must Minimum 8 Characters Long."),
 });
 
 export const GoogleLoginZodSchema = z.object({
-	idToken: z
-		.string()
-		.min(1, "Google ID token cannot be empty"),
+	idToken: z.string().min(1, "Google ID token cannot be empty"),
 });
 
 export const ForgotPasswordZodSchema = z.object({
-	email: z
-		.string()
-		.email("follow the email format"),
+	email: z.string().email("follow the email format"),
 });
 
 export const ResetPasswordZodSchema = z.object({
-	email: z
-		.string()
-		.email("follow the email format"),
+	email: z.string().email("follow the email format"),
 	newPassword: passwordSchema,
-	otp: z
-		.string()
-		.length(6, "OTP must be exactly 6 digits"),
+	otp: z.string().length(6, "OTP must be exactly 6 digits"),
 });
 
 export const RefreshTokenZodSchema = z.object({
 	refreshToken: z.string().optional(),
+});
+
+export const ResendOtpZodSchema = z.object({
+	email: z.string().email("follow the email format"),
 });
 
 export const UserValidation = {
@@ -92,6 +78,7 @@ export const UserValidation = {
 	ForgotPasswordZodSchema,
 	ResetPasswordZodSchema,
 	RefreshTokenZodSchema,
+	ResendOtpZodSchema,
 };
 
 export const AuthValidation = UserValidation;

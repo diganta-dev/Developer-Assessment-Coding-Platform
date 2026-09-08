@@ -1,12 +1,11 @@
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
 import config from "../../config";
-
+import AppError from "../../utils/AppError";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import type { IRequestUser } from "./auth.interface";
 import { AuthService } from "./auth.service";
-import AppError from "../../utils/AppError";
 
 const isProduction = config.node_env === "production";
 
@@ -36,8 +35,16 @@ const verifyRegistrationEmail = catchAsync(
 		const result = await AuthService.verifyRegistrationEmail(payload);
 		const { accessToken, refreshToken, user, candidateProfile } = result;
 
-		res.cookie("accessToken", accessToken, getCookieOptions(1000 * 60 * 60 * 24));
-		res.cookie("refreshToken", refreshToken, getCookieOptions(1000 * 60 * 60 * 24 * 7));
+		res.cookie(
+			"accessToken",
+			accessToken,
+			getCookieOptions(1000 * 60 * 60 * 24),
+		);
+		res.cookie(
+			"refreshToken",
+			refreshToken,
+			getCookieOptions(1000 * 60 * 60 * 24 * 7),
+		);
 
 		sendResponse(res, {
 			statusCode: httpStatus.CREATED,
@@ -56,20 +63,75 @@ const verifyRegistrationEmail = catchAsync(
 const loginUser = catchAsync(async (req: Request, res: Response) => {
 	const payload = req.body;
 	const result = await AuthService.loginUser(payload);
+
+	if (result.requiresVerification) {
+		sendResponse(res, {
+			statusCode: httpStatus.OK,
+			success: true,
+			message: result.message,
+			data: {
+				requiresVerification: true,
+				email: result.email,
+			},
+		});
+		return;
+	}
+
 	const { accessToken, refreshToken, user } = result;
 
 	res.cookie("accessToken", accessToken, getCookieOptions(1000 * 60 * 60 * 24));
-	res.cookie("refreshToken", refreshToken, getCookieOptions(1000 * 60 * 60 * 24 * 7));
+	res.cookie(
+		"refreshToken",
+		refreshToken,
+		getCookieOptions(1000 * 60 * 60 * 24 * 7),
+	);
 
 	sendResponse(res, {
 		statusCode: httpStatus.OK,
 		success: true,
 		message: "User logged in successfully",
 		data: {
+			requiresVerification: false,
 			accessToken,
 			refreshToken,
 			user,
 		},
+	});
+});
+
+const verifyLoginOtp = catchAsync(async (req: Request, res: Response) => {
+	const payload = req.body;
+	const result = await AuthService.verifyLoginOtp(payload);
+	const { accessToken, refreshToken, user } = result;
+
+	res.cookie("accessToken", accessToken, getCookieOptions(1000 * 60 * 60 * 24));
+	res.cookie(
+		"refreshToken",
+		refreshToken,
+		getCookieOptions(1000 * 60 * 60 * 24 * 7),
+	);
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "Email verified and logged in successfully",
+		data: {
+			accessToken,
+			refreshToken,
+			user,
+		},
+	});
+});
+
+const resendLoginOtp = catchAsync(async (req: Request, res: Response) => {
+	const payload = req.body;
+	const result = await AuthService.resendLoginOtp(payload);
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: result.message,
+		data: null,
 	});
 });
 
@@ -79,7 +141,11 @@ const googleLogin = catchAsync(async (req: Request, res: Response) => {
 	const { accessToken, refreshToken, user } = result;
 
 	res.cookie("accessToken", accessToken, getCookieOptions(1000 * 60 * 60 * 24));
-	res.cookie("refreshToken", refreshToken, getCookieOptions(1000 * 60 * 60 * 24 * 7));
+	res.cookie(
+		"refreshToken",
+		refreshToken,
+		getCookieOptions(1000 * 60 * 60 * 24 * 7),
+	);
 
 	sendResponse(res, {
 		statusCode: httpStatus.OK,
@@ -146,7 +212,11 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
 	const { accessToken, refreshToken: newRefreshToken, user } = result;
 
 	res.cookie("accessToken", accessToken, getCookieOptions(1000 * 60 * 60 * 24));
-	res.cookie("refreshToken", newRefreshToken, getCookieOptions(1000 * 60 * 60 * 24 * 7));
+	res.cookie(
+		"refreshToken",
+		newRefreshToken,
+		getCookieOptions(1000 * 60 * 60 * 24 * 7),
+	);
 
 	sendResponse(res, {
 		statusCode: httpStatus.OK,
@@ -188,6 +258,8 @@ export const AuthController = {
 	registerUser: registerCandidate,
 	verifyRegistrationEmail,
 	loginUser,
+	verifyLoginOtp,
+	resendLoginOtp,
 	googleLogin,
 	logoutUser,
 	getMe,

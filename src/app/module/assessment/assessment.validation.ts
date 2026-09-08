@@ -1,3 +1,4 @@
+import { isAfter, toDate } from "date-fns";
 import { z } from "zod";
 
 export const assessmentProblemInputSchema = z.object({
@@ -77,45 +78,23 @@ export const createAssessmentValidation = z
 			.optional()
 			.default("DRAFT"),
 		settings: assessmentSettingInputSchema.optional(),
-		problems: z.array(assessmentProblemInputSchema).optional(),
+		problems: z
+			.never({
+				message:
+					"Problems cannot be added directly during assessment creation. Please create the assessment first, then add problems using the add-problems endpoint.",
+			})
+			.optional(),
 	})
 	.superRefine((data, ctx) => {
 		// Validate date chronology
 		if (data.startDate && data.endDate) {
-			const start = new Date(data.startDate);
-			const end = new Date(data.endDate);
-			if (end <= start) {
+			const start = toDate(data.startDate);
+			const end = toDate(data.endDate);
+			if (!isAfter(end, start)) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message: "End date must be after the start date",
 					path: ["endDate"],
-				});
-			}
-		}
-
-		// Validate unique problem IDs
-		if (data.problems && data.problems.length > 0) {
-			const problemIds = data.problems.map((p) => p.problemId);
-			const uniqueIds = new Set(problemIds);
-			if (uniqueIds.size !== problemIds.length) {
-				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
-					message:
-						"Duplicate problem IDs detected in the assessment problem list",
-					path: ["problems"],
-				});
-			}
-
-			// Validate unique custom question orders if provided
-			const customOrders = data.problems
-				.map((p) => p.questionOrder)
-				.filter((order): order is number => typeof order === "number");
-			const uniqueOrders = new Set(customOrders);
-			if (uniqueOrders.size !== customOrders.length) {
-				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
-					message: "Question orders must be unique within the assessment",
-					path: ["problems"],
 				});
 			}
 		}
@@ -185,9 +164,9 @@ export const updateAssessmentValidation = z
 	.superRefine((data, ctx) => {
 		// Validate date chronology if both dates are present
 		if (data.startDate && data.endDate) {
-			const start = new Date(data.startDate);
-			const end = new Date(data.endDate);
-			if (end <= start) {
+			const start = toDate(data.startDate);
+			const end = toDate(data.endDate);
+			if (!isAfter(end, start)) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message: "End date must be after the start date",
