@@ -142,6 +142,14 @@ const createAssessment = async (
 	user: RequestUser,
 	payload: ICreateAssessmentPayload,
 ) => {
+	// Guard: Candidates cannot create assessments
+	if (user.role === UserRole.CANDIDATE) {
+		throw new AppError(
+			httpStatus.FORBIDDEN,
+			"Forbidden. Candidates are not permitted to create assessments.",
+		);
+	}
+
 	// Guard: Direct problem inclusion is disallowed during assessment creation
 	const rawPayload = payload as unknown as Record<string, unknown>;
 	if (
@@ -163,17 +171,27 @@ const createAssessment = async (
 	const initialTotalMarks = payload.totalMarks ?? 0;
 
 	// Validate passing score relative to total marks if provided
-	if (
-		payload.passingScore !== undefined &&
-		payload.passingScore !== null &&
-		initialTotalMarks > 0
-	) {
-		if (payload.passingScore > initialTotalMarks) {
+	if (payload.passingScore !== undefined && payload.passingScore !== null) {
+		if (initialTotalMarks > 0 && payload.passingScore > initialTotalMarks) {
 			throw new AppError(
 				httpStatus.BAD_REQUEST,
 				`Passing score (${payload.passingScore}) cannot be greater than total marks (${initialTotalMarks}).`,
 			);
 		}
+		if (initialTotalMarks === 0 && payload.passingScore > 0) {
+			throw new AppError(
+				httpStatus.BAD_REQUEST,
+				"Passing score cannot be specified when total marks is 0. Please set total marks or add problems first.",
+			);
+		}
+	}
+
+	// Validate end date is in the future
+	if (payload.endDate && isPast(toDate(payload.endDate))) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"End date must be in the future.",
+		);
 	}
 
 	// Validate date chronology with date-fns
@@ -190,7 +208,7 @@ const createAssessment = async (
 
 	// Atomic assessment creation inside database transaction
 	const result = await prisma.$transaction(async (tx) => {
-		// Create the assessment header & default settings
+		// Create the assessment header & default settings (always DRAFT initially)
 		const newAssessment = await tx.assessment.create({
 			data: {
 				title: payload.title.trim(),
@@ -202,7 +220,7 @@ const createAssessment = async (
 				passingScore: payload.passingScore ?? null,
 				startDate: payload.startDate ? toDate(payload.startDate) : null,
 				endDate: payload.endDate ? toDate(payload.endDate) : null,
-				status: payload.status ?? AssessmentStatus.DRAFT,
+				status: AssessmentStatus.DRAFT,
 				settings: {
 					create: {
 						maxAttempts: payload.settings?.maxAttempts ?? 1,
