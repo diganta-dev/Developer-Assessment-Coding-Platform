@@ -7,6 +7,7 @@ import { ProblemRoute } from "../module/problem-bank/problem.route";
 import { CalculationRoutes } from "../module/score-calculation/calculation.route";
 import { RankingResultRoutes } from "../module/ranking-result/rankingresult.route";
 import { ReportsAnalyticsRoutes } from "../module/repostandAnalytics/reports-analytics.route";
+import { AdminManagementRoutes } from "../module/admin-management/admin-management.route";
 import { SubmissionRoutes } from "../module/submission/submission.route";
 
 const router = Router();
@@ -47,6 +48,10 @@ const routes = [
 	{
 		path: "/reports-analytics",
 		route: ReportsAnalyticsRoutes,
+	},
+	{
+		path: "/admin-management",
+		route: AdminManagementRoutes,
 	},
 ];
 
