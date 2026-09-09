@@ -143,8 +143,8 @@ const createAssessment = async (
 	user: RequestUser,
 	payload: ICreateAssessmentPayload,
 ) => {
-	// Guard: Candidates cannot create assessments
-	if (user.role === UserRole.CANDIDATE) {
+	// Guard: Pure candidates without company staff roles cannot create assessments
+	if (user.role === UserRole.CANDIDATE && !user.companyRole) {
 		throw new AppError(
 			httpStatus.FORBIDDEN,
 			"Forbidden. Candidates are not permitted to create assessments.",

@@ -32,6 +32,71 @@ export default {
 		password: process.env.TESTER_ADMIN_PASSWORD,
 	},
 
+	// Seed variables (Flat properties)
+	super_admin_name:
+		process.env.SUPER_ADMIN_NAME ||
+		process.env.TESTED_PLATFORM_SUPERADMIN_NAME ||
+		"Tester-Super-Admin",
+	super_admin_email:
+		process.env.SUPER_ADMIN_EMAIL ||
+		process.env.TESTED_PLATFORM_SUPERADMIN_EMAIL ||
+		"superadmin@gmail.com",
+	super_admin_password:
+		process.env.SUPER_ADMIN_PASSWORD ||
+		process.env.TESTED_PLATFORM_SUPERADMIN_PASSWORD ||
+		"superAdmin33#",
+
+	tester_admin_name:
+		process.env.TESTER_ADMIN_NAME ||
+		process.env.TESTED_PLATFORM_ADMIN_NAME ||
+		"Tester-Admin",
+	tester_admin_email:
+		process.env.TESTER_ADMIN_EMAIL ||
+		process.env.TESTED_PLATFORM_ADMIN_EMAIL ||
+		"testadmin@gmail.com",
+	tester_admin_password:
+		process.env.TESTER_ADMIN_PASSWORD ||
+		process.env.TESTED_PLATFORM_ADMIN_PASSWORD ||
+		"TestAdmin33#",
+
+	company_admin_name:
+		process.env.TESTED_COMPANY_ADMIN_NAME || "Tested Company Admin",
+	company_admin_email:
+		process.env.TESTED_COMPANY_ADMIN_EMAIL ||
+		"tested.companyadmin@devassess.com",
+	company_admin_password:
+		process.env.TESTED_COMPANY_ADMIN_PASSWORD || "CompanyAdmin123!#",
+
+	company_recruiter_name:
+		process.env.TESTED_COMPANY_RECRUITER_NAME || "Tested Company Recruiter",
+	company_recruiter_email:
+		process.env.TESTED_COMPANY_RECRUITER_EMAIL ||
+		"tested.recruiter@devassess.com",
+	company_recruiter_password:
+		process.env.TESTED_COMPANY_RECRUITER_PASSWORD || "CompanyRecruiter123!#",
+
+	assessment_creator_name:
+		process.env.TESTED_ASSESSMENT_CREATOR_NAME || "Tested Assessment Creator",
+	assessment_creator_email:
+		process.env.TESTED_ASSESSMENT_CREATOR_EMAIL ||
+		"tested.creator@devassess.com",
+	assessment_creator_password:
+		process.env.TESTED_ASSESSMENT_CREATOR_PASSWORD || "Creator123!#",
+
+	evaluator_name: process.env.TESTED_EVALUATOR_NAME || "Tested Evaluator",
+	evaluator_email:
+		process.env.TESTED_EVALUATOR_EMAIL || "tested.evaluator@devassess.com",
+	evaluator_password: process.env.TESTED_EVALUATOR_PASSWORD || "Evaluator123!#",
+
+	candidate_name: process.env.TESTED_CANDIDATE_NAME || "Tested Candidate",
+	candidate_email:
+		process.env.TESTED_CANDIDATE_EMAIL || "tested.candidate@devassess.com",
+	candidate_password: process.env.TESTED_CANDIDATE_PASSWORD || "Candidate123!#",
+
+	test_company_name: process.env.TEST_COMPANY_NAME || "DevAssess Global Tech",
+	test_company_slug: process.env.TEST_COMPANY_SLUG || "devassess-global-tech",
+	test_company_email: process.env.TEST_COMPANY_EMAIL || "contact@devassess.com",
+
 	// Redis
 	redis: {
 		host: process.env.REDIS_HOST,

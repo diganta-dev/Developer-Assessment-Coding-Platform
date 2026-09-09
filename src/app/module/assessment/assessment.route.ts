@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums";
 import { auth } from "../../middleware/checkAuth";
 import { validateRequest } from "../../middleware/validateRequest";
 import { SubmissionController } from "../submission/submission.controller";
@@ -30,19 +31,42 @@ const router = Router();
 
 router.post(
 	"/",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
 	validateRequest(createAssessmentValidation),
 	AssessmentController.createAssessment,
 );
 
 router.post(
 	"/create-assessment",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
 	validateRequest(createAssessmentValidation),
 	AssessmentController.createAssessment,
 );
 
-router.get("/", auth(), AssessmentController.getMyAssessments);
+router.get(
+	"/",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
+	AssessmentController.getMyAssessments,
+);
 
 // ─── CANDIDATE SELF-SERVICE (must be before /:id to avoid shadow) ─────────────
 
@@ -59,21 +83,38 @@ router.post(
 
 router.post(
 	"/publish-results/:id",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
 	validateRequest(publishResultsValidation),
 	AssessmentController.publishAssessmentResults,
 );
 
 router.post(
 	"/invite-candidates/:id",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+	),
 	validateRequest(inviteCandidatesValidation),
 	AssessmentController.inviteCandidates,
 );
 
 router.post(
 	"/add-problems/:id",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
 	validateRequest(addProblemsValidation),
 	AssessmentController.addProblemsToAssessment,
 );
@@ -122,7 +163,14 @@ router.get(
 
 router.get(
 	"/get-my-assessments",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
 	AssessmentController.getMyAssessments,
 );
 
@@ -134,28 +182,67 @@ router.get(
 
 router.patch(
 	"/update-assessment/:id",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
 	validateRequest(updateAssessmentValidation),
 	AssessmentController.updateAssessment,
 );
 
 router.patch(
 	"/publish-assessment/:id",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
 	AssessmentController.publishAssessment,
 );
 
 router.delete(
 	"/delete-assessment/:id",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+	),
 	AssessmentController.deleteAssessment,
 );
 
 // ─── PARAMETERIZED /:id ROUTES (must be last to avoid shadowing) ──────────────
 
-router.get("/:id/attempts", auth(), AssessmentController.getAssessmentAttempts);
+router.get(
+	"/:id/attempts",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
+	AssessmentController.getAssessmentAttempts,
+);
 
-router.get("/:id/results", auth(), AssessmentController.getAssessmentResults);
+router.get(
+	"/:id/results",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
+	AssessmentController.getAssessmentResults,
+);
 
 router.get(
 	"/:id/leaderboard",
@@ -165,7 +252,13 @@ router.get(
 
 router.post(
 	"/:id/publish-results",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
 	validateRequest(publishResultsValidation),
 	AssessmentController.publishAssessmentResults,
 );
@@ -177,24 +270,51 @@ router.post(
 	AssessmentController.startAttempt,
 );
 
-router.patch("/:id/publish", auth(), AssessmentController.publishAssessment);
+router.patch(
+	"/:id/publish",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
+	AssessmentController.publishAssessment,
+);
 
 router.post(
 	"/:id/invite",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+	),
 	validateRequest(inviteCandidatesValidation),
 	AssessmentController.inviteCandidates,
 );
 
 router.get(
 	"/:id/invitations",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
 	AssessmentController.getAssessmentInvitations,
 );
 
 router.post(
 	"/:id/problems",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
 	validateRequest(addProblemsValidation),
 	AssessmentController.addProblemsToAssessment,
 );
@@ -204,11 +324,26 @@ router.get("/:id", auth(), AssessmentController.getSingleAssessment);
 
 router.patch(
 	"/:id",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
 	validateRequest(updateAssessmentValidation),
 	AssessmentController.updateAssessment,
 );
 
-router.delete("/:id", auth(), AssessmentController.deleteAssessment);
+router.delete(
+	"/:id",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+	),
+	AssessmentController.deleteAssessment,
+);
 
 export const AssessmentRoutes = router;

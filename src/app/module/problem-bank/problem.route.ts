@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { UserRole } from "../../../generated/prisma/enums";
+import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums";
 import { auth } from "../../middleware/checkAuth";
 import { validateRequest } from "../../middleware/validateRequest";
 import { ProblemController } from "./problem.controller";
@@ -13,7 +13,13 @@ const router = Router();
 // Create problem (Platform Admins or Company Owner/Admin/Creator)
 router.post(
 	"/create-problem",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
 	validateRequest(createProblemValidation),
 	ProblemController.createProblem,
 );
@@ -31,12 +37,30 @@ router.get(
 	ProblemController.getAllProblems,
 );
 
-// Get problems created by the logged-in user's company (Company Owner, Admin, Assessment Creator)
-router.get("/company-problems", auth(), ProblemController.getCompanyProblems);
+// Get problems created by the logged-in user's company (Company Owner, Admin, Assessment Creator, Evaluator)
+router.get(
+	"/company-problems",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
+	ProblemController.getCompanyProblems,
+);
 
 router.get(
 	"/my-company-problems",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
 	ProblemController.getCompanyProblems,
 );
 
@@ -46,12 +70,28 @@ router.get("/:id", auth(), ProblemController.getSingleProblem);
 // Update problem by ID (Platform Admins or Company Owner/Admin/Creator)
 router.patch(
 	"/:id",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
 	validateRequest(updateProblemValidation),
 	ProblemController.updateProblem,
 );
 
 // Delete problem by ID (Platform Admins or Company Owner/Admin/Creator)
-router.delete("/:id", auth(), ProblemController.deleteProblem);
+router.delete(
+	"/:id",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
+	ProblemController.deleteProblem,
+);
 
 export const ProblemRoute = router;

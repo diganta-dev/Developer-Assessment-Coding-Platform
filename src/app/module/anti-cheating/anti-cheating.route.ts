@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums";
 import { auth } from "../../middleware/checkAuth";
 import { validateRequest } from "../../middleware/validateRequest";
 import { AntiCheatingController } from "./anti-cheating.controller";
@@ -66,14 +67,28 @@ router.post(
 // 7. Calculate Multi-Factor Cheating Risk Score (Audit report)
 router.get(
 	"/attempt/:attemptId/risk",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
 	AntiCheatingController.calculateCheatingRisk,
 );
 
 // 8. Formally Flag Attempt (Admin / Proctor manual review & disqualification)
 router.post(
 	"/attempt/:attemptId/flag",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
 	validateRequest(AntiCheatingValidation.flagAttemptValidation),
 	AntiCheatingController.flagAttempt,
 );
