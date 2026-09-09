@@ -205,68 +205,63 @@ const manualEvaluateSubmission = async (
 
 	const isCorrect = marks === maxMarks;
 
-	// Update Submission outcome
-	await prisma.submission.update({
-		where: { id: submission.id },
-		data: {
-			marks,
-			isCorrect,
-			status: SubmissionStatus.EVALUATED,
-		},
-	});
-
-	// Create or update MANUAL Evaluation entry
-	const existingEvaluation = await prisma.evaluation.findFirst({
-		where: {
-			submissionId: submission.id,
-			type: EvaluationType.MANUAL,
-		},
-	});
-
-	if (existingEvaluation) {
-		return await prisma.evaluation.update({
-			where: { id: existingEvaluation.id },
+	// Atomically persist submission outcome and evaluation record
+	const evaluationRecord = await prisma.$transaction(async (tx) => {
+		await tx.submission.update({
+			where: { id: submission.id },
 			data: {
 				marks,
-				feedback: payload.feedback?.trim() || null,
+				isCorrect,
+				status: SubmissionStatus.EVALUATED,
+			},
+		});
+
+		const existingEvaluation = await tx.evaluation.findFirst({
+			where: {
+				submissionId: submission.id,
+				type: EvaluationType.MANUAL,
+			},
+		});
+
+		if (existingEvaluation) {
+			return tx.evaluation.update({
+				where: { id: existingEvaluation.id },
+				data: {
+					marks,
+					feedback: payload.feedback?.trim() || null,
+					evaluatorId: user.userId,
+					status: EvaluationStatus.COMPLETED,
+					evaluatedAt: new Date(),
+				},
+				include: {
+					submission: true,
+					evaluator: {
+						select: { id: true, name: true, email: true },
+					},
+				},
+			});
+		}
+
+		return tx.evaluation.create({
+			data: {
+				submissionId: submission.id,
 				evaluatorId: user.userId,
+				type: EvaluationType.MANUAL,
 				status: EvaluationStatus.COMPLETED,
+				marks,
+				feedback: payload.feedback?.trim() || null,
 				evaluatedAt: new Date(),
 			},
 			include: {
 				submission: true,
 				evaluator: {
-					select: {
-						id: true,
-						name: true,
-						email: true,
-					},
+					select: { id: true, name: true, email: true },
 				},
 			},
 		});
-	}
-
-	return await prisma.evaluation.create({
-		data: {
-			submissionId: submission.id,
-			evaluatorId: user.userId,
-			type: EvaluationType.MANUAL,
-			status: EvaluationStatus.COMPLETED,
-			marks,
-			feedback: payload.feedback?.trim() || null,
-			evaluatedAt: new Date(),
-		},
-		include: {
-			submission: true,
-			evaluator: {
-				select: {
-					id: true,
-					name: true,
-					email: true,
-				},
-			},
-		},
 	});
+
+	return evaluationRecord;
 };
 
 /**

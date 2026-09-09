@@ -4,6 +4,7 @@ import { AuthRoutes } from "../module/auth/auth.route";
 import { CompanyRoutes } from "../module/company/company.route";
 import { EvaluationRoutes } from "../module/evaluation/evaluation.route";
 import { ProblemRoute } from "../module/problem-bank/problem.route";
+import { CalculationRoutes } from "../module/score-calculation/calculation.route";
 import { SubmissionRoutes } from "../module/submission/submission.route";
 
 const router = Router();
@@ -32,6 +33,10 @@ const routes = [
 	{
 		path: "/evaluation",
 		route: EvaluationRoutes,
+	},
+	{
+		path: "/score-calculation",
+		route: CalculationRoutes,
 	},
 ];
 

@@ -269,12 +269,10 @@ export const executeJudge0TestCase = async (
 	const normalizedActual = normalizeOutput(stdout);
 	const normalizedExpected = normalizeOutput(options.expectedOutput);
 
-	// Status 3 = Accepted (the only valid passing state from Judge0)
-	// Status 4 = Wrong Answer — never pass this, even if output looks similar
-	// We also do our own strict output comparison as a secondary check
+	// In Judge0, status 3 indicates Accepted. Any status id >= 4 (Wrong Answer, Time limit, Compile error, Runtime error) is a failure.
 	const isStatusAccepted = result.status?.id === 3;
-	const isOutputMatch = normalizedActual === normalizedExpected;
-	const passed = isStatusAccepted || isOutputMatch;
+	const hasExecutionError = (result.status?.id ?? 0) >= 4;
+	const passed = !hasExecutionError && isStatusAccepted;
 
 	const executionTimeMs = result.time
 		? Math.round(parseFloat(result.time) * 1000)

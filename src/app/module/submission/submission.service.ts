@@ -9,6 +9,7 @@ import { prisma } from "../../lib/prisma";
 import type { RequestUser } from "../../middleware/checkAuth";
 import AppError from "../../utils/AppError";
 import { CodingEvaluationService } from "../evaluation/codingEvaluation.service";
+import { MCQEvaluationService } from "../evaluation/mcqEvaluation.service";
 import type {
 	ICreateSubmissionPayload,
 	ISubmissionFilterQuery,
@@ -826,6 +827,34 @@ const submitSubmission = async (
 			}
 		} catch (error) {
 			console.error("Automated Judge0 evaluation error:", error);
+		}
+	} else if (submission.problem.type === ProblemType.MCQ) {
+		try {
+			await MCQEvaluationService.evaluateMCQSubmission(
+				submission.id,
+				user.userId,
+				isCandidateOwner,
+			);
+			// Fetch the evaluated submission with updated stats & marks
+			const evaluated = await prisma.submission.findUnique({
+				where: { id: submission.id },
+				include: {
+					problem: {
+						select: {
+							id: true,
+							title: true,
+							type: true,
+							difficulty: true,
+							marks: true,
+						},
+					},
+				},
+			});
+			if (evaluated) {
+				finalSubmission = evaluated;
+			}
+		} catch (error) {
+			console.error("Automated MCQ evaluation error:", error);
 		}
 	}
 

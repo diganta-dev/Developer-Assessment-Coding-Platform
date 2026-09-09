@@ -8,18 +8,11 @@ import {
 } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import AppError from "../../utils/AppError";
+import { AttemptScoreService } from "./attemptScore.service";
 import type { IMCQEvaluationResult } from "./evaluation.interface";
 
 /**
  * Evaluates an MCQ submission against the configured question options.
- *
- * Evaluation Pipeline:
- * 1. Fetch submission with associated problem, MCQ options, and assessment marks configuration.
- * 2. Validate problem type and question integrity.
- * 3. Match candidate's selected option against question options.
- * 4. Calculate earned marks (full marks if correct, 0 if incorrect/unselected).
- * 5. Atomically update Submission and upsert an AUTOMATIC Evaluation record via transaction.
- * 6. Sanitize result if candidate is actively taking the test (prevent answer leakage).
  */
 const evaluateMCQSubmission = async (
 	submissionId: string,
@@ -162,6 +155,18 @@ const evaluateMCQSubmission = async (
 
 		return [updatedSubmission, evaluationRecord];
 	});
+
+	// If the attempt is submitted or expired, auto-sync total attempt score
+	if (
+		submission.attempt.status === AttemptStatus.SUBMITTED ||
+		submission.attempt.status === AttemptStatus.EXPIRED
+	) {
+		try {
+			await AttemptScoreService.calculateAttemptScore(submission.attemptId);
+		} catch {
+			// Non-blocking
+		}
+	}
 
 	// Anti-cheating guard: If candidate evaluates during an active test,
 	// mask correct answers and explanation to prevent test leakage.
