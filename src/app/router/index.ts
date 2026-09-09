@@ -5,6 +5,7 @@ import { CompanyRoutes } from "../module/company/company.route";
 import { EvaluationRoutes } from "../module/evaluation/evaluation.route";
 import { ProblemRoute } from "../module/problem-bank/problem.route";
 import { CalculationRoutes } from "../module/score-calculation/calculation.route";
+import { RankingResultRoutes } from "../module/ranking-result/rankingresult.route";
 import { SubmissionRoutes } from "../module/submission/submission.route";
 
 const router = Router();
@@ -37,6 +38,10 @@ const routes = [
 	{
 		path: "/score-calculation",
 		route: CalculationRoutes,
+	},
+	{
+		path: "/ranking-result",
+		route: RankingResultRoutes,
 	},
 ];
 
