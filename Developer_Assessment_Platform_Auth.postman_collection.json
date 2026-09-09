@@ -87,7 +87,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{rootUrl}}/"
+              "raw": "{{rootUrl}}/",
+              "host": [
+                "{{rootUrl}}"
+              ],
+              "path": [
+                ""
+              ]
             }
           }
         }
@@ -132,10 +138,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"superadmin@gmail.com\",\n  \"password\": \"superAdmin33#\"\n}"
+              "raw": "{\n  \"email\": \"superadmin@gmail.com\",\n  \"password\": \"superAdmin33#\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/login"
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             }
           }
         },
@@ -174,10 +192,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"testadmin@gmail.com\",\n  \"password\": \"TestAdmin33#\"\n}"
+              "raw": "{\n  \"email\": \"testadmin@gmail.com\",\n  \"password\": \"TestAdmin33#\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/login"
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             }
           }
         },
@@ -216,10 +246,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"tested.companyadmin@devassess.com\",\n  \"password\": \"CompanyAdmin123!#\"\n}"
+              "raw": "{\n  \"email\": \"tested.companyadmin@devassess.com\",\n  \"password\": \"CompanyAdmin123!#\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/login"
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             }
           }
         },
@@ -258,10 +300,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"tested.recruiter@devassess.com\",\n  \"password\": \"CompanyRecruiter123!#\"\n}"
+              "raw": "{\n  \"email\": \"tested.recruiter@devassess.com\",\n  \"password\": \"CompanyRecruiter123!#\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/login"
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             }
           }
         },
@@ -300,10 +354,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"tested.creator@devassess.com\",\n  \"password\": \"Creator123!#\"\n}"
+              "raw": "{\n  \"email\": \"tested.creator@devassess.com\",\n  \"password\": \"Creator123!#\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/login"
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             }
           }
         },
@@ -342,10 +408,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"tested.evaluator@devassess.com\",\n  \"password\": \"Evaluator123!#\"\n}"
+              "raw": "{\n  \"email\": \"tested.evaluator@devassess.com\",\n  \"password\": \"Evaluator123!#\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/login"
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             }
           }
         },
@@ -384,10 +462,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"tested.candidate@devassess.com\",\n  \"password\": \"Candidate123!#\"\n}"
+              "raw": "{\n  \"email\": \"tested.candidate@devassess.com\",\n  \"password\": \"Candidate123!#\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/login"
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             }
           }
         },
@@ -397,7 +487,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/auth/me"
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
             }
           }
         },
@@ -436,10 +533,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/refresh-token"
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "refresh-token"
+              ]
             }
           }
         },
@@ -458,10 +567,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Candidate Postman Test\",\n  \"email\": \"candidate.test@example.com\",\n  \"password\": \"CandidatePass123!#\",\n  \"candidateProfile\": {\n    \"phone\": \"+8801700000000\",\n    \"location\": \"Dhaka, Bangladesh\",\n    \"bio\": \"Full Stack Engineer\"\n  }\n}"
+              "raw": "{\n  \"name\": \"Candidate Postman Test\",\n  \"email\": \"candidate.test@example.com\",\n  \"password\": \"CandidatePass123!#\",\n  \"candidateProfile\": {\n    \"phone\": \"+8801700000000\",\n    \"location\": \"Dhaka, Bangladesh\",\n    \"bio\": \"Full Stack Engineer\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/register"
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
             }
           }
         },
@@ -500,10 +621,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"candidate.test@example.com\",\n  \"otp\": \"123456\"\n}"
+              "raw": "{\n  \"email\": \"candidate.test@example.com\",\n  \"otp\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/verify-email"
+              "raw": "{{baseUrl}}/auth/verify-email",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "verify-email"
+              ]
             }
           }
         },
@@ -513,7 +646,14 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/auth/logout"
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
             }
           }
         }
@@ -544,7 +684,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/company/my-company"
+              "raw": "{{baseUrl}}/company/my-company",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "my-company"
+              ]
             }
           }
         },
@@ -554,7 +701,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/company/{{companyId}}/members"
+              "raw": "{{baseUrl}}/company/{{companyId}}/members",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "{{companyId}}",
+                "members"
+              ]
             }
           }
         },
@@ -570,10 +725,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Apex Cyber Innovations\",\n  \"slug\": \"apex-cyber-innovations\",\n  \"email\": \"hr@apexcyber.com\",\n  \"website\": \"https://apexcyber.com\",\n  \"description\": \"AI-driven developer assessment and testing platform\"\n}"
+              "raw": "{\n  \"name\": \"Apex Cyber Innovations\",\n  \"slug\": \"apex-cyber-innovations\",\n  \"email\": \"hr@apexcyber.com\",\n  \"website\": \"https://apexcyber.com\",\n  \"description\": \"AI-driven developer assessment and testing platform\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/company/create-company"
+              "raw": "{{baseUrl}}/company/create-company",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "create-company"
+              ]
             }
           }
         },
@@ -589,10 +756,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"companyId\": \"{{companyId}}\",\n  \"otp\": \"123456\"\n}"
+              "raw": "{\n  \"companyId\": \"{{companyId}}\",\n  \"otp\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/company/verify-company"
+              "raw": "{{baseUrl}}/company/verify-company",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "verify-company"
+              ]
             }
           }
         },
@@ -608,10 +787,23 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"DevAssess Global Tech Enterprises\",\n  \"description\": \"Leading tech assessment benchmark\"\n}"
+              "raw": "{\n  \"name\": \"DevAssess Global Tech Enterprises\",\n  \"description\": \"Leading tech assessment benchmark\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/company/update-company/{{companyId}}"
+              "raw": "{{baseUrl}}/company/update-company/{{companyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "update-company",
+                "{{companyId}}"
+              ]
             }
           }
         },
@@ -627,10 +819,23 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"role\": \"EVALUATOR\"\n}"
+              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"role\": \"EVALUATOR\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/company/{{companyId}}/members"
+              "raw": "{{baseUrl}}/company/{{companyId}}/members",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "{{companyId}}",
+                "members"
+              ]
             }
           }
         }
@@ -668,10 +873,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Node.js Event Loop Phase Priority\",\n  \"description\": \"Which event loop phase executes timers like setTimeout?\",\n  \"type\": \"MCQ\",\n  \"difficulty\": \"EASY\",\n  \"defaultMarks\": 5,\n  \"mcqQuestion\": {\n    \"question\": \"In Node.js event loop, which phase executes setTimeout callbacks?\",\n    \"multipleCorrect\": false,\n    \"options\": [\n      {\n        \"text\": \"Timers Phase\",\n        \"isCorrect\": true,\n        \"explanation\": \"Timers phase executes setTimeout & setInterval callbacks.\"\n      },\n      {\n        \"text\": \"Poll Phase\",\n        \"isCorrect\": false\n      },\n      {\n        \"text\": \"Check Phase\",\n        \"isCorrect\": false\n      },\n      {\n        \"text\": \"Close Callbacks\",\n        \"isCorrect\": false\n      }\n    ]\n  }\n}"
+              "raw": "{\n  \"title\": \"Node.js Event Loop Phase Priority\",\n  \"description\": \"Which event loop phase executes timers like setTimeout?\",\n  \"type\": \"MCQ\",\n  \"difficulty\": \"EASY\",\n  \"defaultMarks\": 5,\n  \"mcqQuestion\": {\n    \"question\": \"In Node.js event loop, which phase executes setTimeout callbacks?\",\n    \"multipleCorrect\": false,\n    \"options\": [\n      {\n        \"text\": \"Timers Phase\",\n        \"isCorrect\": true,\n        \"explanation\": \"Timers phase executes setTimeout & setInterval callbacks.\"\n      },\n      {\n        \"text\": \"Poll Phase\",\n        \"isCorrect\": false\n      },\n      {\n        \"text\": \"Check Phase\",\n        \"isCorrect\": false\n      },\n      {\n        \"text\": \"Close Callbacks\",\n        \"isCorrect\": false\n      }\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/problem/create-problem"
+              "raw": "{{baseUrl}}/problem/create-problem",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "problem",
+                "create-problem"
+              ]
             }
           }
         },
@@ -704,10 +921,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Explain Database Indexing Architecture\",\n  \"description\": \"Explain how B-Tree indexes optimize read latency in PostgreSQL.\",\n  \"type\": \"WRITTEN\",\n  \"difficulty\": \"MEDIUM\",\n  \"defaultMarks\": 10,\n  \"writtenQuestion\": {\n    \"guidelines\": \"Mention B-Tree structure, time complexity, write amplification trade-offs.\",\n    \"minWords\": 30,\n    \"maxWords\": 500\n  }\n}"
+              "raw": "{\n  \"title\": \"Explain Database Indexing Architecture\",\n  \"description\": \"Explain how B-Tree indexes optimize read latency in PostgreSQL.\",\n  \"type\": \"WRITTEN\",\n  \"difficulty\": \"MEDIUM\",\n  \"defaultMarks\": 10,\n  \"writtenQuestion\": {\n    \"guidelines\": \"Mention B-Tree structure, time complexity, write amplification trade-offs.\",\n    \"minWords\": 30,\n    \"maxWords\": 500\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/problem/create-problem"
+              "raw": "{{baseUrl}}/problem/create-problem",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "problem",
+                "create-problem"
+              ]
             }
           }
         },
@@ -717,7 +946,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/problem/"
+              "raw": "{{baseUrl}}/problem/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "problem"
+              ]
             }
           }
         },
@@ -727,7 +962,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/problem/company-problems"
+              "raw": "{{baseUrl}}/problem/company-problems",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "problem",
+                "company-problems"
+              ]
             }
           }
         },
@@ -737,7 +979,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/problem/{{problemId}}"
+              "raw": "{{baseUrl}}/problem/{{problemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "problem",
+                "{{problemId}}"
+              ]
             }
           }
         },
@@ -753,10 +1002,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Node.js Event Loop Architecture (Updated)\",\n  \"difficulty\": \"MEDIUM\"\n}"
+              "raw": "{\n  \"title\": \"Node.js Event Loop Architecture (Updated)\",\n  \"difficulty\": \"MEDIUM\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/problem/{{problemId}}"
+              "raw": "{{baseUrl}}/problem/{{problemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "problem",
+                "{{problemId}}"
+              ]
             }
           }
         },
@@ -766,7 +1027,14 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/problem/{{problemId}}"
+              "raw": "{{baseUrl}}/problem/{{problemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "problem",
+                "{{problemId}}"
+              ]
             }
           }
         }
@@ -804,10 +1072,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Senior Backend Engineer Benchmark 2026\",\n  \"description\": \"Comprehensive technical evaluation covering architecture, event loop, and databases.\",\n  \"totalMarks\": 100,\n  \"passMarks\": 50,\n  \"durationMinutes\": 60,\n  \"startTime\": \"2026-01-01T00:00:00.000Z\",\n  \"endTime\": \"2027-12-31T23:59:59.000Z\",\n  \"allowedAttempts\": 1,\n  \"isStrictTimeLimit\": true,\n  \"proctoringSettings\": {\n    \"trackTabSwitches\": true,\n    \"maxTabSwitches\": 3,\n    \"requireFullscreen\": true,\n    \"blockCopyPaste\": true,\n    \"trackFocusLoss\": true\n  }\n}"
+              "raw": "{\n  \"title\": \"Senior Backend Engineer Benchmark 2026\",\n  \"description\": \"Comprehensive technical evaluation covering architecture, event loop, and databases.\",\n  \"totalMarks\": 100,\n  \"passMarks\": 50,\n  \"durationMinutes\": 60,\n  \"startTime\": \"2026-01-01T00:00:00.000Z\",\n  \"endTime\": \"2027-12-31T23:59:59.000Z\",\n  \"allowedAttempts\": 1,\n  \"isStrictTimeLimit\": true,\n  \"proctoringSettings\": {\n    \"trackTabSwitches\": true,\n    \"maxTabSwitches\": 3,\n    \"requireFullscreen\": true,\n    \"blockCopyPaste\": true,\n    \"trackFocusLoss\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/assessment/create-assessment"
+              "raw": "{{baseUrl}}/assessment/create-assessment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "create-assessment"
+              ]
             }
           }
         },
@@ -823,10 +1103,23 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"problems\": [\n    {\n      \"problemId\": \"{{problemId}}\",\n      \"marks\": 5,\n      \"questionOrder\": 1\n    }\n  ]\n}"
+              "raw": "{\n  \"problems\": [\n    {\n      \"problemId\": \"{{problemId}}\",\n      \"marks\": 5,\n      \"questionOrder\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/assessment/add-problems/{{assessmentId}}"
+              "raw": "{{baseUrl}}/assessment/add-problems/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "add-problems",
+                "{{assessmentId}}"
+              ]
             }
           }
         },
@@ -836,7 +1129,15 @@
             "method": "PATCH",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/assessment/publish-assessment/{{assessmentId}}"
+              "raw": "{{baseUrl}}/assessment/publish-assessment/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "publish-assessment",
+                "{{assessmentId}}"
+              ]
             }
           }
         },
@@ -852,10 +1153,23 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"emails\": [\n    \"tested.candidate@devassess.com\"\n  ]\n}"
+              "raw": "{\n  \"emails\": [\n    \"tested.candidate@devassess.com\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/assessment/invite-candidates/{{assessmentId}}"
+              "raw": "{{baseUrl}}/assessment/invite-candidates/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "invite-candidates",
+                "{{assessmentId}}"
+              ]
             }
           }
         },
@@ -865,7 +1179,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/assessment/{{assessmentId}}/invitations"
+              "raw": "{{baseUrl}}/assessment/{{assessmentId}}/invitations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "{{assessmentId}}",
+                "invitations"
+              ]
             }
           }
         },
@@ -893,7 +1215,15 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/assessment/start-attempt/{{assessmentId}}"
+              "raw": "{{baseUrl}}/assessment/start-attempt/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "start-attempt",
+                "{{assessmentId}}"
+              ]
             }
           }
         },
@@ -903,7 +1233,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/assessment/my-attempts"
+              "raw": "{{baseUrl}}/assessment/my-attempts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "my-attempts"
+              ]
             }
           }
         },
@@ -913,7 +1250,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/assessment/attempts/{{attemptId}}"
+              "raw": "{{baseUrl}}/assessment/attempts/{{attemptId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "attempts",
+                "{{attemptId}}"
+              ]
             }
           }
         },
@@ -923,7 +1268,16 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/assessment/attempts/{{attemptId}}/submit"
+              "raw": "{{baseUrl}}/assessment/attempts/{{attemptId}}/submit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "attempts",
+                "{{attemptId}}",
+                "submit"
+              ]
             }
           }
         },
@@ -933,7 +1287,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/assessment/attempts/{{attemptId}}/result"
+              "raw": "{{baseUrl}}/assessment/attempts/{{attemptId}}/result",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "attempts",
+                "{{attemptId}}",
+                "result"
+              ]
             }
           }
         },
@@ -943,7 +1306,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/assessment/attempts/{{attemptId}}/detailed-report"
+              "raw": "{{baseUrl}}/assessment/attempts/{{attemptId}}/detailed-report",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "attempts",
+                "{{attemptId}}",
+                "detailed-report"
+              ]
             }
           }
         }
@@ -981,10 +1353,21 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"attemptId\": \"{{attemptId}}\",\n  \"problemId\": \"{{problemId}}\",\n  \"writtenAnswer\": \"PostgreSQL B-Tree indexes provide logarithmic search O(log N) efficiency by organizing balanced keys into tree leaf nodes, reducing disk I/O.\"\n}"
+              "raw": "{\n  \"attemptId\": \"{{attemptId}}\",\n  \"problemId\": \"{{problemId}}\",\n  \"writtenAnswer\": \"PostgreSQL B-Tree indexes provide logarithmic search O(log N) efficiency by organizing balanced keys into tree leaf nodes, reducing disk I/O.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/submission/"
+              "raw": "{{baseUrl}}/submission/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "submission"
+              ]
             }
           }
         },
@@ -994,7 +1377,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/submission/attempts/{{attemptId}}"
+              "raw": "{{baseUrl}}/submission/attempts/{{attemptId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "submission",
+                "attempts",
+                "{{attemptId}}"
+              ]
             }
           }
         },
@@ -1004,7 +1395,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/submission/my-submissions"
+              "raw": "{{baseUrl}}/submission/my-submissions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "submission",
+                "my-submissions"
+              ]
             }
           }
         },
@@ -1014,7 +1412,15 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/submission/{{submissionId}}/submit"
+              "raw": "{{baseUrl}}/submission/{{submissionId}}/submit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "submission",
+                "{{submissionId}}",
+                "submit"
+              ]
             }
           }
         }
@@ -1036,10 +1442,24 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"clientTimestamp\": \"2026-09-09T08:59:27.956Z\",\n  \"details\": \"Candidate navigated away to external Chrome window\"\n}"
+              "raw": "{\n  \"clientTimestamp\": \"2026-09-09T09:03:57.507Z\",\n  \"details\": \"Candidate navigated away to external Chrome window\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/tab-switch"
+              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/tab-switch",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "anti-cheating",
+                "attempt",
+                "{{attemptId}}",
+                "tab-switch"
+              ]
             }
           }
         },
@@ -1055,10 +1475,24 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"clientTimestamp\": \"2026-09-09T08:59:27.957Z\",\n  \"details\": \"Pasted large block of text into editor\",\n  \"metadata\": {\n    \"characterCount\": 180\n  }\n}"
+              "raw": "{\n  \"clientTimestamp\": \"2026-09-09T09:03:57.507Z\",\n  \"details\": \"Pasted large block of text into editor\",\n  \"metadata\": {\n    \"characterCount\": 180\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/copy-paste"
+              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/copy-paste",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "anti-cheating",
+                "attempt",
+                "{{attemptId}}",
+                "copy-paste"
+              ]
             }
           }
         },
@@ -1074,10 +1508,24 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"clientTimestamp\": \"2026-09-09T08:59:27.957Z\",\n  \"details\": \"Candidate exited fullscreen view\"\n}"
+              "raw": "{\n  \"clientTimestamp\": \"2026-09-09T09:03:57.507Z\",\n  \"details\": \"Candidate exited fullscreen view\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/fullscreen-exit"
+              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/fullscreen-exit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "anti-cheating",
+                "attempt",
+                "{{attemptId}}",
+                "fullscreen-exit"
+              ]
             }
           }
         },
@@ -1093,10 +1541,24 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"clientTimestamp\": \"2026-09-09T08:59:27.957Z\",\n  \"details\": \"Secondary tab heartbeat detected on same user session\"\n}"
+              "raw": "{\n  \"clientTimestamp\": \"2026-09-09T09:03:57.507Z\",\n  \"details\": \"Secondary tab heartbeat detected on same user session\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/multiple-tabs"
+              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/multiple-tabs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "anti-cheating",
+                "attempt",
+                "{{attemptId}}",
+                "multiple-tabs"
+              ]
             }
           }
         },
@@ -1112,10 +1574,24 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"clientTimestamp\": \"2026-09-09T08:59:27.957Z\",\n  \"details\": \"Browser developer tools opened during active assessment\"\n}"
+              "raw": "{\n  \"clientTimestamp\": \"2026-09-09T09:03:57.507Z\",\n  \"details\": \"Browser developer tools opened during active assessment\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/suspicious-activity"
+              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/suspicious-activity",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "anti-cheating",
+                "attempt",
+                "{{attemptId}}",
+                "suspicious-activity"
+              ]
             }
           }
         },
@@ -1125,7 +1601,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/risk"
+              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/risk",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "anti-cheating",
+                "attempt",
+                "{{attemptId}}",
+                "risk"
+              ]
             }
           }
         },
@@ -1141,10 +1626,24 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"reason\": \"Excessive window switching and multiple tabs opened during test\",\n  \"severity\": \"HIGH\"\n}"
+              "raw": "{\n  \"reason\": \"Excessive window switching and multiple tabs opened during test\",\n  \"severity\": \"HIGH\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/flag"
+              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/flag",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "anti-cheating",
+                "attempt",
+                "{{attemptId}}",
+                "flag"
+              ]
             }
           }
         }
@@ -1159,7 +1658,15 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/evaluation/mcq/{{submissionId}}"
+              "raw": "{{baseUrl}}/evaluation/mcq/{{submissionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "evaluation",
+                "mcq",
+                "{{submissionId}}"
+              ]
             }
           }
         },
@@ -1175,10 +1682,23 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"marksObtained\": 9,\n  \"feedback\": \"Comprehensive understanding of PostgreSQL indexing and algorithmic complexity.\"\n}"
+              "raw": "{\n  \"marksObtained\": 9,\n  \"feedback\": \"Comprehensive understanding of PostgreSQL indexing and algorithmic complexity.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/evaluation/manual/{{submissionId}}"
+              "raw": "{{baseUrl}}/evaluation/manual/{{submissionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "evaluation",
+                "manual",
+                "{{submissionId}}"
+              ]
             }
           }
         },
@@ -1188,7 +1708,16 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/evaluation/attempt/{{attemptId}}/score"
+              "raw": "{{baseUrl}}/evaluation/attempt/{{attemptId}}/score",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "evaluation",
+                "attempt",
+                "{{attemptId}}",
+                "score"
+              ]
             }
           }
         },
@@ -1198,7 +1727,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/evaluation/"
+              "raw": "{{baseUrl}}/evaluation/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "evaluation"
+              ]
             }
           }
         },
@@ -1208,7 +1743,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/evaluation/{{submissionId}}"
+              "raw": "{{baseUrl}}/evaluation/{{submissionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "evaluation",
+                "{{submissionId}}"
+              ]
             }
           }
         }
@@ -1223,7 +1765,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/score-calculation/submission/{{submissionId}}"
+              "raw": "{{baseUrl}}/score-calculation/submission/{{submissionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "score-calculation",
+                "submission",
+                "{{submissionId}}"
+              ]
             }
           }
         },
@@ -1233,7 +1783,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/score-calculation/mcq/{{submissionId}}/score"
+              "raw": "{{baseUrl}}/score-calculation/mcq/{{submissionId}}/score",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "score-calculation",
+                "mcq",
+                "{{submissionId}}",
+                "score"
+              ]
             }
           }
         },
@@ -1243,7 +1802,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/score-calculation/written/{{submissionId}}/score"
+              "raw": "{{baseUrl}}/score-calculation/written/{{submissionId}}/score",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "score-calculation",
+                "written",
+                "{{submissionId}}",
+                "score"
+              ]
             }
           }
         },
@@ -1253,7 +1821,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/score-calculation/attempt/{{attemptId}}"
+              "raw": "{{baseUrl}}/score-calculation/attempt/{{attemptId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "score-calculation",
+                "attempt",
+                "{{attemptId}}"
+              ]
             }
           }
         }
@@ -1268,7 +1844,15 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/ranking-result/generate/{{attemptId}}"
+              "raw": "{{baseUrl}}/ranking-result/generate/{{attemptId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ranking-result",
+                "generate",
+                "{{attemptId}}"
+              ]
             }
           }
         },
@@ -1278,7 +1862,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/ranking-result/rank/{{attemptId}}"
+              "raw": "{{baseUrl}}/ranking-result/rank/{{attemptId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ranking-result",
+                "rank",
+                "{{attemptId}}"
+              ]
             }
           }
         },
@@ -1288,7 +1880,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/ranking-result/leaderboard/{{assessmentId}}"
+              "raw": "{{baseUrl}}/ranking-result/leaderboard/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ranking-result",
+                "leaderboard",
+                "{{assessmentId}}"
+              ]
             }
           }
         },
@@ -1298,7 +1898,15 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/ranking-result/publish/{{assessmentId}}"
+              "raw": "{{baseUrl}}/ranking-result/publish/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ranking-result",
+                "publish",
+                "{{assessmentId}}"
+              ]
             }
           }
         },
@@ -1308,7 +1916,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/ranking-result/my-results"
+              "raw": "{{baseUrl}}/ranking-result/my-results",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ranking-result",
+                "my-results"
+              ]
             }
           }
         },
@@ -1318,7 +1933,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/ranking-result/attempt/{{attemptId}}"
+              "raw": "{{baseUrl}}/ranking-result/attempt/{{attemptId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ranking-result",
+                "attempt",
+                "{{attemptId}}"
+              ]
             }
           }
         }
@@ -1333,7 +1956,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/reports-analytics/assessment/{{assessmentId}}/report"
+              "raw": "{{baseUrl}}/reports-analytics/assessment/{{assessmentId}}/report",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reports-analytics",
+                "assessment",
+                "{{assessmentId}}",
+                "report"
+              ]
             }
           }
         },
@@ -1343,7 +1975,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/reports-analytics/assessment/{{assessmentId}}/score-distribution"
+              "raw": "{{baseUrl}}/reports-analytics/assessment/{{assessmentId}}/score-distribution",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reports-analytics",
+                "assessment",
+                "{{assessmentId}}",
+                "score-distribution"
+              ]
             }
           }
         },
@@ -1353,7 +1994,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/reports-analytics/assessment/{{assessmentId}}/pass-fail"
+              "raw": "{{baseUrl}}/reports-analytics/assessment/{{assessmentId}}/pass-fail",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reports-analytics",
+                "assessment",
+                "{{assessmentId}}",
+                "pass-fail"
+              ]
             }
           }
         },
@@ -1363,7 +2013,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/reports-analytics/assessment/{{assessmentId}}/statistics"
+              "raw": "{{baseUrl}}/reports-analytics/assessment/{{assessmentId}}/statistics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reports-analytics",
+                "assessment",
+                "{{assessmentId}}",
+                "statistics"
+              ]
             }
           }
         },
@@ -1373,7 +2032,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/reports-analytics/attempt/{{attemptId}}/performance"
+              "raw": "{{baseUrl}}/reports-analytics/attempt/{{attemptId}}/performance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reports-analytics",
+                "attempt",
+                "{{attemptId}}",
+                "performance"
+              ]
             }
           }
         },
@@ -1383,7 +2051,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/reports-analytics/candidate/{{candidateId}}/report"
+              "raw": "{{baseUrl}}/reports-analytics/candidate/{{candidateId}}/report",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reports-analytics",
+                "candidate",
+                "{{candidateId}}",
+                "report"
+              ]
             }
           }
         },
@@ -1393,7 +2070,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/reports-analytics/company/{{companyId}}/report"
+              "raw": "{{baseUrl}}/reports-analytics/company/{{companyId}}/report",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reports-analytics",
+                "company",
+                "{{companyId}}",
+                "report"
+              ]
             }
           }
         }
@@ -1408,7 +2094,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/admin-management/dashboard-statistics"
+              "raw": "{{baseUrl}}/admin-management/dashboard-statistics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin-management",
+                "dashboard-statistics"
+              ]
             }
           }
         },
@@ -1418,7 +2111,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/admin-management/system-statistics"
+              "raw": "{{baseUrl}}/admin-management/system-statistics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin-management",
+                "system-statistics"
+              ]
             }
           }
         },
@@ -1428,7 +2128,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/admin-management/users"
+              "raw": "{{baseUrl}}/admin-management/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin-management",
+                "users"
+              ]
             }
           }
         },
@@ -1438,7 +2145,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/admin-management/users/{{userId}}"
+              "raw": "{{baseUrl}}/admin-management/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin-management",
+                "users",
+                "{{userId}}"
+              ]
             }
           }
         },
@@ -1454,10 +2169,24 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"isActive\": true\n}"
+              "raw": "{\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
-              "raw": "{{baseUrl}}/admin-management/users/{{userId}}/status"
+              "raw": "{{baseUrl}}/admin-management/users/{{userId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin-management",
+                "users",
+                "{{userId}}",
+                "status"
+              ]
             }
           }
         },
@@ -1467,7 +2196,15 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/admin-management/users/{{userId}}"
+              "raw": "{{baseUrl}}/admin-management/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin-management",
+                "users",
+                "{{userId}}"
+              ]
             }
           }
         },
@@ -1477,7 +2214,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/admin-management/companies"
+              "raw": "{{baseUrl}}/admin-management/companies",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin-management",
+                "companies"
+              ]
             }
           }
         },
@@ -1487,7 +2231,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/admin-management/assessments"
+              "raw": "{{baseUrl}}/admin-management/assessments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin-management",
+                "assessments"
+              ]
             }
           }
         },
@@ -1497,7 +2248,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/admin-management/submissions"
+              "raw": "{{baseUrl}}/admin-management/submissions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin-management",
+                "submissions"
+              ]
             }
           }
         }
