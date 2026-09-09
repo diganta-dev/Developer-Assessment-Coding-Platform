@@ -28,7 +28,7 @@ declare global {
 
 export type { RequestUser };
 
-export const auth = (...requiredRoles: UserRole[]) => {
+export const auth = (...requiredRoles: (UserRole | CompanyMemberRole)[]) => {
 	return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 		const token = req.cookies?.accessToken
 			? req.cookies.accessToken
@@ -100,14 +100,28 @@ export const auth = (...requiredRoles: UserRole[]) => {
 			);
 		}
 
-		if (requiredRoles.length && !requiredRoles.includes(user.role)) {
-			throw new AppError(
-				httpStatus.FORBIDDEN,
-				"Forbidden. You don't have permission to access this resource.",
-			);
-		}
+		const primaryMembership = decoded.companyId
+			? user.companyMembers?.find((m) => m.companyId === decoded.companyId) ||
+				user.companyMembers?.[0]
+			: user.companyMembers?.[0];
 
-		const primaryMembership = user.companyMembers?.[0];
+		const companyRole = primaryMembership?.role;
+
+		if (requiredRoles.length) {
+			const hasUserRole = requiredRoles.includes(user.role);
+			const hasCompanyRole = companyRole
+				? requiredRoles.includes(companyRole)
+				: (user.companyMembers?.some((m) =>
+						requiredRoles.includes(m.role),
+					) ?? false);
+
+			if (!hasUserRole && !hasCompanyRole) {
+				throw new AppError(
+					httpStatus.FORBIDDEN,
+					"You are not permitted to access this route.",
+				);
+			}
+		}
 
 		req.user = {
 			email: user.email,
@@ -116,7 +130,7 @@ export const auth = (...requiredRoles: UserRole[]) => {
 			role: user.role,
 			tokenVersion: user.tokenVersion,
 			companyId: primaryMembership?.companyId,
-			companyRole: primaryMembership?.role,
+			companyRole: companyRole,
 		};
 
 		next();

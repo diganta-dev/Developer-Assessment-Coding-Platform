@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums";
 import { auth } from "../../middleware/checkAuth";
 import { RankingResultController } from "./rankingresult.controller";
 
@@ -32,12 +33,24 @@ router.get(
 // 4. Publish official assessment results for all participants (POST and PATCH supported)
 router.post(
 	"/publish/:assessmentId",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
 	RankingResultController.publishAssessmentResult,
 );
 router.patch(
 	"/publish/:assessmentId",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
 	RankingResultController.publishAssessmentResult,
 );
 

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums";
 import { auth } from "../../middleware/checkAuth";
 import { validateRequest } from "../../middleware/validateRequest";
 import { CompanyController } from "./company.controller";
@@ -22,38 +23,86 @@ router.post(
 
 router.patch(
 	"/update-company/:id",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+	),
 	validateRequest(CompanyValidation.UpdateCompanyZodSchema),
 	CompanyController.updateCompany,
 );
-router.get("/my-company", auth(), CompanyController.getMyCompany);
+
+router.get(
+	"/my-company",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
+	CompanyController.getMyCompany,
+);
 
 router.post(
 	"/add-member/:companyId",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+	),
 	validateRequest(CompanyValidation.AddCompanyMemberZodSchema),
 	CompanyController.addCompanyMember,
 );
 
 router.post(
 	"/:companyId/members",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+	),
 	validateRequest(CompanyValidation.AddCompanyMemberZodSchema),
 	CompanyController.addCompanyMember,
 );
 
-router.get("/:companyId/members", auth(), CompanyController.getCompanyMembers);
+router.get(
+	"/:companyId/members",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
+	CompanyController.getCompanyMembers,
+);
 
 router.patch(
 	"/:companyId/members/:memberUserId",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+	),
 	validateRequest(CompanyValidation.UpdateMemberRoleZodSchema),
 	CompanyController.updateMemberRole,
 );
 
 router.delete(
 	"/:companyId/members/:memberUserId",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+	),
 	CompanyController.removeCompanyMember,
 );
 

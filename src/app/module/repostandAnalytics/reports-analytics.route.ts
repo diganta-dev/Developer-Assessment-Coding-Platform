@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums";
 import { auth } from "../../middleware/checkAuth";
 import { ReportsAnalyticsController } from "./reports-analytics.controller";
 
@@ -11,33 +12,68 @@ const router = Router();
 // 1. Generate / Refresh comprehensive assessment report
 router.get(
 	"/assessment/:assessmentId/report",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
 	ReportsAnalyticsController.generateAssessmentReport,
 );
 router.post(
 	"/assessment/:assessmentId/report",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
 	ReportsAnalyticsController.generateAssessmentReport,
 );
 
 // 2. Score frequency distribution & statistical variance
 router.get(
 	"/assessment/:assessmentId/score-distribution",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
 	ReportsAnalyticsController.getScoreDistribution,
 );
 
 // 3. Granular pass/fail statistics and near-miss diagnostics
 router.get(
 	"/assessment/:assessmentId/pass-fail",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
 	ReportsAnalyticsController.getPassFailStatistics,
 );
 
 // 4. Operational KPIs and problem difficulty statistics for an assessment
 router.get(
 	"/assessment/:assessmentId/statistics",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
 	ReportsAnalyticsController.getAssessmentStatistics,
 );
 
@@ -58,7 +94,14 @@ router.get(
 // 7. Organization recruitment pipeline & executive talent report
 router.get(
 	"/company/:companyId/report",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
 	ReportsAnalyticsController.generateCompanyReport,
 );
 

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums";
 import { auth } from "../../middleware/checkAuth";
 import { EvaluationController } from "./evaluation.controller";
 
@@ -28,7 +29,14 @@ router.post(
 // Manual Evaluation (Written questions / Manual grading)
 router.post(
 	"/manual/:submissionId",
-	auth(),
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
 	EvaluationController.manualEvaluateSubmission,
 );
 
@@ -46,7 +54,18 @@ router.get(
 );
 
 // Query all evaluations (paginated, filtered)
-router.get("/", auth(), EvaluationController.getAllEvaluations);
+router.get(
+	"/",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+		CompanyMemberRole.EVALUATOR,
+	),
+	EvaluationController.getAllEvaluations,
+);
 
 // Query single evaluation by ID
 router.get("/:id", auth(), EvaluationController.getEvaluationById);
