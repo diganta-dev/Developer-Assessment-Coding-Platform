@@ -6,6 +6,7 @@ import { EvaluationRoutes } from "../module/evaluation/evaluation.route";
 import { ProblemRoute } from "../module/problem-bank/problem.route";
 import { CalculationRoutes } from "../module/score-calculation/calculation.route";
 import { RankingResultRoutes } from "../module/ranking-result/rankingresult.route";
+import { ReportsAnalyticsRoutes } from "../module/repostandAnalytics/reports-analytics.route";
 import { SubmissionRoutes } from "../module/submission/submission.route";
 
 const router = Router();
@@ -42,6 +43,10 @@ const routes = [
 	{
 		path: "/ranking-result",
 		route: RankingResultRoutes,
+	},
+	{
+		path: "/reports-analytics",
+		route: ReportsAnalyticsRoutes,
 	},
 ];
 
