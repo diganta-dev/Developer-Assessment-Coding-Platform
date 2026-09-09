@@ -1,5 +1,6 @@
 import httpStatus from "http-status";
 import {
+	AttemptStatus,
 	EvaluationStatus,
 	EvaluationType,
 	ProblemType,
@@ -9,22 +10,15 @@ import {
 import { prisma } from "../../lib/prisma";
 import type { RequestUser } from "../../middleware/checkAuth";
 import AppError from "../../utils/AppError";
+import { AttemptScoreService } from "./attemptScore.service";
 import type {
 	IWrittenEvaluationPayload,
 	IWrittenEvaluationResult,
 } from "./evaluation.interface";
 
 /**
- * Evaluates a candidate's written submission.
- *
- * Evaluation Pipeline:
- * 1. Fetch submission with written question details (word limit, expected answer) and assessment problems.
- * 2. Validate user role and ownership (Candidates cannot grade their own written submissions).
- * 3. Verify that the problem type is WRITTEN.
- * 4. Compute text metrics (word count vs word limit).
- * 5. Validate that marks are non-negative and do not exceed the problem's allocated marks.
- * 6. Atomically persist updated submission status and upsert the MANUAL Evaluation record.
- * 7. Return comprehensive evaluation report with evaluator profile and word count analytics.
+ * Evaluates a candidate's written submission by validating assigned marks,
+ * computing word count analytics, and persisting evaluation feedback.
  */
 const evaluateWrittenSubmission = async (
 	user: RequestUser,
@@ -40,7 +34,7 @@ const evaluateWrittenSubmission = async (
 	) {
 		throw new AppError(
 			httpStatus.BAD_REQUEST,
-			"Valid non-negative marks must be provided for written evaluation.",
+			"A valid non-negative number must be provided for marks.",
 		);
 	}
 
@@ -68,7 +62,7 @@ const evaluateWrittenSubmission = async (
 		throw new AppError(httpStatus.NOT_FOUND, "Submission not found.");
 	}
 
-	// Candidates cannot grade their own submissions
+	// Security: Candidates cannot grade their own written work
 	const isCandidateOwner = submission.attempt.candidateId === user.userId;
 	if (isCandidateOwner) {
 		throw new AppError(
@@ -77,7 +71,7 @@ const evaluateWrittenSubmission = async (
 		);
 	}
 
-	// Verify evaluator permissions (Platform Admin, Assessment Creator, or Company Member)
+	// Evaluator authorization: Platform Admin, Assessment Creator, or Company Member
 	const isPlatformAdmin =
 		user.role === UserRole.SUPER_ADMIN || user.role === UserRole.ADMIN;
 	const isCompanyMember =
@@ -96,7 +90,7 @@ const evaluateWrittenSubmission = async (
 	if (submission.problem.type !== ProblemType.WRITTEN) {
 		throw new AppError(
 			httpStatus.BAD_REQUEST,
-			`Only WRITTEN problems can be evaluated with evaluateWrittenSubmission. Problem type is ${submission.problem.type}.`,
+			`Automatic written evaluation only applies to WRITTEN problems (received ${submission.problem.type}).`,
 		);
 	}
 
@@ -108,7 +102,7 @@ const evaluateWrittenSubmission = async (
 		);
 	}
 
-	// Resolve maximum marks: check assessment problem configuration override first
+	// Resolve maximum allowable marks from assessment override or problem base marks
 	const assessmentProblem = submission.attempt.assessment.problems.find(
 		(ap) => ap.problemId === submission.problemId,
 	);
@@ -117,11 +111,11 @@ const evaluateWrittenSubmission = async (
 	if (marks > maxMarks) {
 		throw new AppError(
 			httpStatus.BAD_REQUEST,
-			`Assigned marks (${marks}) cannot exceed the maximum allowed marks (${maxMarks}) for this problem.`,
+			`Assigned marks (${marks}) cannot exceed the maximum allowed marks (${maxMarks}) for this question.`,
 		);
 	}
 
-	// Word count analytics
+	// Text length and word limit metrics
 	const rawText = submission.answerText?.trim() || "";
 	const wordCount =
 		rawText === "" ? 0 : rawText.split(/\s+/).filter(Boolean).length;
@@ -131,7 +125,7 @@ const evaluateWrittenSubmission = async (
 	const isCorrect = marks === maxMarks;
 	const feedback = payload.feedback?.trim() || null;
 
-	// Atomically persist submission and evaluation record
+	// Atomically persist submission status and upsert manual evaluation record
 	const [, evaluation] = await prisma.$transaction(async (tx) => {
 		const updatedSubmission = await tx.submission.update({
 			where: { id: submission.id },
@@ -192,6 +186,18 @@ const evaluateWrittenSubmission = async (
 
 		return [updatedSubmission, evaluationRecord];
 	});
+
+	// If the attempt is submitted or expired, refresh the total attempt score
+	if (
+		submission.attempt.status === AttemptStatus.SUBMITTED ||
+		submission.attempt.status === AttemptStatus.EXPIRED
+	) {
+		try {
+			await AttemptScoreService.calculateAttemptScore(submission.attemptId);
+		} catch {
+			// Non-blocking
+		}
+	}
 
 	return {
 		submissionId: submission.id,

@@ -98,15 +98,27 @@ const calculateAttemptScore = async (
 	let totalObtainedMarks = 0;
 	let evaluatedProblems = 0;
 
+	const isAttemptFinished =
+		attempt.status === AttemptStatus.SUBMITTED ||
+		attempt.status === AttemptStatus.EXPIRED ||
+		attempt.status === AttemptStatus.EVALUATED;
+
 	const breakdown: IAttemptProblemScoreBreakdown[] = assessmentProblems.map(
 		(ap) => {
 			const problemMaxMarks = ap.marks ?? ap.problem.marks;
 			totalPossibleMarks += problemMaxMarks;
 
 			const sub = submissionMap.get(ap.problemId);
+			const isUnsubmittedFinished = isAttemptFinished && !sub;
 			const isEvaluated =
-				sub &&
-				(sub.status === SubmissionStatus.EVALUATED || sub.marks !== null);
+				Boolean(isUnsubmittedFinished) ||
+				Boolean(
+					sub &&
+						(sub.status === SubmissionStatus.EVALUATED ||
+							sub.status === SubmissionStatus.PASSED ||
+							sub.status === SubmissionStatus.FAILED ||
+							sub.marks !== null),
+				);
 
 			let problemEarnedMarks = 0;
 			let problemIsCorrect = false;
@@ -212,23 +224,35 @@ const calculateAttemptScore = async (
 		},
 	);
 
+	const isCandidateOwner = user ? attempt.candidateId === user.userId : false;
+	const isLiveExam =
+		isCandidateOwner && attempt.status === AttemptStatus.IN_PROGRESS;
+
+	const sanitizedBreakdown = isLiveExam
+		? breakdown.map((b) => ({
+				...b,
+				obtainedMarks: 0,
+				isCorrect: false,
+			}))
+		: breakdown;
+
 	return {
 		attemptId: updatedAttempt.id,
 		assessmentId: attempt.assessmentId,
 		candidateId: attempt.candidateId,
 		candidate: attempt.candidate,
 		totalMarks: totalPossibleMarks,
-		obtainedMarks: totalObtainedMarks,
-		percentage,
+		obtainedMarks: isLiveExam ? 0 : totalObtainedMarks,
+		percentage: isLiveExam ? 0 : percentage,
 		passingScore: attempt.assessment.passingScore,
-		isPassed,
-		resultStatus,
+		isPassed: isLiveExam ? false : isPassed,
+		resultStatus: isLiveExam ? ResultStatus.FAILED : resultStatus,
 		attemptStatus: updatedAttempt.status,
 		isFullyEvaluated,
 		totalProblems,
 		evaluatedProblems,
 		pendingProblems,
-		breakdown,
+		breakdown: sanitizedBreakdown,
 		resultId: updatedResult.id,
 		calculatedAt: new Date(),
 	};

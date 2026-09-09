@@ -676,7 +676,7 @@ const refreshToken = async (token: string) => {
 	if (!verifiedRefreshToken.success || !verifiedRefreshToken.data) {
 		throw new AppError(
 			httpStatus.UNAUTHORIZED,
-			config.node_env === "development"
+			config.node_env === "development" && verifiedRefreshToken.error
 				? verifiedRefreshToken.error
 				: "Invalid refresh token",
 		);

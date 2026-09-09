@@ -4,9 +4,9 @@
     "description": "Developer Assessment & Coding Platform Backend API",
     "main": "index.js",
     "scripts": {
-        "dev": "node ./node_modules/tsx/dist/cli.mjs watch src/server.ts",
-        "build": "node ./node_modules/typescript/bin/tsc",
-        "start": "node dist/src/server.js",
+        "dev": "tsx watch src/server.ts",
+        "build": "tsup",
+        "start": "node dist/server.js",
         "prisma:validate": "node ./node_modules/prisma/build/index.js validate",
         "prisma:generate": "node ./node_modules/prisma/build/index.js generate",
         "prisma:migrate": "node ./node_modules/prisma/build/index.js migrate dev",
@@ -50,6 +50,7 @@
         "@types/nodemailer": "^8.0.1",
         "@types/pg": "^8.20.0",
         "prisma": "^7.9.1",
+        "tsup": "^8.5.1",
         "tsx": "^4.23.1",
         "typescript": "^7.0.2"
     }

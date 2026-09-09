@@ -5,8 +5,8 @@ import { Prisma } from "../../generated/prisma/client";
 import config from "../config";
 import AppError from "../utils/AppError";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const globalErrorHandler = async (
+	// biome-ignore lint/suspicious/noExplicitAny: Express error handler receives unknown/any error
 	err: any,
 	_req: Request,
 	res: Response,
@@ -26,7 +26,7 @@ export const globalErrorHandler = async (
 	} else if (err instanceof ZodError || err?.name === "ZodError") {
 		statusCode = httpStatus.BAD_REQUEST;
 		errorMessage = Array.isArray(err.issues)
-			? err.issues.map((issue: any) => issue.message).join(", ")
+			? err.issues.map((issue: { message: string }) => issue.message).join(", ")
 			: "Validation Error";
 	} else if (err instanceof Prisma.PrismaClientValidationError) {
 		statusCode = httpStatus.BAD_REQUEST;
