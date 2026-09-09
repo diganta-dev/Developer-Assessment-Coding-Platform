@@ -29,8 +29,6 @@ import type {
 // Types & Interfaces
 // ============================================================================
 
-
-
 // ============================================================================
 // Helper: Access Control & Anti-Cheating
 // ============================================================================
@@ -59,8 +57,7 @@ function verifyScoreAccess(
 	const isPlatformAdmin =
 		user.role === UserRole.SUPER_ADMIN || user.role === UserRole.ADMIN;
 	const isCompanyMember =
-		Boolean(user.companyId) &&
-		user.companyId === attempt.assessment.companyId;
+		Boolean(user.companyId) && user.companyId === attempt.assessment.companyId;
 	const isAssessmentCreator = attempt.assessment.creatorId === user.userId;
 
 	if (
@@ -480,8 +477,7 @@ const calculateWrittenScore = async (
 	const assessmentProblem = submission.attempt.assessment.problems.find(
 		(ap) => ap.problemId === submission.problemId,
 	);
-	const totalMarks =
-		assessmentProblem?.marks ?? submission.problem.marks;
+	const totalMarks = assessmentProblem?.marks ?? submission.problem.marks;
 
 	const writtenQuestion = submission.problem.writtenQuestion;
 	const answerText = submission.answerText || "";
@@ -491,8 +487,9 @@ const calculateWrittenScore = async (
 	const isWordLimitExceeded = Boolean(wordLimit && wordCount > wordLimit);
 
 	const evaluation = submission.evaluations[0];
-	const isGraded =
-		Boolean(evaluation && evaluation.status === EvaluationStatus.COMPLETED);
+	const isGraded = Boolean(
+		evaluation && evaluation.status === EvaluationStatus.COMPLETED,
+	);
 
 	const earnedMarks = isGraded
 		? (evaluation?.marks ?? 0)
@@ -507,9 +504,7 @@ const calculateWrittenScore = async (
 		? earnedMarks === totalMarks
 		: Boolean(submission.isCorrect);
 
-	const status = isGraded
-		? SubmissionStatus.EVALUATED
-		: submission.status;
+	const status = isGraded ? SubmissionStatus.EVALUATED : submission.status;
 
 	const evaluationStatus = evaluation?.status ?? EvaluationStatus.PENDING;
 	const feedback =
@@ -518,8 +513,7 @@ const calculateWrittenScore = async (
 
 	// Anti-cheating guard: Mask model answer and marks during active attempt
 	const isLiveAssessment =
-		isCandidateOwner &&
-		submission.attempt.status === AttemptStatus.IN_PROGRESS;
+		isCandidateOwner && submission.attempt.status === AttemptStatus.IN_PROGRESS;
 
 	return {
 		submissionId: submission.id,
@@ -577,7 +571,10 @@ const calculateSubmissionScore = async (
 	});
 
 	if (!submission || !submission.problem) {
-		throw new AppError(httpStatus.NOT_FOUND, "Submission or associated problem not found.");
+		throw new AppError(
+			httpStatus.NOT_FOUND,
+			"Submission or associated problem not found.",
+		);
 	}
 
 	switch (submission.problem.type) {

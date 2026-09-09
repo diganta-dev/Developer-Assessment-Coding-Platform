@@ -65,8 +65,7 @@ export const determineResultStatus = (
 			: ResultStatus.FAILED;
 	}
 
-	const percentage =
-		totalMarks > 0 ? (obtainedMarks / totalMarks) * 100 : 0;
+	const percentage = totalMarks > 0 ? (obtainedMarks / totalMarks) * 100 : 0;
 	return percentage >= 50 ? ResultStatus.PASSED : ResultStatus.FAILED;
 };
 
@@ -138,7 +137,7 @@ export const calculateCandidateRank = async (
 					submittedAt: attempt.submittedAt,
 					createdAt: attempt.createdAt,
 				},
-		  ];
+			];
 
 	const totalParticipants = allAttempts.length;
 
@@ -164,8 +163,12 @@ export const calculateCandidateRank = async (
 		}
 
 		// 3. Submission date (ascending, earlier submission wins)
-		const submitA = a.submittedAt ? a.submittedAt.getTime() : a.createdAt.getTime();
-		const submitB = b.submittedAt ? b.submittedAt.getTime() : b.createdAt.getTime();
+		const submitA = a.submittedAt
+			? a.submittedAt.getTime()
+			: a.createdAt.getTime();
+		const submitB = b.submittedAt
+			? b.submittedAt.getTime()
+			: b.createdAt.getTime();
 		return submitA - submitB;
 	});
 
@@ -258,7 +261,11 @@ export const generateAssessmentResult = async (
 	// Permission Verification
 	const isCandidateOwner = user ? attempt.candidateId === user.userId : false;
 	if (user && !isCandidateOwner) {
-		verifyAssessmentAccess(user, attempt.assessment, "generate or view this result");
+		verifyAssessmentAccess(
+			user,
+			attempt.assessment,
+			"generate or view this result",
+		);
 	}
 
 	// Ensure attempt score is calculated and aggregated with latest data
@@ -426,8 +433,12 @@ export const generateAssessmentRanking = async (
 			return timeA - timeB;
 		}
 
-		const submitA = a.submittedAt ? a.submittedAt.getTime() : a.createdAt.getTime();
-		const submitB = b.submittedAt ? b.submittedAt.getTime() : b.createdAt.getTime();
+		const submitA = a.submittedAt
+			? a.submittedAt.getTime()
+			: a.createdAt.getTime();
+		const submitB = b.submittedAt
+			? b.submittedAt.getTime()
+			: b.createdAt.getTime();
 		return submitA - submitB;
 	});
 
@@ -450,7 +461,8 @@ export const generateAssessmentRanking = async (
 		const timeTakenSeconds =
 			attempt.submittedAt && attempt.startedAt
 				? Math.round(
-						(attempt.submittedAt.getTime() - attempt.startedAt.getTime()) / 1000,
+						(attempt.submittedAt.getTime() - attempt.startedAt.getTime()) /
+							1000,
 					)
 				: null;
 
@@ -641,8 +653,12 @@ export const publishAssessmentResult = async (
 
 		if (timeA !== timeB) return timeA - timeB;
 
-		const submitA = a.submittedAt ? a.submittedAt.getTime() : a.createdAt.getTime();
-		const submitB = b.submittedAt ? b.submittedAt.getTime() : b.createdAt.getTime();
+		const submitA = a.submittedAt
+			? a.submittedAt.getTime()
+			: a.createdAt.getTime();
+		const submitB = b.submittedAt
+			? b.submittedAt.getTime()
+			: b.createdAt.getTime();
 		return submitA - submitB;
 	});
 

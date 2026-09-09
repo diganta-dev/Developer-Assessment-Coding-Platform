@@ -42,11 +42,7 @@ router.patch(
 );
 
 // 5. Get current authenticated candidate's results across all assessments
-router.get(
-	"/my-results",
-	auth(),
-	RankingResultController.getMyResults,
-);
+router.get("/my-results", auth(), RankingResultController.getMyResults);
 
 // 6. Get a candidate's attempt result
 router.get(

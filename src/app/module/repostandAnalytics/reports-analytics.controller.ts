@@ -77,25 +77,23 @@ const generateCompanyReport = catchAsync(
 /**
  * Calculates the score frequency distribution, quartiles, and statistical variance for an assessment.
  */
-const getScoreDistribution = catchAsync(
-	async (req: Request, res: Response) => {
-		const user = req.user as RequestUser;
-		const assessmentId =
-			(req.params.assessmentId as string) || (req.params.id as string);
+const getScoreDistribution = catchAsync(async (req: Request, res: Response) => {
+	const user = req.user as RequestUser;
+	const assessmentId =
+		(req.params.assessmentId as string) || (req.params.id as string);
 
-		const result = await ReportsAnalyticsService.getScoreDistribution(
-			assessmentId,
-			user,
-		);
+	const result = await ReportsAnalyticsService.getScoreDistribution(
+		assessmentId,
+		user,
+	);
 
-		sendResponse(res, {
-			statusCode: httpStatus.OK,
-			success: true,
-			message: "Score distribution calculated successfully",
-			data: result,
-		});
-	},
-);
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "Score distribution calculated successfully",
+		data: result,
+	});
+});
 
 /**
  * Computes granular pass/fail statistics, threshold comparisons, and near-miss candidate counts.

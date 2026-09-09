@@ -15,16 +15,18 @@ import { AdminManagementService } from "./admin-management.service";
 /**
  * 1. Get platform-wide dashboard statistics
  */
-const getDashboardStatistics = catchAsync(async (_req: Request, res: Response) => {
-	const result = await AdminManagementService.getDashboardStatistics();
+const getDashboardStatistics = catchAsync(
+	async (_req: Request, res: Response) => {
+		const result = await AdminManagementService.getDashboardStatistics();
 
-	sendResponse(res, {
-		statusCode: httpStatus.OK,
-		success: true,
-		message: "Dashboard statistics retrieved successfully",
-		data: result,
-	});
-});
+		sendResponse(res, {
+			statusCode: httpStatus.OK,
+			success: true,
+			message: "Dashboard statistics retrieved successfully",
+			data: result,
+		});
+	},
+);
 
 /**
  * 2. Get paginated users directory with search & filters

@@ -16,10 +16,7 @@ export interface ISubmissionScoreResult {
 	isCorrect: boolean;
 	status: SubmissionStatus;
 	feedback: string | null;
-	details?:
-		| ICodingScoreBreakdown
-		| IMCQScoreBreakdown
-		| IWrittenScoreBreakdown;
+	details?: ICodingScoreBreakdown | IMCQScoreBreakdown | IWrittenScoreBreakdown;
 }
 
 export interface ICodingScoreBreakdown {

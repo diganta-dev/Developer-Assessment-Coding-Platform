@@ -30,7 +30,10 @@ import type {
 // Pagination Helper
 // ============================================================================
 
-function calculatePagination(query: { page?: number | string; limit?: number | string }) {
+function calculatePagination(query: {
+	page?: number | string;
+	limit?: number | string;
+}) {
 	const page = Math.max(1, Number(query.page) || 1);
 	const limit = Math.max(1, Math.min(100, Number(query.limit) || 20));
 	const skip = (page - 1) * limit;
@@ -116,9 +119,14 @@ const getDashboardStatistics = async (): Promise<IAdminDashboardStats> => {
 
 	for (const item of submissionsByStatus) {
 		totalSubmissions += item._count.id;
-		if (item.status === SubmissionStatus.PASSED) passedSubmissions += item._count.id;
-		else if (item.status === SubmissionStatus.FAILED) failedSubmissions += item._count.id;
-		else if (item.status === SubmissionStatus.PENDING || item.status === SubmissionStatus.RUNNING) {
+		if (item.status === SubmissionStatus.PASSED)
+			passedSubmissions += item._count.id;
+		else if (item.status === SubmissionStatus.FAILED)
+			failedSubmissions += item._count.id;
+		else if (
+			item.status === SubmissionStatus.PENDING ||
+			item.status === SubmissionStatus.RUNNING
+		) {
 			pendingSubmissions += item._count.id;
 		} else if (item.status === SubmissionStatus.EVALUATED) {
 			evaluatedSubmissions += item._count.id;
@@ -149,7 +157,8 @@ const getDashboardStatistics = async (): Promise<IAdminDashboardStats> => {
 
 	const overallPassRate =
 		completedAttemptsCount > 0
-			? Math.round((passedResultsCount / completedAttemptsCount) * 100 * 100) / 100
+			? Math.round((passedResultsCount / completedAttemptsCount) * 100 * 100) /
+				100
 			: 0;
 
 	return {
@@ -689,7 +698,10 @@ const getCompanies = async (
  */
 const getAssessments = async (
 	query: IAssessmentFilterQuery,
-): Promise<{ assessments: IAdminAssessmentListItem[]; meta: IPaginationMeta }> => {
+): Promise<{
+	assessments: IAdminAssessmentListItem[];
+	meta: IPaginationMeta;
+}> => {
 	const { page, limit, skip } = calculatePagination(query);
 
 	const where: Prisma.AssessmentWhereInput = {};
@@ -807,7 +819,10 @@ const getAssessments = async (
  */
 const getSubmissions = async (
 	query: ISubmissionFilterQuery,
-): Promise<{ submissions: IAdminSubmissionListItem[]; meta: IPaginationMeta }> => {
+): Promise<{
+	submissions: IAdminSubmissionListItem[];
+	meta: IPaginationMeta;
+}> => {
 	const { page, limit, skip } = calculatePagination(query);
 
 	const where: Prisma.SubmissionWhereInput = {};
@@ -836,8 +851,16 @@ const getSubmissions = async (
 		const term = query.searchTerm.trim();
 		where.OR = [
 			{ problem: { title: { contains: term, mode: "insensitive" } } },
-			{ attempt: { candidate: { name: { contains: term, mode: "insensitive" } } } },
-			{ attempt: { candidate: { email: { contains: term, mode: "insensitive" } } } },
+			{
+				attempt: {
+					candidate: { name: { contains: term, mode: "insensitive" } },
+				},
+			},
+			{
+				attempt: {
+					candidate: { email: { contains: term, mode: "insensitive" } },
+				},
+			},
 		];
 	}
 
@@ -882,24 +905,26 @@ const getSubmissions = async (
 		}),
 	]);
 
-	const submissions: IAdminSubmissionListItem[] = submissionRecords.map((s) => ({
-		id: s.id,
-		attemptId: s.attemptId,
-		candidateId: s.attempt.candidate.id,
-		candidateName: s.attempt.candidate.name,
-		candidateEmail: s.attempt.candidate.email,
-		problemId: s.problem.id,
-		problemTitle: s.problem.title,
-		problemType: s.problem.type,
-		problemDifficulty: s.problem.difficulty,
-		status: s.status,
-		marks: s.marks,
-		maxMarks: s.problem.marks,
-		isCorrect: s.isCorrect,
-		executionTimeMs: s.executionTimeMs,
-		memoryUsedMb: s.memoryUsedMb,
-		submittedAt: s.submittedAt,
-	}));
+	const submissions: IAdminSubmissionListItem[] = submissionRecords.map(
+		(s) => ({
+			id: s.id,
+			attemptId: s.attemptId,
+			candidateId: s.attempt.candidate.id,
+			candidateName: s.attempt.candidate.name,
+			candidateEmail: s.attempt.candidate.email,
+			problemId: s.problem.id,
+			problemTitle: s.problem.title,
+			problemType: s.problem.type,
+			problemDifficulty: s.problem.difficulty,
+			status: s.status,
+			marks: s.marks,
+			maxMarks: s.problem.marks,
+			isCorrect: s.isCorrect,
+			executionTimeMs: s.executionTimeMs,
+			memoryUsedMb: s.memoryUsedMb,
+			submittedAt: s.submittedAt,
+		}),
+	);
 
 	return {
 		submissions,

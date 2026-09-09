@@ -23,7 +23,9 @@ export const updateUserStatusValidation = z
 	.object({
 		isActive: z.boolean({ message: "isActive must be a boolean" }).optional(),
 		role: z.nativeEnum(UserRole, { message: "Invalid user role" }).optional(),
-		isVerified: z.boolean({ message: "isVerified must be a boolean" }).optional(),
+		isVerified: z
+			.boolean({ message: "isVerified must be a boolean" })
+			.optional(),
 	})
 	.refine(
 		(data) =>

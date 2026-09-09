@@ -28,47 +28,23 @@ router.get(
 );
 
 // 3. User Management
-router.get(
-	"/users",
-	adminAuth,
-	AdminManagementController.getUsers,
-);
-router.get(
-	"/users/:id",
-	adminAuth,
-	AdminManagementController.getUserDetails,
-);
+router.get("/users", adminAuth, AdminManagementController.getUsers);
+router.get("/users/:id", adminAuth, AdminManagementController.getUserDetails);
 router.patch(
 	"/users/:id/status",
 	adminAuth,
 	validateRequest(AdminManagementValidation.updateUserStatusValidation),
 	AdminManagementController.updateUserStatus,
 );
-router.delete(
-	"/users/:id",
-	adminAuth,
-	AdminManagementController.deleteUser,
-);
+router.delete("/users/:id", adminAuth, AdminManagementController.deleteUser);
 
 // 4. Company Management
-router.get(
-	"/companies",
-	adminAuth,
-	AdminManagementController.getCompanies,
-);
+router.get("/companies", adminAuth, AdminManagementController.getCompanies);
 
 // 5. Assessment Management
-router.get(
-	"/assessments",
-	adminAuth,
-	AdminManagementController.getAssessments,
-);
+router.get("/assessments", adminAuth, AdminManagementController.getAssessments);
 
 // 6. Submissions Monitoring
-router.get(
-	"/submissions",
-	adminAuth,
-	AdminManagementController.getSubmissions,
-);
+router.get("/submissions", adminAuth, AdminManagementController.getSubmissions);
 
 export const AdminManagementRoutes = router;

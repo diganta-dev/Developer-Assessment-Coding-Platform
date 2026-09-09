@@ -325,7 +325,8 @@ const generateAssessmentReport = async (
 					: 0;
 			const accuracyRate =
 				totalSubmissions > 0
-					? Math.round((correctSubmissions / totalSubmissions) * 100 * 100) / 100
+					? Math.round((correctSubmissions / totalSubmissions) * 100 * 100) /
+						100
 					: 0;
 
 			return {
@@ -536,7 +537,9 @@ const generateCandidateReport = async (
 
 			const timeTakenSeconds =
 				att.submittedAt && att.startedAt
-					? Math.round((att.submittedAt.getTime() - att.startedAt.getTime()) / 1000)
+					? Math.round(
+							(att.submittedAt.getTime() - att.startedAt.getTime()) / 1000,
+						)
 					: null;
 
 			return {
@@ -568,11 +571,17 @@ const generateCandidateReport = async (
 			: 0;
 
 	// Skill Category Mastery (CODING, MCQ, WRITTEN)
-	const problemTypes = [ProblemType.CODING, ProblemType.MCQ, ProblemType.WRITTEN];
+	const problemTypes = [
+		ProblemType.CODING,
+		ProblemType.MCQ,
+		ProblemType.WRITTEN,
+	];
 	const allSubmissions = candidate.attempts.flatMap((att) => att.submissions);
 
 	const skillMastery: ISkillMasteryBreakdown[] = problemTypes.map((type) => {
-		const typeSubmissions = allSubmissions.filter((s) => s.problem.type === type);
+		const typeSubmissions = allSubmissions.filter(
+			(s) => s.problem.type === type,
+		);
 		const attemptedCount = typeSubmissions.length;
 		const totalMarksSum = typeSubmissions.reduce(
 			(sum, s) => sum + s.problem.marks,
@@ -683,8 +692,8 @@ const generateCompanyReport = async (
 	let allScoresSum = 0;
 	let totalCompletedScoresCount = 0;
 
-	const assessmentBreakdown: ICompanyAssessmentMetric[] = company.assessments.map(
-		(assessment) => {
+	const assessmentBreakdown: ICompanyAssessmentMetric[] =
+		company.assessments.map((assessment) => {
 			const invitationsCount = assessment.invitations.length;
 			totalCandidatesInvited += invitationsCount;
 
@@ -742,8 +751,7 @@ const generateCompanyReport = async (
 				averageScore: avgScore,
 				passRate,
 			};
-		},
-	);
+		});
 
 	const companyAverageScore =
 		totalCompletedScoresCount > 0
@@ -851,10 +859,13 @@ const getScoreDistribution = async (
 	const totalSum = scores.reduce((sum, v) => sum + v, 0);
 
 	const mean =
-		totalEvaluated > 0 ? Math.round((totalSum / totalEvaluated) * 100) / 100 : 0;
+		totalEvaluated > 0
+			? Math.round((totalSum / totalEvaluated) * 100) / 100
+			: 0;
 	const median = calculateMedian(sortedScores);
 	const standardDeviation = calculateStandardDeviation(scores, mean);
-	const highestScore = sortedScores.length > 0 ? sortedScores[sortedScores.length - 1] : 0;
+	const highestScore =
+		sortedScores.length > 0 ? sortedScores[sortedScores.length - 1] : 0;
 	const lowestScore = sortedScores.length > 0 ? sortedScores[0] : 0;
 
 	const quartiles = {
@@ -952,7 +963,10 @@ const getPassFailStatistics = async (
 
 	// Near miss window: score within 10% of totalMarks below passing threshold
 	const nearMissMargin = (assessment.totalMarks || 100) * 0.1;
-	const nearMissLowerBound = Math.max(0, passingScoreThreshold - nearMissMargin);
+	const nearMissLowerBound = Math.max(
+		0,
+		passingScoreThreshold - nearMissMargin,
+	);
 
 	for (const att of assessment.attempts) {
 		const isPass = hasExplicitPassingScore
@@ -986,10 +1000,14 @@ const getPassFailStatistics = async (
 			: 0;
 
 	const averagePassedScore =
-		passedCount > 0 ? Math.round((passedScoreSum / passedCount) * 100) / 100 : 0;
+		passedCount > 0
+			? Math.round((passedScoreSum / passedCount) * 100) / 100
+			: 0;
 
 	const averageFailedScore =
-		failedCount > 0 ? Math.round((failedScoreSum / failedCount) * 100) / 100 : 0;
+		failedCount > 0
+			? Math.round((failedScoreSum / failedCount) * 100) / 100
+			: 0;
 
 	return {
 		assessmentId: assessment.id,
@@ -1115,11 +1133,35 @@ const getAssessmentStatistics = async (
 	// Difficulty breakdown
 	const difficultyBuckets: Record<
 		Difficulty,
-		{ count: number; totalMarks: number; earnedMarksSum: number; totalSubmissions: number; correctSubmissions: number }
+		{
+			count: number;
+			totalMarks: number;
+			earnedMarksSum: number;
+			totalSubmissions: number;
+			correctSubmissions: number;
+		}
 	> = {
-		[Difficulty.EASY]: { count: 0, totalMarks: 0, earnedMarksSum: 0, totalSubmissions: 0, correctSubmissions: 0 },
-		[Difficulty.MEDIUM]: { count: 0, totalMarks: 0, earnedMarksSum: 0, totalSubmissions: 0, correctSubmissions: 0 },
-		[Difficulty.HARD]: { count: 0, totalMarks: 0, earnedMarksSum: 0, totalSubmissions: 0, correctSubmissions: 0 },
+		[Difficulty.EASY]: {
+			count: 0,
+			totalMarks: 0,
+			earnedMarksSum: 0,
+			totalSubmissions: 0,
+			correctSubmissions: 0,
+		},
+		[Difficulty.MEDIUM]: {
+			count: 0,
+			totalMarks: 0,
+			earnedMarksSum: 0,
+			totalSubmissions: 0,
+			correctSubmissions: 0,
+		},
+		[Difficulty.HARD]: {
+			count: 0,
+			totalMarks: 0,
+			earnedMarksSum: 0,
+			totalSubmissions: 0,
+			correctSubmissions: 0,
+		},
 	};
 
 	for (const ap of assessment.problems) {
@@ -1128,14 +1170,13 @@ const getAssessmentStatistics = async (
 		difficultyBuckets[diff].count++;
 		difficultyBuckets[diff].totalMarks += marks;
 
-		const problemSubs = allSubmissions.filter((s) => s.problemId === ap.problemId);
+		const problemSubs = allSubmissions.filter(
+			(s) => s.problemId === ap.problemId,
+		);
 		for (const sub of problemSubs) {
 			difficultyBuckets[diff].totalSubmissions++;
 			difficultyBuckets[diff].earnedMarksSum += sub.marks ?? 0;
-			if (
-				Boolean(sub.isCorrect) ||
-				(marks > 0 && (sub.marks ?? 0) === marks)
-			) {
+			if (Boolean(sub.isCorrect) || (marks > 0 && (sub.marks ?? 0) === marks)) {
 				difficultyBuckets[diff].correctSubmissions++;
 			}
 		}
@@ -1292,7 +1333,8 @@ const getCandidatePerformance = async (
 		cohortSize > 0
 			? Math.round((cohortPercentSum / cohortSize) * 100) / 100
 			: 0;
-	const cohortHighestScore = cohortScores.length > 0 ? Math.max(...cohortScores) : 0;
+	const cohortHighestScore =
+		cohortScores.length > 0 ? Math.max(...cohortScores) : 0;
 
 	const candidateScoreDiffFromAverage =
 		Math.round((attempt.obtainedMarks - cohortAverageScore) * 100) / 100;
@@ -1302,7 +1344,7 @@ const getCandidatePerformance = async (
 	const betterScoreCount = cohortScores.filter(
 		(s) => s > attempt.obtainedMarks,
 	).length;
-	const effectiveRank = rank ?? (betterScoreCount + 1);
+	const effectiveRank = rank ?? betterScoreCount + 1;
 
 	const percentileRank =
 		cohortSize > 1
@@ -1324,7 +1366,9 @@ const getCandidatePerformance = async (
 	const durationMinutesAllocated = attempt.assessment.durationMinutes;
 	const timeTakenSeconds =
 		attempt.submittedAt && attempt.startedAt
-			? Math.round((attempt.submittedAt.getTime() - attempt.startedAt.getTime()) / 1000)
+			? Math.round(
+					(attempt.submittedAt.getTime() - attempt.startedAt.getTime()) / 1000,
+				)
 			: null;
 
 	const totalAllocatedSeconds = durationMinutesAllocated * 60;

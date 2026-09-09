@@ -37,8 +37,7 @@ const calculateCandidateRank = catchAsync(
 		const attemptId =
 			(req.params.attemptId as string) || (req.params.id as string);
 
-		const result =
-			await RankingResultService.calculateCandidateRank(attemptId);
+		const result = await RankingResultService.calculateCandidateRank(attemptId);
 
 		sendResponse(res, {
 			statusCode: httpStatus.OK,
