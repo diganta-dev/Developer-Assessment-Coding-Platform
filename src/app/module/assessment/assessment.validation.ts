@@ -76,6 +76,16 @@ export const createAssessmentValidation = z
 			.datetime("End date must be a valid ISO datetime string")
 			.optional()
 			.nullable(),
+		startTime: z
+			.string()
+			.datetime("Start time must be a valid ISO datetime string")
+			.optional()
+			.nullable(),
+		endTime: z
+			.string()
+			.datetime("End time must be a valid ISO datetime string")
+			.optional()
+			.nullable(),
 		status: z
 			.literal("DRAFT", {
 				message:

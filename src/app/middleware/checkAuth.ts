@@ -111,9 +111,8 @@ export const auth = (...requiredRoles: (UserRole | CompanyMemberRole)[]) => {
 			const hasUserRole = requiredRoles.includes(user.role);
 			const hasCompanyRole = companyRole
 				? requiredRoles.includes(companyRole)
-				: (user.companyMembers?.some((m) =>
-						requiredRoles.includes(m.role),
-					) ?? false);
+				: (user.companyMembers?.some((m) => requiredRoles.includes(m.role)) ??
+					false);
 
 			if (!hasUserRole && !hasCompanyRole) {
 				throw new AppError(

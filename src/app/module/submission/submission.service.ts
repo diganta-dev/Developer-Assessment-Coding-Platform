@@ -1,3 +1,4 @@
+import { AssessmentService } from "../assessment/assessment.service";
 import httpStatus from "http-status";
 import {
 	AttemptStatus,
@@ -138,6 +139,17 @@ const createSubmission = async (
 	const isExpired = attempt.expiresAt && attempt.expiresAt.getTime() <= now;
 
 	if (isExpired) {
+		const shouldAutoSubmit =
+			attempt.assessment.settings?.autoSubmitOnExpiry !== false;
+
+		if (shouldAutoSubmit) {
+			await AssessmentService.autoSubmitAttempt(attempt.id);
+			throw new AppError(
+				httpStatus.BAD_REQUEST,
+				"Assessment attempt time has expired. Your attempt has been automatically submitted.",
+			);
+		}
+
 		await prisma.assessmentAttempt.update({
 			where: { id: attempt.id },
 			data: { status: AttemptStatus.EXPIRED },

@@ -69,8 +69,7 @@ function calculatePercentile(sorted: number[], percentile: number): number {
 function calculateStandardDeviation(numbers: number[], mean: number): number {
 	if (numbers.length <= 1) return 0;
 	const variance =
-		numbers.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) /
-		numbers.length;
+		numbers.reduce((acc, val) => acc + (val - mean) ** 2, 0) / numbers.length;
 	return Math.round(Math.sqrt(variance) * 100) / 100;
 }
 
@@ -1176,7 +1175,7 @@ const getAssessmentStatistics = async (
 		for (const sub of problemSubs) {
 			difficultyBuckets[diff].totalSubmissions++;
 			difficultyBuckets[diff].earnedMarksSum += sub.marks ?? 0;
-			if (Boolean(sub.isCorrect) || (marks > 0 && (sub.marks ?? 0) === marks)) {
+			if (sub.isCorrect || (marks > 0 && (sub.marks ?? 0) === marks)) {
 				difficultyBuckets[diff].correctSubmissions++;
 			}
 		}

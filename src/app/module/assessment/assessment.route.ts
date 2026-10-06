@@ -95,7 +95,7 @@ router.post(
 );
 
 router.post(
-	"/invite-candidates/:id",    
+	"/invite-candidates/:id",
 	auth(
 		UserRole.SUPER_ADMIN,
 		UserRole.ADMIN,

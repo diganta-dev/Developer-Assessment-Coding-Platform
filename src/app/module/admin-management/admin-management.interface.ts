@@ -1,4 +1,4 @@
-import {
+import type {
 	AssessmentStatus,
 	AttemptStatus,
 	Difficulty,
@@ -51,6 +51,7 @@ export interface IAdminDashboardStats {
 		published: number;
 		active: number;
 		completed: number;
+		expired?: number;
 		archived: number;
 	};
 	submissions: {

@@ -54,7 +54,6 @@ const registerCandidate = async (payload: IRegisterCandidatePayload) => {
 			value: expirationSeconds,
 		},
 	});
-	
 
 	const redisPayloadUserData = {
 		name,

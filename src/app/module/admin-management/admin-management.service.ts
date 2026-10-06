@@ -102,6 +102,7 @@ const getDashboardStatistics = async (): Promise<IAdminDashboardStats> => {
 		[AssessmentStatus.PUBLISHED]: 0,
 		[AssessmentStatus.ACTIVE]: 0,
 		[AssessmentStatus.COMPLETED]: 0,
+		[AssessmentStatus.EXPIRED]: 0,
 		[AssessmentStatus.ARCHIVED]: 0,
 	};
 	let totalAssessments = 0;
@@ -181,6 +182,7 @@ const getDashboardStatistics = async (): Promise<IAdminDashboardStats> => {
 			published: assessmentStatusMap[AssessmentStatus.PUBLISHED],
 			active: assessmentStatusMap[AssessmentStatus.ACTIVE],
 			completed: assessmentStatusMap[AssessmentStatus.COMPLETED],
+			expired: assessmentStatusMap[AssessmentStatus.EXPIRED],
 			archived: assessmentStatusMap[AssessmentStatus.ARCHIVED],
 		},
 		submissions: {

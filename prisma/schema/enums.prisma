@@ -28,6 +28,7 @@ enum AssessmentStatus {
   PUBLISHED
   ACTIVE
   COMPLETED
+  EXPIRED
   ARCHIVED
 }
 
@@ -64,6 +65,7 @@ enum EvaluationStatus {
   PENDING
   IN_PROGRESS
   COMPLETED
+  EXPIRED
 }
 
 enum ResultStatus {

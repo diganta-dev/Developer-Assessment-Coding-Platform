@@ -1,3 +1,4 @@
+import { AssessmentService } from "./app/module/assessment/assessment.service";
 import app from "./app";
 import config from "./app/config";
 
@@ -36,6 +37,16 @@ const main = async () => {
 		app.listen(PORT, () => {
 			console.log(`Server is running on port ${PORT}`);
 		});
+
+		// Initial sync and background scheduler for automatic assessment expiration
+		AssessmentService.syncExpiredAssessments().catch((err) =>
+			console.error("[Scheduler Init] Assessment expiration error:", err),
+		);
+		setInterval(() => {
+			AssessmentService.syncExpiredAssessments().catch((err) =>
+				console.error("[Scheduler] Assessment expiration error:", err),
+			);
+		}, 30 * 1000); // Check every 30 seconds
 	} catch (error) {
 		console.error("Error starting the server:", error);
 		await prisma.$disconnect();
