@@ -1,3 +1,4 @@
+import type { Prisma } from "../../../generated/prisma/client";
 import crypto from "crypto";
 import ejs from "ejs";
 import httpStatus from "http-status";
@@ -16,6 +17,7 @@ import type {
 	ICompanyPayload,
 	IUpdateCompanyPayload,
 	IVerifyCompanyPayload,
+	ICompanyMemberFilterQuery,
 } from "./company.interface";
 
 const generateUniqueCompanySlug = async (name: string): Promise<string> => {
@@ -787,6 +789,7 @@ const removeCompanyMember = async (
 const getCompanyMembers = async (
 	companyId: string,
 	currentUser: { userId: string; role: UserRole },
+	query?: ICompanyMemberFilterQuery,
 ) => {
 	const company = await prisma.company.findUnique({
 		where: { id: companyId },
@@ -827,23 +830,66 @@ const getCompanyMembers = async (
 		}
 	}
 
-	const members = await prisma.companyMember.findMany({
-		where: { companyId },
-		include: {
-			user: {
-				select: {
-					id: true,
-					name: true,
-					email: true,
-					role: true,
-					profilePictureUrl: true,
+	const page = Math.max(1, Number(query?.page) || 1);
+	const limit =
+		query?.limit !== undefined
+			? Math.max(1, Math.min(100, Number(query.limit) || 10))
+			: 10;
+	const skip = (page - 1) * limit;
+	const sortBy = query?.sortBy || "joinedAt";
+	const sortOrder = query?.sortOrder === "desc" ? "desc" : "asc";
+
+	const andConditions: Prisma.CompanyMemberWhereInput[] = [{ companyId }];
+
+	if (query?.searchTerm && query.searchTerm.trim() !== "") {
+		const term = query.searchTerm.trim();
+		andConditions.push({
+			OR: [
+				{ user: { name: { contains: term, mode: "insensitive" } } },
+				{ user: { email: { contains: term, mode: "insensitive" } } },
+			],
+		});
+	}
+
+	if (query?.role) {
+		andConditions.push({ role: query.role });
+	}
+
+	const where: Prisma.CompanyMemberWhereInput =
+		andConditions.length > 0 ? { AND: andConditions } : { companyId };
+
+	const [total, members] = await Promise.all([
+		prisma.companyMember.count({ where }),
+		prisma.companyMember.findMany({
+			where,
+			include: {
+				user: {
+					select: {
+						id: true,
+						name: true,
+						email: true,
+						role: true,
+						profilePictureUrl: true,
+					},
 				},
 			},
-		},
-		orderBy: { joinedAt: "asc" },
-	});
+			skip,
+			take: limit,
+			orderBy: { [sortBy]: sortOrder },
+		}),
+	]);
 
-	return members;
+	const totalPages = Math.ceil(total / limit) || 1;
+
+	return {
+		meta: {
+			page,
+			limit,
+			total,
+			totalPages,
+		},
+		data: members,
+	};
 };
 
 export const CompanyService = {

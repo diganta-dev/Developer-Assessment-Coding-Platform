@@ -9,7 +9,7 @@ enum CompanyMemberRole {
   COMPANY_ADMIN
   ASSESSMENT_CREATOR
   EVALUATOR
-} 
+}    
 
 enum ProblemType {
   MCQ

@@ -17,7 +17,7 @@ import { AntiCheatingService } from "./anti-cheating.service";
 /**
  * 1. Record generic anti-cheat event/violation
  */
-const recordViolation = catchAsync(async (req: Request, res: Response) => {
+const recordViolation = catchAsync(async (req: Request, res: Response) => { 
 	const user = req.user as RequestUser;
 	const attemptId =
 		(req.params.attemptId as string) || (req.params.id as string);

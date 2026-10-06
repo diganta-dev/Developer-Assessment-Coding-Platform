@@ -147,12 +147,17 @@ const removeCompanyMember = catchAsync(async (req, res) => {
 const getCompanyMembers = catchAsync(async (req, res) => {
 	const companyId = req.params.companyId as string;
 	const user = req.user!;
-	const result = await CompanyService.getCompanyMembers(companyId, user);
+	const result = await CompanyService.getCompanyMembers(
+		companyId,
+		user,
+		req.query as any,
+	);
 	sendResponse(res, {
 		success: true,
 		statusCode: httpStatus.OK,
 		message: "Company members fetched successfully",
-		data: result,
+		meta: result.meta,
+		data: result.data,
 	});
 });
 

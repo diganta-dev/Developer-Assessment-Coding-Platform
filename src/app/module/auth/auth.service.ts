@@ -54,6 +54,7 @@ const registerCandidate = async (payload: IRegisterCandidatePayload) => {
 			value: expirationSeconds,
 		},
 	});
+	
 
 	const redisPayloadUserData = {
 		name,
@@ -72,6 +73,7 @@ const registerCandidate = async (payload: IRegisterCandidatePayload) => {
 			},
 		},
 	);
+	console.log("OTP for registration:", otp);
 
 	const templatePath = path.join(
 		process.cwd(),

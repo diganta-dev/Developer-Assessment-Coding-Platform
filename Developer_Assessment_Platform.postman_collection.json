@@ -72,6 +72,11 @@
       "key": "userId",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "memberUserId",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -725,7 +730,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Apex Cyber Innovations\",\n  \"slug\": \"apex-cyber-innovations\",\n  \"email\": \"hr@apexcyber.com\",\n  \"website\": \"https://apexcyber.com\",\n  \"description\": \"AI-driven developer assessment and testing platform\"\n}",
+              "raw": "{\n  \"name\": \"Apex Cyber Innovations\",\n  \"email\": \"hr@apexcyber.com\",\n  \"website\": \"https://apexcyber.com\",\n  \"description\": \"AI-driven developer assessment and testing platform\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -756,7 +761,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"companyId\": \"{{companyId}}\",\n  \"otp\": \"123456\"\n}",
+              "raw": "{\n  \"email\": \"hr@apexcyber.com\",\n  \"otp\": \"123456\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -819,7 +824,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"role\": \"EVALUATOR\"\n}",
+              "raw": "{\n  \"email\": \"evaluator@example.com\",\n  \"role\": \"EVALUATOR\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -835,6 +840,90 @@
                 "company",
                 "{{companyId}}",
                 "members"
+              ]
+            }
+          }
+        },
+        {
+          "name": "07. Add Company Member (Alternate Route)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"evaluator@example.com\",\n  \"role\": \"EVALUATOR\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/company/add-member/{{companyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "add-member",
+                "{{companyId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "08. Update Company Member Role",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"ASSESSMENT_CREATOR\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/company/{{companyId}}/members/{{memberUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "{{companyId}}",
+                "members",
+                "{{memberUserId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "09. Remove Company Member",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/company/{{companyId}}/members/{{memberUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "{{companyId}}",
+                "members",
+                "{{memberUserId}}"
               ]
             }
           }
@@ -1044,7 +1133,7 @@
       "name": "04. Assessment Creation & Lifecycle",
       "item": [
         {
-          "name": "01. Create Assessment (Draft)",
+          "name": "01. Create Assessment (Admin / Company Owner / Company Admin / Assessment Creator)",
           "event": [
             {
               "listen": "test",
@@ -1092,7 +1181,7 @@
           }
         },
         {
-          "name": "02. Add Problems to Assessment",
+          "name": "02. Add Problems to Assessment (Admin / Company Owner / Company Admin / Assessment Creator)",
           "request": {
             "method": "POST",
             "header": [
@@ -1124,7 +1213,7 @@
           }
         },
         {
-          "name": "03. Publish Assessment",
+          "name": "03. Publish Assessment (Admin / Company Owner / Company Admin / Assessment Creator)",
           "request": {
             "method": "PATCH",
             "header": [],
@@ -1142,7 +1231,7 @@
           }
         },
         {
-          "name": "04. Invite Candidate to Assessment",
+          "name": "04. Invite Candidate (Admin / Company Owner / Company Admin)",
           "request": {
             "method": "POST",
             "header": [
@@ -1174,7 +1263,7 @@
           }
         },
         {
-          "name": "05. Get Assessment Invitations",
+          "name": "05. Get Assessment Invitations (Authenticated; Service Permission Checked)",
           "request": {
             "method": "GET",
             "header": [],
@@ -1192,7 +1281,7 @@
           }
         },
         {
-          "name": "06. Start Attempt (Candidate)",
+          "name": "06. Start Attempt (Candidate Only)",
           "event": [
             {
               "listen": "test",
@@ -1228,7 +1317,7 @@
           }
         },
         {
-          "name": "07. Get Candidate My Attempts",
+          "name": "07. Get Candidate My Attempts (Authenticated Candidate)",
           "request": {
             "method": "GET",
             "header": [],
@@ -1245,7 +1334,7 @@
           }
         },
         {
-          "name": "08. Get Attempt Details",
+          "name": "08. Get Attempt Details (Candidate / Admin / Company Staff)",
           "request": {
             "method": "GET",
             "header": [],
@@ -1263,7 +1352,7 @@
           }
         },
         {
-          "name": "09. Finalize & Submit Attempt",
+          "name": "09. Finalize & Submit Attempt (Candidate / Platform Admin)",
           "request": {
             "method": "POST",
             "header": [],
@@ -1282,7 +1371,7 @@
           }
         },
         {
-          "name": "10. Get Attempt Result Preview",
+          "name": "10. Get Attempt Result (Candidate / Admin / Company Staff)",
           "request": {
             "method": "GET",
             "header": [],
@@ -1301,7 +1390,7 @@
           }
         },
         {
-          "name": "11. Get Detailed Assessment Report (Recruiter/Admin)",
+          "name": "11. Get Detailed Assessment Report (Admin / Company Staff)",
           "request": {
             "method": "GET",
             "header": [],
@@ -1318,7 +1407,27 @@
               ]
             }
           }
-        }
+        },
+        { "name": "12. Create Assessment (Root Route) (Admin / Company Owner / Company Admin / Assessment Creator)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/" } },
+        { "name": "13. Get All Assessments (Root Route) (Admin / Company Owner / Company Admin / Assessment Creator / Evaluator)", "request": { "method": "GET", "url": "{{baseUrl}}/assessment/" } },
+        { "name": "14. Publish Results (Alias Route) (Admin / Company Owner / Company Admin / Assessment Creator)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/publish-results/{{assessmentId}}" } },
+        { "name": "15. Create Submission from Attempt (Authenticated Candidate)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/attempts/{{attemptId}}/submissions" } },
+        { "name": "16. Calculate Attempt Score (Alias Route) (Authenticated; Service Permission Checked)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/attempts/{{attemptId}}/calculate-score" } },
+        { "name": "17. Get My Assessments (Admin / Company Owner / Company Admin / Assessment Creator / Evaluator)", "request": { "method": "GET", "url": "{{baseUrl}}/assessment/get-my-assessments" } },
+        { "name": "18. Get Single Assessment (Authenticated; Candidate / Company Staff / Admin)", "request": { "method": "GET", "url": "{{baseUrl}}/assessment/get-single-assessment/{{assessmentId}}" } },
+        { "name": "19. Update Assessment (Admin / Company Owner / Company Admin / Assessment Creator)", "request": { "method": "PATCH", "url": "{{baseUrl}}/assessment/update-assessment/{{assessmentId}}" } },
+        { "name": "20. Delete Assessment (Admin / Company Owner / Company Admin)", "request": { "method": "DELETE", "url": "{{baseUrl}}/assessment/delete-assessment/{{assessmentId}}" } },
+        { "name": "21. Get Assessment Attempts (Admin / Company Owner / Company Admin / Assessment Creator / Evaluator)", "request": { "method": "GET", "url": "{{baseUrl}}/assessment/{{assessmentId}}/attempts" } },
+        { "name": "22. Get Assessment Results (Admin / Company Owner / Company Admin / Assessment Creator / Evaluator)", "request": { "method": "GET", "url": "{{baseUrl}}/assessment/{{assessmentId}}/results" } },
+        { "name": "23. Get Assessment Leaderboard (Authenticated; Service Permission Checked)", "request": { "method": "GET", "url": "{{baseUrl}}/assessment/{{assessmentId}}/leaderboard" } },
+        { "name": "24. Publish Results (Direct Route) (Admin / Company Owner / Company Admin / Assessment Creator)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/{{assessmentId}}/publish-results" } },
+        { "name": "25. Start Attempt (Direct Route) (Candidate Only)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/{{assessmentId}}/start-attempt" } },
+        { "name": "26. Publish Assessment (Direct Route) (Admin / Company Owner / Company Admin / Assessment Creator)", "request": { "method": "PATCH", "url": "{{baseUrl}}/assessment/{{assessmentId}}/publish" } },
+        { "name": "27. Invite Candidate (Direct Route) (Admin / Company Owner / Company Admin)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/{{assessmentId}}/invite" } },
+        { "name": "28. Add Problems (Direct Route) (Admin / Company Owner / Company Admin / Assessment Creator)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/{{assessmentId}}/problems" } },
+        { "name": "29. Get Single Assessment (Direct Route) (Authenticated; Candidate / Company Staff / Admin)", "request": { "method": "GET", "url": "{{baseUrl}}/assessment/{{assessmentId}}" } },
+        { "name": "30. Update Assessment (Direct Route) (Admin / Company Owner / Company Admin / Assessment Creator)", "request": { "method": "PATCH", "url": "{{baseUrl}}/assessment/{{assessmentId}}" } },
+        { "name": "31. Delete Assessment (Direct Route) (Admin / Company Owner / Company Admin)", "request": { "method": "DELETE", "url": "{{baseUrl}}/assessment/{{assessmentId}}" } }
       ]
     },
     {
@@ -2259,6 +2368,36 @@
             }
           }
         }
+      ]
+    },
+    {
+      "name": "12. Complete Route Coverage",
+      "description": "Additional requests for every backend route that was not previously represented in this collection.",
+      "item": [
+        { "name": "Verify Login OTP", "request": { "method": "POST", "url": "{{baseUrl}}/auth/verify-login-otp" } },
+        { "name": "Resend Login OTP", "request": { "method": "POST", "url": "{{baseUrl}}/auth/resend-login-otp" } },
+        { "name": "Google Login", "request": { "method": "POST", "url": "{{baseUrl}}/auth/google" } },
+        { "name": "Google Login Alias", "request": { "method": "POST", "url": "{{baseUrl}}/auth/google-login" } },
+        { "name": "Forgot Password", "request": { "method": "POST", "url": "{{baseUrl}}/auth/forgot-password" } },
+        { "name": "Reset Password", "request": { "method": "POST", "url": "{{baseUrl}}/auth/reset-password" } },
+        { "name": "Get All Problems Alias", "request": { "method": "GET", "url": "{{baseUrl}}/problem/all-problems" } },
+        { "name": "Get My Company Problems Alias", "request": { "method": "GET", "url": "{{baseUrl}}/problem/my-company-problems" } },
+        { "name": "Create Submission by Attempt", "request": { "method": "POST", "url": "{{baseUrl}}/submission/attempts/{{attemptId}}" } },
+        { "name": "Submit Submission by Body", "request": { "method": "POST", "url": "{{baseUrl}}/submission/submit" } },
+        { "name": "Evaluate Submission", "request": { "method": "POST", "url": "{{baseUrl}}/submission/{{submissionId}}/evaluate" } },
+        { "name": "Get Submission by ID", "request": { "method": "GET", "url": "{{baseUrl}}/submission/{{submissionId}}" } },
+        { "name": "Evaluate Coding Submission", "request": { "method": "POST", "url": "{{baseUrl}}/evaluation/coding/{{submissionId}}" } },
+        { "name": "Evaluate Written Submission", "request": { "method": "POST", "url": "{{baseUrl}}/evaluation/written/{{submissionId}}" } },
+        { "name": "Get Attempt Evaluation Score", "request": { "method": "GET", "url": "{{baseUrl}}/evaluation/attempt/{{attemptId}}/score" } },
+        { "name": "Calculate Submission Score", "request": { "method": "POST", "url": "{{baseUrl}}/score-calculation/submission/{{submissionId}}" } },
+        { "name": "Calculate Coding Score", "request": { "method": "GET", "url": "{{baseUrl}}/score-calculation/coding/{{submissionId}}/score" } },
+        { "name": "Calculate Coding Score POST", "request": { "method": "POST", "url": "{{baseUrl}}/score-calculation/coding/{{submissionId}}/score" } },
+        { "name": "Calculate MCQ Score POST", "request": { "method": "POST", "url": "{{baseUrl}}/score-calculation/mcq/{{submissionId}}/score" } },
+        { "name": "Calculate Written Score POST", "request": { "method": "POST", "url": "{{baseUrl}}/score-calculation/written/{{submissionId}}/score" } },
+        { "name": "Calculate Attempt Score POST", "request": { "method": "POST", "url": "{{baseUrl}}/score-calculation/attempt/{{attemptId}}" } },
+        { "name": "Publish Ranking Results PATCH", "request": { "method": "PATCH", "url": "{{baseUrl}}/ranking-result/publish/{{assessmentId}}" } },
+        { "name": "Generate Assessment Report POST", "request": { "method": "POST", "url": "{{baseUrl}}/reports-analytics/assessment/{{assessmentId}}/report" } },
+        { "name": "Report Generic Anti-Cheat Violation", "request": { "method": "POST", "url": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/violation" } }
       ]
     }
   ]

@@ -19,3 +19,19 @@ export interface IAddCompanyMemberPayload {
 	email: string;
 	role: CompanyMemberRole;
 }
+
+export interface ICompanyMemberFilterQuery {
+	page?: number | string;
+	limit?: number | string;
+	searchTerm?: string;
+	role?: CompanyMemberRole;
+	sortBy?: string;
+	sortOrder?: "asc" | "desc";
+}
+
+export interface IPaginationMeta {
+	page: number;
+	limit: number;
+	total: number;
+	totalPages: number;
+}
