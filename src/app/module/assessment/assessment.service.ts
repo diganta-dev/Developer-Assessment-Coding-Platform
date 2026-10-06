@@ -171,15 +171,23 @@ const createAssessment = async (
 
 	const initialTotalMarks = payload.totalMarks ?? 0;
 
+	// Normalize passingScore / passMarks
+	const effectivePassingScore =
+		payload.passingScore !== undefined && payload.passingScore !== null
+			? payload.passingScore
+			: payload.passMarks !== undefined && payload.passMarks !== null
+				? payload.passMarks
+				: null;
+
 	// Validate passing score relative to total marks if provided
-	if (payload.passingScore !== undefined && payload.passingScore !== null) {
-		if (initialTotalMarks > 0 && payload.passingScore > initialTotalMarks) {
+	if (effectivePassingScore !== null) {
+		if (initialTotalMarks > 0 && effectivePassingScore > initialTotalMarks) {
 			throw new AppError(
 				httpStatus.BAD_REQUEST,
-				`Passing score (${payload.passingScore}) cannot be greater than total marks (${initialTotalMarks}).`,
+				`Passing score (${effectivePassingScore}) cannot be greater than total marks (${initialTotalMarks}).`,
 			);
 		}
-		if (initialTotalMarks === 0 && payload.passingScore > 0) {
+		if (initialTotalMarks === 0 && effectivePassingScore > 0) {
 			throw new AppError(
 				httpStatus.BAD_REQUEST,
 				"Passing score cannot be specified when total marks is 0. Please set total marks or add problems first.",
@@ -218,7 +226,7 @@ const createAssessment = async (
 				creatorId: user.userId,
 				durationMinutes: payload.durationMinutes,
 				totalMarks: initialTotalMarks,
-				passingScore: payload.passingScore ?? null,
+				passingScore: effectivePassingScore,
 				startDate: payload.startDate
 					? toDate(payload.startDate)
 					: (payload as any).startTime
@@ -1043,8 +1051,14 @@ const updateAssessment = async (
 			updateData.durationMinutes = payload.durationMinutes;
 		if (calculatedTotalMarks !== undefined)
 			updateData.totalMarks = calculatedTotalMarks;
-		if (payload.passingScore !== undefined)
-			updateData.passingScore = payload.passingScore;
+		const effectiveUpdateScore =
+			payload.passingScore !== undefined
+				? payload.passingScore
+				: payload.passMarks !== undefined
+					? payload.passMarks
+					: undefined;
+		if (effectiveUpdateScore !== undefined)
+			updateData.passingScore = effectiveUpdateScore;
 		if (payload.startDate !== undefined)
 			updateData.startDate = payload.startDate
 				? toDate(payload.startDate)

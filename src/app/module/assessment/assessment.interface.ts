@@ -28,6 +28,7 @@ export interface ICreateAssessmentPayload {
 	durationMinutes: number;
 	totalMarks?: number;
 	passingScore?: number | null;
+	passMarks?: number | null;
 	startDate?: string | Date | null;
 	endDate?: string | Date | null;
 	status?: AssessmentStatus;
@@ -50,6 +51,7 @@ export interface IUpdateAssessmentPayload {
 	durationMinutes?: number;
 	totalMarks?: number;
 	passingScore?: number | null;
+	passMarks?: number | null;
 	startDate?: string | Date | null;
 	endDate?: string | Date | null;
 	status?: AssessmentStatus;

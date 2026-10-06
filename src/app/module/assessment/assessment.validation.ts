@@ -66,6 +66,11 @@ export const createAssessmentValidation = z
 			.positive("Passing score must be positive")
 			.optional()
 			.nullable(),
+		passMarks: z
+			.number()
+			.positive("Pass marks must be positive")
+			.optional()
+			.nullable(),
 		startDate: z
 			.string()
 			.datetime("Start date must be a valid ISO datetime string")
@@ -125,11 +130,12 @@ export const createAssessmentValidation = z
 			}
 		}
 
-		// Validate passing score against total marks
-		if (data.passingScore !== undefined && data.passingScore !== null) {
+		// Validate passing score / passMarks against total marks
+		const effectivePassing = data.passingScore ?? (data as any).passMarks;
+		if (effectivePassing !== undefined && effectivePassing !== null) {
 			if (
 				data.totalMarks !== undefined &&
-				data.passingScore > data.totalMarks
+				effectivePassing > data.totalMarks
 			) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
@@ -137,7 +143,7 @@ export const createAssessmentValidation = z
 					path: ["passingScore"],
 				});
 			}
-			if (data.totalMarks === 0 && data.passingScore > 0) {
+			if (data.totalMarks === 0 && effectivePassing > 0) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message: "Passing score cannot be specified when total marks is 0",
