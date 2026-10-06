@@ -19,7 +19,7 @@ const router = Router();
 
 /**
  * Route ordering rules (Express processes top-to-bottom):
- * 1. Fully static paths first  → /create-assessment
+ * 1. Fully static paths first  → /assessment/
  * 2. Static-prefix paths next → /start-attempt/:id, /invite-candidates/:id, /add-problems/:id
  * 3. Attempt sub-routes        → /attempts/:attemptId/*
  * 4. Candidate self-service    → /my-attempts
@@ -31,19 +31,6 @@ const router = Router();
 
 router.post(
 	"/",
-	auth(
-		UserRole.SUPER_ADMIN,
-		UserRole.ADMIN,
-		CompanyMemberRole.COMPANY_OWNER,
-		CompanyMemberRole.COMPANY_ADMIN,
-		CompanyMemberRole.ASSESSMENT_CREATOR,
-	),
-	validateRequest(createAssessmentValidation),
-	AssessmentController.createAssessment,
-);
-
-router.post(
-	"/create-assessment",
 	auth(
 		UserRole.SUPER_ADMIN,
 		UserRole.ADMIN,
@@ -70,7 +57,13 @@ router.get(
 
 // ─── CANDIDATE SELF-SERVICE (must be before /:id to avoid shadow) ─────────────
 
+router.get("/candidate/my-attempts", auth(), AssessmentController.getMyAttempts);
 router.get("/my-attempts", auth(), AssessmentController.getMyAttempts);
+
+// Candidate invitation verification (public, verified via cryptographically random token)
+router.get("/verify-invitation", AssessmentController.verifyInvitationToken);
+router.get("/verify-invitation/:token", AssessmentController.verifyInvitationToken);
+router.get("/invitation/verify/:token", AssessmentController.verifyInvitationToken);
 
 // ─── STATIC-PREFIX ALTERNATE FORMS (before /:id prefix) ──────────────────────
 
@@ -296,6 +289,18 @@ router.post(
 
 router.get(
 	"/:id/invitations",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
+	AssessmentController.getAssessmentInvitations,
+);
+
+router.get(
+	"/:id/invitation",
 	auth(
 		UserRole.SUPER_ADMIN,
 		UserRole.ADMIN,

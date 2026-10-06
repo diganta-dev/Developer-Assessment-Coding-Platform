@@ -136,6 +136,20 @@ const getAssessmentInvitations = catchAsync(
 	},
 );
 
+const verifyInvitationToken = catchAsync(async (req: Request, res: Response) => {
+	const token = (req.params.token || req.query.token) as string;
+	if (!token) {
+		throw new AppError(httpStatus.BAD_REQUEST, "Invitation token is required");
+	}
+	const result = await AssessmentService.verifyInvitationToken(token);
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "Invitation verified successfully",
+		data: result,
+	});
+});
+
 const startAttempt = catchAsync(async (req: Request, res: Response) => {
 	const user = req.user as RequestUser;
 	const id = req.params.id as string;
@@ -329,6 +343,7 @@ export const AssessmentController = {
 	addProblemsToAssessment,
 	inviteCandidates,
 	getAssessmentInvitations,
+	verifyInvitationToken,
 	startAttempt,
 	getAttemptDetails,
 	submitAssessmentAttempt,

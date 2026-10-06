@@ -1169,13 +1169,13 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/assessment/create-assessment",
+              "raw": "{{baseUrl}}/assessment/",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "assessment",
-                "create-assessment"
+                "assessment"
               ]
             }
           }

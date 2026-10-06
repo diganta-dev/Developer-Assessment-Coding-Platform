@@ -423,7 +423,7 @@ async function runFullIntegrationTest() {
 		// 4.1 Create Assessment
 		const createAssessmentRes = await request(
 			baseUrl,
-			"/api/v1/assessment/create-assessment",
+			"/api/v1/assessment/",
 			{
 				method: "POST",
 				token: creatorToken,
@@ -447,7 +447,7 @@ async function runFullIntegrationTest() {
 		assert(
 			createAssessmentRes.status === 201 &&
 				Boolean(createAssessmentRes.data?.data?.id),
-			"POST /api/v1/assessment/create-assessment (Draft Assessment Created)",
+			"POST /api/v1/assessment/ (Draft Assessment Created)",
 			createAssessmentRes.data?.message,
 		);
 		createdAssessmentId = createAssessmentRes.data.data.id;

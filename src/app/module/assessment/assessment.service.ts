@@ -1734,23 +1734,42 @@ const getAssessmentInvitations = async (
 		user.role === UserRole.SUPER_ADMIN || user.role === UserRole.ADMIN;
 
 	if (!isPlatformAdmin) {
-		const membership = await prisma.companyMember.findUnique({
-			where: {
-				userId_companyId: {
-					userId: user.userId,
-					companyId: assessment.companyId,
-				},
-			},
-		});
-
+		const isSameCompany =
+			Boolean(user.companyId && user.companyId === assessment.companyId);
 		const isCreator = assessment.creatorId === user.userId;
-		if (!isCreator && !membership) {
+
+		let hasAccess = isCreator || isSameCompany;
+		if (!hasAccess) {
+			const membership = await prisma.companyMember.findUnique({
+				where: {
+					userId_companyId: {
+						userId: user.userId,
+						companyId: assessment.companyId,
+					},
+				},
+			});
+			if (membership) {
+				hasAccess = true;
+			}
+		}
+
+		if (!hasAccess) {
 			throw new AppError(
 				httpStatus.FORBIDDEN,
 				"You do not have permission to view invitations for this assessment.",
 			);
 		}
 	}
+
+	// Automatically expire pending invitations whose expiry has passed
+	await prisma.assessmentInvitation.updateMany({
+		where: {
+			assessmentId,
+			status: InvitationStatus.PENDING,
+			expiresAt: { lte: new Date() },
+		},
+		data: { status: InvitationStatus.EXPIRED },
+	});
 
 	const invitations = await prisma.assessmentInvitation.findMany({
 		where: { assessmentId },
@@ -1761,6 +1780,21 @@ const getAssessmentInvitations = async (
 					name: true,
 					email: true,
 					profilePictureUrl: true,
+					assessmentAttempts: {
+						where: { assessmentId },
+						orderBy: { attemptNumber: "desc" },
+						take: 1,
+						select: {
+							id: true,
+							attemptNumber: true,
+							status: true,
+							obtainedMarks: true,
+							totalMarks: true,
+							percentage: true,
+							startedAt: true,
+							submittedAt: true,
+						},
+					},
 				},
 			},
 		},
@@ -1768,6 +1802,80 @@ const getAssessmentInvitations = async (
 	});
 
 	return invitations;
+};
+
+/**
+ * Validates and retrieves assessment invitation details by token for candidate landing.
+ */
+const verifyInvitationToken = async (token: string) => {
+	const invitation = await prisma.assessmentInvitation.findUnique({
+		where: { token },
+		include: {
+			assessment: {
+				select: {
+					id: true,
+					title: true,
+					description: true,
+					durationMinutes: true,
+					totalMarks: true,
+					passingScore: true,
+					startDate: true,
+					endDate: true,
+					status: true,
+					company: {
+						select: {
+							id: true,
+							name: true,
+							logoUrl: true,
+						},
+					},
+					settings: true,
+				},
+			},
+			candidate: {
+				select: {
+					id: true,
+					name: true,
+					email: true,
+				},
+			},
+		},
+	});
+
+	if (!invitation) {
+		throw new AppError(
+			httpStatus.NOT_FOUND,
+			"Invitation token not found or invalid.",
+		);
+	}
+
+	const now = new Date();
+	const isExpired =
+		invitation.status === InvitationStatus.EXPIRED ||
+		Boolean(invitation.expiresAt && invitation.expiresAt <= now) ||
+		Boolean(invitation.assessment.endDate && invitation.assessment.endDate <= now);
+
+	if (isExpired && invitation.status === InvitationStatus.PENDING) {
+		await prisma.assessmentInvitation.update({
+			where: { id: invitation.id },
+			data: { status: InvitationStatus.EXPIRED },
+		});
+		invitation.status = InvitationStatus.EXPIRED;
+	}
+
+	return {
+		invitation: {
+			id: invitation.id,
+			status: invitation.status,
+			email: invitation.email,
+			token: invitation.token,
+			invitedAt: invitation.invitedAt,
+			expiresAt: invitation.expiresAt,
+			isExpired,
+		},
+		assessment: invitation.assessment,
+		candidate: invitation.candidate,
+	};
 };
 
 /**
@@ -2484,6 +2592,18 @@ const getAssessmentAttempts = async (
 						name: true,
 						email: true,
 						profilePictureUrl: true,
+					},
+				},
+				result: {
+					select: {
+						id: true,
+						totalMarks: true,
+						obtainedMarks: true,
+						percentage: true,
+						passingScore: true,
+						rank: true,
+						status: true,
+						publishedAt: true,
 					},
 				},
 				_count: {
@@ -3309,6 +3429,7 @@ export const AssessmentService = {
 	addProblemsToAssessment,
 	inviteCandidates,
 	getAssessmentInvitations,
+	verifyInvitationToken,
 	startAttempt,
 	getAttemptDetails,
 	submitAssessmentAttempt,
