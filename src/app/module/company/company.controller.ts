@@ -13,6 +13,7 @@ const getCookieOptions = (maxAge: number) => ({
 	secure: isProduction,
 	sameSite: (isProduction ? "none" : "lax") as "none" | "lax",
 	maxAge,
+	path: "/",
 });
 
 // Helper to extract authenticated user's ID if token or session is provided

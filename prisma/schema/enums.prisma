@@ -91,3 +91,14 @@ enum AntiCheatEventType {
   MULTIPLE_TAB
   WINDOW_BLUR
 }
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum PaymentType {
+  COMPANY_REGISTRATION
+  USER_REGISTRATION
+}

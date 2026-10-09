@@ -16,6 +16,12 @@ export default {
 	jwt_access_expires_in: process.env.JWT_ACCESS_EXPIRES_IN,
 	jwt_refresh_expires_in: process.env.JWT_REFRESH_EXPIRES_IN,
 	application_name: process.env.APPLICATION_NAME,
+	bkash_base_url: process.env.BKASH_BASE_URL!,
+	bkash_app_key: process.env.BKASH_APP_KEY!,
+	bkash_app_secret: process.env.BKASH_APP_SECRET!,
+	bkash_username: process.env.BKASH_USERNAME!,
+	bkash_password: process.env.BKASH_PASSWORD!,
+	bkash_callback_url: process.env.BKASH_CALLBACK_URL!,
 
 	// Google OAuth
 	google_client_id: process.env.GOOGLE_CLIENT_ID,

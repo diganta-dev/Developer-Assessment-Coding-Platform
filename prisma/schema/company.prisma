@@ -5,7 +5,8 @@ model Company {
   slug String @unique
 
   email       String @unique
-  isVerified  Boolean @default(false)
+  isVerified         Boolean  @default(false)
+  isPaymentVerified  Boolean  @default(true)
   logoUrl     String?
   description String?
   website     String?
@@ -17,6 +18,7 @@ model Company {
 
   assessments Assessment[]
   problems    Problem[]
+  payments    Payment[]
 
   @@index([slug])
 }

@@ -36,6 +36,9 @@ model User {
   // Evaluations
   evaluations Evaluation[] @relation("Evaluator")
 
+  // Payments
+  payments Payment[]
+
   @@index([email])
   @@index([role])
 }

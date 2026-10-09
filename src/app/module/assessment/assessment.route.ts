@@ -42,6 +42,19 @@ router.post(
 	AssessmentController.createAssessment,
 );
 
+router.post(
+	"/create-assessment",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+		CompanyMemberRole.ASSESSMENT_CREATOR,
+	),
+	validateRequest(createAssessmentValidation),
+	AssessmentController.createAssessment,
+);
+
 router.get(
 	"/",
 	auth(

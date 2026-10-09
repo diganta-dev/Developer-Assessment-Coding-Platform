@@ -14,6 +14,7 @@ const getCookieOptions = (maxAge: number) => ({
 	secure: isProduction,
 	sameSite: (isProduction ? "none" : "lax") as "none" | "lax",
 	maxAge,
+	path: "/",
 });
 
 const registerCandidate = catchAsync(async (req: Request, res: Response) => {

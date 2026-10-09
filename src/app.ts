@@ -13,9 +13,27 @@ import router from "./app/router";
 
 const app: Application = express();
 
+const allowedOrigins = [
+	config.frontend_url,
+	"http://localhost:3000",
+	"http://127.0.0.1:3000",
+	"http://localhost:3001",
+	"http://127.0.0.1:3001",
+].filter(Boolean);
+
 app.use(
 	cors({
-		origin: config.frontend_url,
+		origin: (origin, callback) => {
+			if (
+				!origin ||
+				allowedOrigins.includes(origin) ||
+				config.node_env === "development"
+			) {
+				callback(null, true);
+			} else {
+				callback(new Error("Not allowed by CORS"));
+			}
+		},
 		credentials: true,
 	}),
 );

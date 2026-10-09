@@ -1,8 +1,8 @@
 {
   "info": {
-    "_postman_id": "8a32d1e0-74e2-4d2a-bf34-9cf72834b9d1",
+    "_postman_id": "developer-assessment-coding-platform-suite",
     "name": "Developer Assessment & Coding Platform - Full API Suite",
-    "description": "Comprehensive Postman Collection for Developer Assessment & Coding Platform Backend.\n\nIncludes all 12 modules: Authentication & Multi-Persona Logins, Company Management, Problem Bank, Assessment Lifecycle, Submissions, Anti-Cheating Telemetry, Evaluation Engine, Score Calculation, Ranking & Leaderboards, Reports & Analytics, and Admin Management.\n\nFeatures automated token & variable management: Access Token, Problem ID, Assessment ID, Attempt ID, and Submission ID are automatically captured and synchronized across requests.",
+    "description": "Production API Collection with complete coverage of all 122 backend routes across 11 modules. Contains valid Zod-compliant request payloads, zero duplicates, and implementation status tracking for the frontend development phase.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -18,15 +18,8 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "https://developer-assessment-coding-platfor-psi.vercel.app/api/v1",
-      "type": "string",
-      "description": "Production API Base URL (Can switch to http://localhost:5000/api/v1 for local testing)"
-    },
-    {
-      "key": "rootUrl",
-      "value": "https://developer-assessment-coding-platfor-psi.vercel.app",
-      "type": "string",
-      "description": "Root Health check URL"
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
     },
     {
       "key": "accessToken",
@@ -40,11 +33,6 @@
     },
     {
       "key": "companyId",
-      "value": "",
-      "type": "string"
-    },
-    {
-      "key": "problemId",
       "value": "",
       "type": "string"
     },
@@ -64,7 +52,12 @@
       "type": "string"
     },
     {
-      "key": "candidateId",
+      "key": "problemId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "invitationToken",
       "value": "",
       "type": "string"
     },
@@ -77,63 +70,43 @@
       "key": "memberUserId",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "candidateId",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
     {
       "name": "00. Health Check & Root",
+      "description": "API server root health check and status probes",
       "item": [
         {
-          "name": "Root Welcome (Server Status)",
+          "name": "01. Root Health Check Probe",
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{rootUrl}}/",
+              "raw": "{{baseUrl}}/",
               "host": [
-                "{{rootUrl}}"
+                "{{baseUrl}}"
               ],
-              "path": [
-                ""
-              ]
-            }
-          }
+              "path": []
+            },
+            "description": "Public endpoint checking if the backend server and database services are operational.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "01. Authentication & Multi-Persona Logins",
-      "description": "Endpoints for authentication, login across 7 seeded personas, registration, email verification, and tokens.",
+      "description": "Authentication, registration, email verification, password reset, and session management",
       "item": [
         {
-          "name": "01. Login as Super Admin (Platform Super Admin)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    const res = pm.response.json();",
-                  "    if (res.data && res.data.accessToken) {",
-                  "        pm.collectionVariables.set('accessToken', res.data.accessToken);",
-                  "        console.log('Access token saved to collection variable.');",
-                  "    }",
-                  "    if (res.data && res.data.refreshToken) {",
-                  "        pm.collectionVariables.set('refreshToken', res.data.refreshToken);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "01. Register Candidate",
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "POST",
             "header": [
               {
@@ -141,444 +114,6 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"superadmin@gmail.com\",\n  \"password\": \"superAdmin33#\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            }
-          }
-        },
-        {
-          "name": "02. Login as Platform Admin",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    const res = pm.response.json();",
-                  "    if (res.data && res.data.accessToken) {",
-                  "        pm.collectionVariables.set('accessToken', res.data.accessToken);",
-                  "        console.log('Access token saved to collection variable.');",
-                  "    }",
-                  "    if (res.data && res.data.refreshToken) {",
-                  "        pm.collectionVariables.set('refreshToken', res.data.refreshToken);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"testadmin@gmail.com\",\n  \"password\": \"TestAdmin33#\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            }
-          }
-        },
-        {
-          "name": "03. Login as Company Admin",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    const res = pm.response.json();",
-                  "    if (res.data && res.data.accessToken) {",
-                  "        pm.collectionVariables.set('accessToken', res.data.accessToken);",
-                  "        console.log('Access token saved to collection variable.');",
-                  "    }",
-                  "    if (res.data && res.data.refreshToken) {",
-                  "        pm.collectionVariables.set('refreshToken', res.data.refreshToken);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"tested.companyadmin@devassess.com\",\n  \"password\": \"CompanyAdmin123!#\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            }
-          }
-        },
-        {
-          "name": "04. Login as Recruiter",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    const res = pm.response.json();",
-                  "    if (res.data && res.data.accessToken) {",
-                  "        pm.collectionVariables.set('accessToken', res.data.accessToken);",
-                  "        console.log('Access token saved to collection variable.');",
-                  "    }",
-                  "    if (res.data && res.data.refreshToken) {",
-                  "        pm.collectionVariables.set('refreshToken', res.data.refreshToken);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"tested.recruiter@devassess.com\",\n  \"password\": \"CompanyRecruiter123!#\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            }
-          }
-        },
-        {
-          "name": "05. Login as Assessment Creator",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    const res = pm.response.json();",
-                  "    if (res.data && res.data.accessToken) {",
-                  "        pm.collectionVariables.set('accessToken', res.data.accessToken);",
-                  "        console.log('Access token saved to collection variable.');",
-                  "    }",
-                  "    if (res.data && res.data.refreshToken) {",
-                  "        pm.collectionVariables.set('refreshToken', res.data.refreshToken);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"tested.creator@devassess.com\",\n  \"password\": \"Creator123!#\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            }
-          }
-        },
-        {
-          "name": "06. Login as Evaluator",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    const res = pm.response.json();",
-                  "    if (res.data && res.data.accessToken) {",
-                  "        pm.collectionVariables.set('accessToken', res.data.accessToken);",
-                  "        console.log('Access token saved to collection variable.');",
-                  "    }",
-                  "    if (res.data && res.data.refreshToken) {",
-                  "        pm.collectionVariables.set('refreshToken', res.data.refreshToken);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"tested.evaluator@devassess.com\",\n  \"password\": \"Evaluator123!#\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            }
-          }
-        },
-        {
-          "name": "07. Login as Candidate",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    const res = pm.response.json();",
-                  "    if (res.data && res.data.accessToken) {",
-                  "        pm.collectionVariables.set('accessToken', res.data.accessToken);",
-                  "        console.log('Access token saved to collection variable.');",
-                  "    }",
-                  "    if (res.data && res.data.refreshToken) {",
-                  "        pm.collectionVariables.set('refreshToken', res.data.refreshToken);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"tested.candidate@devassess.com\",\n  \"password\": \"Candidate123!#\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            }
-          }
-        },
-        {
-          "name": "08. Get Current Authenticated Profile (/me)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/auth/me",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "me"
-              ]
-            }
-          }
-        },
-        {
-          "name": "09. Refresh Access Token",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    const res = pm.response.json();",
-                  "    if (res.data && res.data.accessToken) {",
-                  "        pm.collectionVariables.set('accessToken', res.data.accessToken);",
-                  "        console.log('Access token saved to collection variable.');",
-                  "    }",
-                  "    if (res.data && res.data.refreshToken) {",
-                  "        pm.collectionVariables.set('refreshToken', res.data.refreshToken);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/refresh-token",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "refresh-token"
-              ]
-            }
-          }
-        },
-        {
-          "name": "10. Register New Candidate",
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Candidate Postman Test\",\n  \"email\": \"candidate.test@example.com\",\n  \"password\": \"CandidatePass123!#\",\n  \"candidateProfile\": {\n    \"phone\": \"+8801700000000\",\n    \"location\": \"Dhaka, Bangladesh\",\n    \"bio\": \"Full Stack Engineer\"\n  }\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "{{baseUrl}}/auth/register",
               "host": [
@@ -588,35 +123,23 @@
                 "auth",
                 "register"
               ]
-            }
-          }
-        },
-        {
-          "name": "11. Verify Email OTP",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    const res = pm.response.json();",
-                  "    if (res.data && res.data.accessToken) {",
-                  "        pm.collectionVariables.set('accessToken', res.data.accessToken);",
-                  "        console.log('Access token saved to collection variable.');",
-                  "    }",
-                  "    if (res.data && res.data.refreshToken) {",
-                  "        pm.collectionVariables.set('refreshToken', res.data.refreshToken);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
+            },
+            "description": "Public candidate self-registration with password complexity check.\n\n**Frontend Status:** ✅ Implemented in frontend (`userRegistration (auth.api.ts)`)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Developer\",\n  \"email\": \"john.candidate@example.com\",\n  \"password\": \"Password123!\",\n  \"candidateProfile\": {\n    \"phone\": \"+1234567890\",\n    \"contactNumber\": \"+1234567890\",\n    \"bio\": \"Full Stack Software Engineer\",\n    \"location\": \"San Francisco, CA\",\n    \"githubUrl\": \"https://github.com/johndeveloper\",\n    \"linkedinUrl\": \"https://linkedin.com/in/johndeveloper\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
               }
             }
-          ],
+          },
+          "response": []
+        },
+        {
+          "name": "02. Verify Registration Email",
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "POST",
             "header": [
               {
@@ -624,15 +147,6 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"candidate.test@example.com\",\n  \"otp\": \"123456\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "{{baseUrl}}/auth/verify-email",
               "host": [
@@ -642,11 +156,187 @@
                 "auth",
                 "verify-email"
               ]
+            },
+            "description": "Verifies the 6-digit email confirmation code sent to candidate.\n\n**Frontend Status:** ✅ Implemented in frontend (`userVerifyAccount (auth.api.ts)`)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.candidate@example.com\",\n  \"otp\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "12. Logout User",
+          "name": "03. Login User (Candidate / Company Staff / Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Standard login returning JWT accessToken, refreshToken, and user persona profile.\n\n**Frontend Status:** ✅ Implemented in frontend (`userLogin (auth.api.ts)`)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.candidate@example.com\",\n  \"password\": \"Password123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "04. Verify Login OTP (2FA / Secure Login)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-login-otp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "verify-login-otp"
+              ]
+            },
+            "description": "Verifies secondary login OTP if 2-factor authentication is active.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.candidate@example.com\",\n  \"otp\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "05. Resend Login OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/resend-login-otp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "resend-login-otp"
+              ]
+            },
+            "description": "Resends a fresh 6-digit OTP code to the requested email.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.candidate@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "06. Google OAuth Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "google"
+              ]
+            },
+            "description": "Authenticates or registers user via verified Google OAuth idToken.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idToken\": \"google_oauth_id_token_example\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "07. Google OAuth Login (Alias Route)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google-login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "google-login"
+              ]
+            },
+            "description": "Alternate alias path for Google OAuth login.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idToken\": \"google_oauth_id_token_example\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "08. Logout User",
           "request": {
             "method": "POST",
             "header": [],
@@ -659,32 +349,237 @@
                 "auth",
                 "logout"
               ]
+            },
+            "description": "Revokes refresh token cookie and terminates the user session.\n\n**Frontend Status:** ✅ Implemented in frontend (`userLogout (auth.api.ts)`)"
+          },
+          "response": []
+        },
+        {
+          "name": "09. Get Current Authenticated User (/auth/me)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Returns currently authenticated profile, permissions, and active company membership.\n\n**Frontend Status:** ✅ Implemented in frontend (`userGetMe (auth.api.ts)`)"
+          },
+          "response": []
+        },
+        {
+          "name": "10. Refresh Access Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "refresh-token"
+              ]
+            },
+            "description": "Issues a new JWT access token using the valid refresh token.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
+        },
+        {
+          "name": "11. Forgot Password Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            },
+            "description": "Dispatches password reset OTP to user registered email address.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.candidate@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "12. Reset Password with OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/reset-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password"
+              ]
+            },
+            "description": "Resets account password upon valid verification of the 6-digit OTP.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.candidate@example.com\",\n  \"newPassword\": \"NewSecurePassword123!\",\n  \"otp\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "02. Company & Workspace Management",
+      "description": "Company workspace registration, member invitations, and role management",
       "item": [
         {
-          "name": "01. Get My Company Profile",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200) {",
-                  "    const res = pm.response.json();",
-                  "    if (res.data && res.data.id) {",
-                  "        pm.collectionVariables.set('companyId', res.data.id);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
+          "name": "01. Create Company Workspace",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/company/create-company",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "create-company"
+              ]
+            },
+            "description": "Authenticated user registers an organization workspace.\n\n**Frontend Status:** ✅ Implemented in frontend (`companyRegistration (auth.api.ts)`)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Apex Cyber Innovations\",\n  \"email\": \"hr@apexcyber.com\",\n  \"website\": \"https://apexcyber.com\",\n  \"description\": \"AI-driven developer assessment and testing platform\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
               }
             }
-          ],
+          },
+          "response": []
+        },
+        {
+          "name": "02. Verify Company Registration OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/company/verify-company",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "verify-company"
+              ]
+            },
+            "description": "Verifies company email domain with 6-digit OTP code.\n\n**Frontend Status:** ✅ Implemented in frontend (`companyVerification (auth.api.ts)`)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"hr@apexcyber.com\",\n  \"otp\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "03. Update Company Details",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/company/update-company/{{companyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "update-company",
+                "{{companyId}}"
+              ]
+            },
+            "description": "Owner / Company Admin updates workspace metadata.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Apex Cyber Solutions Ltd\",\n  \"description\": \"Enterprise technical hiring and evaluation platform\",\n  \"website\": \"https://apexcyber.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "04. Get My Company Workspace",
           "request": {
             "method": "GET",
             "header": [],
@@ -697,11 +592,81 @@
                 "company",
                 "my-company"
               ]
-            }
-          }
+            },
+            "description": "Fetches organization details for the logged-in staff member.\n\n**Frontend Status:** ✅ Implemented in frontend (`getUserCompany (company.api.ts)`)"
+          },
+          "response": []
         },
         {
-          "name": "02. Get Company Members",
+          "name": "05. Add Company Member (Alias Route)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/company/add-member/{{companyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "add-member",
+                "{{companyId}}"
+              ]
+            },
+            "description": "Invites a team member to join the workspace with a specific role.\n\n**Frontend Status:** ✅ Implemented in frontend (`addCompanyMember (company.api.ts)`)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"evaluator@apexcyber.com\",\n  \"role\": \"EVALUATOR\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "06. Add Company Member (Direct Route)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/company/{{companyId}}/members",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "{{companyId}}",
+                "members"
+              ]
+            },
+            "description": "Direct REST route to invite a team member to the workspace.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"creator@apexcyber.com\",\n  \"role\": \"ASSESSMENT_CREATOR\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "07. Get Company Members List",
           "request": {
             "method": "GET",
             "header": [],
@@ -715,166 +680,10 @@
                 "{{companyId}}",
                 "members"
               ]
-            }
-          }
-        },
-        {
-          "name": "03. Create Company",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Apex Cyber Innovations\",\n  \"email\": \"hr@apexcyber.com\",\n  \"website\": \"https://apexcyber.com\",\n  \"description\": \"AI-driven developer assessment and testing platform\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             },
-            "url": {
-              "raw": "{{baseUrl}}/company/create-company",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "company",
-                "create-company"
-              ]
-            }
-          }
-        },
-        {
-          "name": "04. Verify Company",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"hr@apexcyber.com\",\n  \"otp\": \"123456\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/company/verify-company",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "company",
-                "verify-company"
-              ]
-            }
-          }
-        },
-        {
-          "name": "05. Update Company Profile",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"DevAssess Global Tech Enterprises\",\n  \"description\": \"Leading tech assessment benchmark\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/company/update-company/{{companyId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "company",
-                "update-company",
-                "{{companyId}}"
-              ]
-            }
-          }
-        },
-        {
-          "name": "06. Add Company Member",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"evaluator@example.com\",\n  \"role\": \"EVALUATOR\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/company/{{companyId}}/members",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "company",
-                "{{companyId}}",
-                "members"
-              ]
-            }
-          }
-        },
-        {
-          "name": "07. Add Company Member (Alternate Route)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"evaluator@example.com\",\n  \"role\": \"EVALUATOR\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/company/add-member/{{companyId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "company",
-                "add-member",
-                "{{companyId}}"
-              ]
-            }
-          }
+            "description": "Retrieves all staff members, invitations, and active roles.\n\n**Frontend Status:** ✅ Implemented in frontend (`getCompanyMembers (company.api.ts)`)"
+          },
+          "response": []
         },
         {
           "name": "08. Update Company Member Role",
@@ -886,15 +695,6 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"role\": \"ASSESSMENT_CREATOR\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "{{baseUrl}}/company/{{companyId}}/members/{{memberUserId}}",
               "host": [
@@ -906,8 +706,19 @@
                 "members",
                 "{{memberUserId}}"
               ]
+            },
+            "description": "Owner modifies the organizational role of a member.\n\n**Frontend Status:** ✅ Implemented in frontend (`updateCompanyMemberRole (company.api.ts)`)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"COMPANY_ADMIN\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "09. Remove Company Member",
@@ -925,33 +736,19 @@
                 "members",
                 "{{memberUserId}}"
               ]
-            }
-          }
+            },
+            "description": "Revokes organization access and deletes company membership.\n\n**Frontend Status:** ✅ Implemented in frontend (`removeMember (company.api.ts)`)"
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "03. Problem Bank Management",
+      "description": "Question authoring (Coding, MCQ, Written), difficulty tagging, test case setup",
       "item": [
         {
-          "name": "01. Create MCQ Problem",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    const res = pm.response.json();",
-                  "    if (res.data && res.data.id) {",
-                  "        pm.collectionVariables.set('problemId', res.data.id);",
-                  "        console.log('Problem ID saved: ' + res.data.id);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "01. Create Problem (Coding / MCQ / Written)",
           "request": {
             "method": "POST",
             "header": [
@@ -960,15 +757,6 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"Node.js Event Loop Phase Priority\",\n  \"description\": \"Which event loop phase executes timers like setTimeout?\",\n  \"type\": \"MCQ\",\n  \"difficulty\": \"EASY\",\n  \"defaultMarks\": 5,\n  \"mcqQuestion\": {\n    \"question\": \"In Node.js event loop, which phase executes setTimeout callbacks?\",\n    \"multipleCorrect\": false,\n    \"options\": [\n      {\n        \"text\": \"Timers Phase\",\n        \"isCorrect\": true,\n        \"explanation\": \"Timers phase executes setTimeout & setInterval callbacks.\"\n      },\n      {\n        \"text\": \"Poll Phase\",\n        \"isCorrect\": false\n      },\n      {\n        \"text\": \"Check Phase\",\n        \"isCorrect\": false\n      },\n      {\n        \"text\": \"Close Callbacks\",\n        \"isCorrect\": false\n      }\n    ]\n  }\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "{{baseUrl}}/problem/create-problem",
               "host": [
@@ -978,75 +766,59 @@
                 "problem",
                 "create-problem"
               ]
-            }
-          }
-        },
-        {
-          "name": "02. Create Written Problem",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    const res = pm.response.json();",
-                  "    if (res.data && res.data.id) {",
-                  "        pm.collectionVariables.set('problemId', res.data.id);",
-                  "        console.log('Problem ID saved: ' + res.data.id);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            },
+            "description": "Creates an assessment question in the problem bank.\n\n**Frontend Status:** ✅ Implemented in frontend (`createQuestion (question.api.ts)`)",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Explain Database Indexing Architecture\",\n  \"description\": \"Explain how B-Tree indexes optimize read latency in PostgreSQL.\",\n  \"type\": \"WRITTEN\",\n  \"difficulty\": \"MEDIUM\",\n  \"defaultMarks\": 10,\n  \"writtenQuestion\": {\n    \"guidelines\": \"Mention B-Tree structure, time complexity, write amplification trade-offs.\",\n    \"minWords\": 30,\n    \"maxWords\": 500\n  }\n}",
+              "raw": "{\n  \"title\": \"Two Sum Target Finder\",\n  \"description\": \"Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\",\n  \"type\": \"CODING\",\n  \"difficulty\": \"MEDIUM\",\n  \"tags\": [\n    \"algorithms\",\n    \"arrays\",\n    \"hash-table\"\n  ],\n  \"codingProblem\": {\n    \"language\": \"JAVASCRIPT\",\n    \"starterCode\": \"function twoSum(nums, target) {\\n  // Write your code here\\n}\",\n    \"testCases\": [\n      {\n        \"input\": \"[2,7,11,15]\\n9\",\n        \"expectedOutput\": \"[0,1]\",\n        \"isPublic\": true\n      },\n      {\n        \"input\": \"[3,2,4]\\n6\",\n        \"expectedOutput\": \"[1,2]\",\n        \"isPublic\": false\n      }\n    ]\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/problem/create-problem",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "problem",
-                "create-problem"
-              ]
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "03. Get All Problems (Admin Directory)",
+          "name": "02. Get All Problems (Root Route - Admin Only)",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/problem/",
+              "raw": "{{baseUrl}}/problem",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "problem"
               ]
-            }
-          }
+            },
+            "description": "Platform Admin fetches all questions across all organizations.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "04. Get My Company Problems",
+          "name": "03. Get All Problems (Alias Route - Admin Only)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/problem/all-problems",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "problem",
+                "all-problems"
+              ]
+            },
+            "description": "Alias path to retrieve all questions across the platform.\n\n**Frontend Status:** ✅ Implemented in frontend (`getAllProblem (question.api.ts)`)"
+          },
+          "response": []
+        },
+        {
+          "name": "04. Get Company Problem Bank",
           "request": {
             "method": "GET",
             "header": [],
@@ -1059,11 +831,32 @@
                 "problem",
                 "company-problems"
               ]
-            }
-          }
+            },
+            "description": "Fetches all questions authored within the user's company workspace.\n\n**Frontend Status:** ✅ Implemented in frontend (`getCompanyProblems (question.api.ts)`)"
+          },
+          "response": []
         },
         {
-          "name": "05. Get Problem Details by ID",
+          "name": "05. Get Company Problem Bank (Alias Route)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/problem/my-company-problems",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "problem",
+                "my-company-problems"
+              ]
+            },
+            "description": "Alias path to fetch company-specific questions.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "06. Get Single Problem by ID",
           "request": {
             "method": "GET",
             "header": [],
@@ -1076,11 +869,13 @@
                 "problem",
                 "{{problemId}}"
               ]
-            }
-          }
+            },
+            "description": "Fetches full problem details including public test cases / options.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "06. Update Problem",
+          "name": "07. Update Problem Details",
           "request": {
             "method": "PATCH",
             "header": [
@@ -1089,15 +884,6 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"Node.js Event Loop Architecture (Updated)\",\n  \"difficulty\": \"MEDIUM\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "{{baseUrl}}/problem/{{problemId}}",
               "host": [
@@ -1107,11 +893,22 @@
                 "problem",
                 "{{problemId}}"
               ]
+            },
+            "description": "Modifies problem attributes, difficulty rating, or guidelines.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Two Sum (Optimized Hash Map)\",\n  \"difficulty\": \"EASY\",\n  \"tags\": [\n    \"arrays\",\n    \"hashmap\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "07. Delete Problem",
+          "name": "08. Delete Problem",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -1124,33 +921,19 @@
                 "problem",
                 "{{problemId}}"
               ]
-            }
-          }
+            },
+            "description": "Permanently removes the problem from the company bank.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "04. Assessment Creation & Lifecycle",
+      "description": "Assessment lifecycle: creation, question assignment, invitations, candidate attempts, and publishing",
       "item": [
         {
-          "name": "01. Create Assessment (Admin / Company Owner / Company Admin / Assessment Creator)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    const res = pm.response.json();",
-                  "    if (res.data && res.data.id) {",
-                  "        pm.collectionVariables.set('assessmentId', res.data.id);",
-                  "        console.log('Assessment ID saved: ' + res.data.id);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "01. Create Assessment (Root Route)",
           "request": {
             "method": "POST",
             "header": [
@@ -1159,29 +942,30 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"Senior Backend Engineer Benchmark 2026\",\n  \"description\": \"Comprehensive technical evaluation covering architecture, event loop, and databases.\",\n  \"totalMarks\": 100,\n  \"passMarks\": 50,\n  \"durationMinutes\": 60,\n  \"startTime\": \"2026-01-01T00:00:00.000Z\",\n  \"endTime\": \"2027-12-31T23:59:59.000Z\",\n  \"allowedAttempts\": 1,\n  \"isStrictTimeLimit\": true,\n  \"proctoringSettings\": {\n    \"trackTabSwitches\": true,\n    \"maxTabSwitches\": 3,\n    \"requireFullscreen\": true,\n    \"blockCopyPaste\": true,\n    \"trackFocusLoss\": true\n  }\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
-              "raw": "{{baseUrl}}/assessment/",
+              "raw": "{{baseUrl}}/assessment",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "assessment",
                 "assessment"
               ]
+            },
+            "description": "Creates an assessment with time bounds and anti-cheat settings.\n\n**Frontend Status:** ✅ Implemented in frontend (`createAssessment (assessment.api.ts)`)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Senior Full Stack Assessment 2026\",\n  \"description\": \"Technical coding and system architecture evaluation\",\n  \"durationMinutes\": 90,\n  \"totalMarks\": 100,\n  \"passingScore\": 70,\n  \"passMarks\": 70,\n  \"startTime\": \"2026-10-10T10:00:00.000Z\",\n  \"endTime\": \"2026-10-20T23:59:59.000Z\",\n  \"settings\": {\n    \"shuffleQuestions\": true,\n    \"tabSwitchLimit\": 3,\n    \"fullScreenMode\": true,\n    \"copyPasteDisabled\": true,\n    \"proctoringEnabled\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "02. Add Problems to Assessment (Admin / Company Owner / Company Admin / Assessment Creator)",
+          "name": "02. Create Assessment (Alias Route)",
           "request": {
             "method": "POST",
             "header": [
@@ -1190,30 +974,233 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"problems\": [\n    {\n      \"problemId\": \"{{problemId}}\",\n      \"marks\": 5,\n      \"questionOrder\": 1\n    }\n  ]\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
-              "raw": "{{baseUrl}}/assessment/add-problems/{{assessmentId}}",
+              "raw": "{{baseUrl}}/assessment/create-assessment",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "assessment",
-                "add-problems",
-                "{{assessmentId}}"
+                "create-assessment"
               ]
+            },
+            "description": "Action-style route for assessment creation used by frontend.\n\n**Frontend Status:** ✅ Implemented in frontend (`createAssessment (assessment.api.ts)`)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Senior Full Stack Assessment 2026\",\n  \"description\": \"Technical coding and system architecture evaluation\",\n  \"durationMinutes\": 90,\n  \"totalMarks\": 100,\n  \"passingScore\": 70,\n  \"passMarks\": 70,\n  \"startTime\": \"2026-10-10T10:00:00.000Z\",\n  \"endTime\": \"2026-10-20T23:59:59.000Z\",\n  \"settings\": {\n    \"shuffleQuestions\": true,\n    \"tabSwitchLimit\": 3,\n    \"fullScreenMode\": true,\n    \"copyPasteDisabled\": true,\n    \"proctoringEnabled\": true\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "03. Publish Assessment (Admin / Company Owner / Company Admin / Assessment Creator)",
+          "name": "03. Get All Assessments (Root Route)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment"
+              ]
+            },
+            "description": "Fetches company assessments with filter queries.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "04. Get My Assessments (Alias Route)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/get-my-assessments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "get-my-assessments"
+              ]
+            },
+            "description": "Retrieves assessments created by current company staff.\n\n**Frontend Status:** ✅ Implemented in frontend (`getCompanyAllAssessments & getMyAssessments (assessment.api.ts)`)"
+          },
+          "response": []
+        },
+        {
+          "name": "05. Get Single Assessment (Direct Route)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "{{assessmentId}}"
+              ]
+            },
+            "description": "Direct REST route to fetch assessment details. Role-checked & sanitized for candidate.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "06. Get Single Assessment (Alias Route)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/get-single-assessment/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "get-single-assessment",
+                "{{assessmentId}}"
+              ]
+            },
+            "description": "Legacy route for single assessment lookup.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "07. Update Assessment (Direct Route)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "{{assessmentId}}"
+              ]
+            },
+            "description": "Direct REST route to update assessment settings.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Senior Full Stack Assessment 2026 (Updated)\",\n  \"durationMinutes\": 120,\n  \"passingScore\": 75\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "08. Update Assessment (Alias Route)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/update-assessment/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "update-assessment",
+                "{{assessmentId}}"
+              ]
+            },
+            "description": "Action-style route to update assessment.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Senior Full Stack Assessment 2026 (Updated)\",\n  \"durationMinutes\": 120,\n  \"passingScore\": 75\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "09. Delete Assessment (Direct Route)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "{{assessmentId}}"
+              ]
+            },
+            "description": "Direct REST route to delete an assessment.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "10. Delete Assessment (Alias Route)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/delete-assessment/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "delete-assessment",
+                "{{assessmentId}}"
+              ]
+            },
+            "description": "Action-style route to delete an assessment.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "11. Publish Assessment (Direct Route)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/{{assessmentId}}/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "{{assessmentId}}",
+                "publish"
+              ]
+            },
+            "description": "Direct REST route to publish assessment and make it accessible.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "12. Publish Assessment (Alias Route)",
           "request": {
             "method": "PATCH",
             "header": [],
@@ -1227,11 +1214,13 @@
                 "publish-assessment",
                 "{{assessmentId}}"
               ]
-            }
-          }
+            },
+            "description": "Legacy action route to publish assessment.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "04. Invite Candidate (Admin / Company Owner / Company Admin)",
+          "name": "13. Add Problems to Assessment (Direct Route)",
           "request": {
             "method": "POST",
             "header": [
@@ -1240,15 +1229,108 @@
                 "value": "application/json"
               }
             ],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/{{assessmentId}}/problems",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "{{assessmentId}}",
+                "problems"
+              ]
+            },
+            "description": "Direct route to associate questions and assign marks.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"emails\": [\n    \"tested.candidate@devassess.com\"\n  ]\n}",
+              "raw": "{\n  \"problems\": [\n    {\n      \"problemId\": \"{{problemId}}\",\n      \"marks\": 50,\n      \"questionOrder\": 1\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "14. Add Problems to Assessment (Alias Route)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/add-problems/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "add-problems",
+                "{{assessmentId}}"
+              ]
             },
+            "description": "Action-style route to add problems to assessment.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"problems\": [\n    {\n      \"problemId\": \"{{problemId}}\",\n      \"marks\": 50,\n      \"questionOrder\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "15. Invite Candidate (Direct Route)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/{{assessmentId}}/invite",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "{{assessmentId}}",
+                "invite"
+              ]
+            },
+            "description": "Direct REST route to generate secure invitation token.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"candidate@example.com\",\n  \"validUntil\": \"2026-10-30T23:59:59.000Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "16. Invite Candidate (Alias Route)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/assessment/invite-candidates/{{assessmentId}}",
               "host": [
@@ -1259,11 +1341,22 @@
                 "invite-candidates",
                 "{{assessmentId}}"
               ]
+            },
+            "description": "Action-style route to send candidate invitations.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"candidate@example.com\",\n  \"validUntil\": \"2026-10-30T23:59:59.000Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "05. Get Assessment Invitations (Authenticated; Service Permission Checked)",
+          "name": "17. Get Assessment Invitations (Plural Direct Route)",
           "request": {
             "method": "GET",
             "header": [],
@@ -1277,32 +1370,141 @@
                 "{{assessmentId}}",
                 "invitations"
               ]
-            }
-          }
+            },
+            "description": "Retrieves list of candidate invitations sent for the assessment.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "06. Start Attempt (Candidate Only)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    const res = pm.response.json();",
-                  "    const attempt = res.data?.attempt || res.data;",
-                  "    if (attempt && attempt.id) {",
-                  "        pm.collectionVariables.set('attemptId', attempt.id);",
-                  "        console.log('Attempt ID saved: ' + attempt.id);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "18. Get Assessment Invitations (Singular Alias Route)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/{{assessmentId}}/invitation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "{{assessmentId}}",
+                "invitation"
+              ]
+            },
+            "description": "Singular path alias for assessment invitations list.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "19. Verify Invitation Token (Query Param Route)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/verify-invitation?token={{invitationToken}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "verify-invitation"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "{{invitationToken}}"
+                }
+              ]
+            },
+            "description": "Public endpoint validating invitation token via query param.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "20. Verify Invitation Token (Path Param Route)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/verify-invitation/{{invitationToken}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "verify-invitation",
+                "{{invitationToken}}"
+              ]
+            },
+            "description": "Public endpoint validating invitation token via path param.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "21. Verify Invitation Token (Alternate Path Route)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/invitation/verify/{{invitationToken}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "invitation",
+                "verify",
+                "{{invitationToken}}"
+              ]
+            },
+            "description": "Alternate RESTful verification route used by frontend view.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "22. Start Assessment Attempt (Direct Route)",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/{{assessmentId}}/start-attempt",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "{{assessmentId}}",
+                "start-attempt"
+              ]
+            },
+            "description": "Candidate initiates live assessment attempt via direct route.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invitationToken\": \"{{invitationToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "23. Start Assessment Attempt (Alias Route)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/assessment/start-attempt/{{assessmentId}}",
               "host": [
@@ -1313,11 +1515,22 @@
                 "start-attempt",
                 "{{assessmentId}}"
               ]
+            },
+            "description": "Candidate initiates attempt via action route.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invitationToken\": \"{{invitationToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "07. Get Candidate My Attempts (Authenticated Candidate)",
+          "name": "24. Get Candidate My Attempts (Standard Route)",
           "request": {
             "method": "GET",
             "header": [],
@@ -1330,11 +1543,43 @@
                 "assessment",
                 "my-attempts"
               ]
-            }
-          }
+            },
+            "description": "Candidate retrieves their test history and active sessions.\n\n**Frontend Status:** ✅ Implemented in frontend (`getMyAttempts (assessment.api.ts)`)"
+          },
+          "response": []
         },
         {
-          "name": "08. Get Attempt Details (Candidate / Admin / Company Staff)",
+          "name": "25. Get Candidate My Attempts (Candidate Prefix Alias)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/candidate/my-attempts?page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "candidate",
+                "my-attempts"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Candidate portal specific route for paginated attempt history.\n\n**Frontend Status:** ✅ Implemented in frontend (`getCandidateMyAttempts (assessment.api.ts)`)"
+          },
+          "response": []
+        },
+        {
+          "name": "26. Get Attempt Details (Questions & Timer)",
           "request": {
             "method": "GET",
             "header": [],
@@ -1348,11 +1593,48 @@
                 "attempts",
                 "{{attemptId}}"
               ]
-            }
-          }
+            },
+            "description": "Fetches live attempt status, remaining time, and sanitized questions.\n\n**Frontend Status:** ✅ Implemented in frontend (`getAttemptDetails (assessment.api.ts)`)"
+          },
+          "response": []
         },
         {
-          "name": "09. Finalize & Submit Attempt (Candidate / Platform Admin)",
+          "name": "27. Create Submission from Attempt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/attempts/{{attemptId}}/submissions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "attempts",
+                "{{attemptId}}",
+                "submissions"
+              ]
+            },
+            "description": "Saves code or answers for a problem inside the active attempt.\n\n**Frontend Status:** ✅ Implemented in frontend (`createSubmissionFromAttempt (assessment.api.ts)`)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"problemId\": \"{{problemId}}\",\n  \"submittedCode\": \"function twoSum(nums, target) { return [0, 1]; }\",\n  \"language\": \"JAVASCRIPT\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "28. Finalize & Submit Attempt",
           "request": {
             "method": "POST",
             "header": [],
@@ -1367,11 +1649,34 @@
                 "{{attemptId}}",
                 "submit"
               ]
-            }
-          }
+            },
+            "description": "Candidate finalizes the test attempt and locks all answers.\n\n**Frontend Status:** ✅ Implemented in frontend (`submitAssessmentAttempt (assessment.api.ts)`)"
+          },
+          "response": []
         },
         {
-          "name": "10. Get Attempt Result (Candidate / Admin / Company Staff)",
+          "name": "29. Calculate Attempt Score (Assessment Route Alias)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/attempts/{{attemptId}}/calculate-score",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "attempts",
+                "{{attemptId}}",
+                "calculate-score"
+              ]
+            },
+            "description": "Triggers aggregation of attempt marks and percentage score.\n\n**Frontend Status:** ✅ Implemented in frontend (`calculateAttemptScore (assessment.api.ts)`)"
+          },
+          "response": []
+        },
+        {
+          "name": "30. Get Attempt Result",
           "request": {
             "method": "GET",
             "header": [],
@@ -1386,11 +1691,13 @@
                 "{{attemptId}}",
                 "result"
               ]
-            }
-          }
+            },
+            "description": "Candidate / Staff views result status, pass/fail, and score.\n\n**Frontend Status:** ✅ Implemented in frontend (`getAttemptResult (assessment.api.ts)`)"
+          },
+          "response": []
         },
         {
-          "name": "11. Get Detailed Assessment Report (Admin / Company Staff)",
+          "name": "31. Get Detailed Assessment Report (Audit & Telemetry)",
           "request": {
             "method": "GET",
             "header": [],
@@ -1405,53 +1712,73 @@
                 "{{attemptId}}",
                 "detailed-report"
               ]
-            }
-          }
+            },
+            "description": "Company Staff reviews complete attempt telemetry and anti-cheat log.\n\n**Frontend Status:** ✅ Implemented in frontend (`getDetailedAssesssmentReport (assessment.api.ts)`)"
+          },
+          "response": []
         },
-        { "name": "12. Create Assessment (Root Route) (Admin / Company Owner / Company Admin / Assessment Creator)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/" } },
-        { "name": "13. Get All Assessments (Root Route) (Admin / Company Owner / Company Admin / Assessment Creator / Evaluator)", "request": { "method": "GET", "url": "{{baseUrl}}/assessment/" } },
-        { "name": "14. Publish Results (Alias Route) (Admin / Company Owner / Company Admin / Assessment Creator)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/publish-results/{{assessmentId}}" } },
-        { "name": "15. Create Submission from Attempt (Authenticated Candidate)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/attempts/{{attemptId}}/submissions" } },
-        { "name": "16. Calculate Attempt Score (Alias Route) (Authenticated; Service Permission Checked)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/attempts/{{attemptId}}/calculate-score" } },
-        { "name": "17. Get My Assessments (Admin / Company Owner / Company Admin / Assessment Creator / Evaluator)", "request": { "method": "GET", "url": "{{baseUrl}}/assessment/get-my-assessments" } },
-        { "name": "18. Get Single Assessment (Authenticated; Candidate / Company Staff / Admin)", "request": { "method": "GET", "url": "{{baseUrl}}/assessment/get-single-assessment/{{assessmentId}}" } },
-        { "name": "19. Update Assessment (Admin / Company Owner / Company Admin / Assessment Creator)", "request": { "method": "PATCH", "url": "{{baseUrl}}/assessment/update-assessment/{{assessmentId}}" } },
-        { "name": "20. Delete Assessment (Admin / Company Owner / Company Admin)", "request": { "method": "DELETE", "url": "{{baseUrl}}/assessment/delete-assessment/{{assessmentId}}" } },
-        { "name": "21. Get Assessment Attempts (Admin / Company Owner / Company Admin / Assessment Creator / Evaluator)", "request": { "method": "GET", "url": "{{baseUrl}}/assessment/{{assessmentId}}/attempts" } },
-        { "name": "22. Get Assessment Results (Admin / Company Owner / Company Admin / Assessment Creator / Evaluator)", "request": { "method": "GET", "url": "{{baseUrl}}/assessment/{{assessmentId}}/results" } },
-        { "name": "23. Get Assessment Leaderboard (Authenticated; Service Permission Checked)", "request": { "method": "GET", "url": "{{baseUrl}}/assessment/{{assessmentId}}/leaderboard" } },
-        { "name": "24. Publish Results (Direct Route) (Admin / Company Owner / Company Admin / Assessment Creator)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/{{assessmentId}}/publish-results" } },
-        { "name": "25. Start Attempt (Direct Route) (Candidate Only)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/{{assessmentId}}/start-attempt" } },
-        { "name": "26. Publish Assessment (Direct Route) (Admin / Company Owner / Company Admin / Assessment Creator)", "request": { "method": "PATCH", "url": "{{baseUrl}}/assessment/{{assessmentId}}/publish" } },
-        { "name": "27. Invite Candidate (Direct Route) (Admin / Company Owner / Company Admin)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/{{assessmentId}}/invite" } },
-        { "name": "28. Add Problems (Direct Route) (Admin / Company Owner / Company Admin / Assessment Creator)", "request": { "method": "POST", "url": "{{baseUrl}}/assessment/{{assessmentId}}/problems" } },
-        { "name": "29. Get Single Assessment (Direct Route) (Authenticated; Candidate / Company Staff / Admin)", "request": { "method": "GET", "url": "{{baseUrl}}/assessment/{{assessmentId}}" } },
-        { "name": "30. Update Assessment (Direct Route) (Admin / Company Owner / Company Admin / Assessment Creator)", "request": { "method": "PATCH", "url": "{{baseUrl}}/assessment/{{assessmentId}}" } },
-        { "name": "31. Delete Assessment (Direct Route) (Admin / Company Owner / Company Admin)", "request": { "method": "DELETE", "url": "{{baseUrl}}/assessment/{{assessmentId}}" } }
-      ]
-    },
-    {
-      "name": "05. Solution Submissions",
-      "item": [
         {
-          "name": "01. Submit Solution (MCQ or Written)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    const res = pm.response.json();",
-                  "    if (res.data && res.data.id) {",
-                  "        pm.collectionVariables.set('submissionId', res.data.id);",
-                  "        console.log('Submission ID saved: ' + res.data.id);",
-                  "    }",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "32. Get Assessment Attempts List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/{{assessmentId}}/attempts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "{{assessmentId}}",
+                "attempts"
+              ]
+            },
+            "description": "Staff lists all candidate submissions for a specific assessment.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "33. Get Assessment Results List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/{{assessmentId}}/results",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "{{assessmentId}}",
+                "results"
+              ]
+            },
+            "description": "Staff views calculated candidate scores and rankings.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "34. Get Assessment Leaderboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/{{assessmentId}}/leaderboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "{{assessmentId}}",
+                "leaderboard"
+              ]
+            },
+            "description": "Retrieves leaderboard ranking candidates by score and speed.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "35. Publish Results (Direct Route)",
           "request": {
             "method": "POST",
             "header": [
@@ -1460,31 +1787,112 @@
                 "value": "application/json"
               }
             ],
+            "url": {
+              "raw": "{{baseUrl}}/assessment/{{assessmentId}}/publish-results",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "{{assessmentId}}",
+                "publish-results"
+              ]
+            },
+            "description": "Direct REST route releasing official scores to candidates.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"attemptId\": \"{{attemptId}}\",\n  \"problemId\": \"{{problemId}}\",\n  \"writtenAnswer\": \"PostgreSQL B-Tree indexes provide logarithmic search O(log N) efficiency by organizing balanced keys into tree leaf nodes, reducing disk I/O.\"\n}",
+              "raw": "{\n  \"publishAll\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "36. Publish Results (Alias Route)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/submission/",
+              "raw": "{{baseUrl}}/assessment/publish-results/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "assessment",
+                "publish-results",
+                "{{assessmentId}}"
+              ]
+            },
+            "description": "Legacy action route releasing official scores to candidates.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"publishAll\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05. Solution Submissions",
+      "description": "Granular submission creation, code evaluation hooks, and submission history",
+      "item": [
+        {
+          "name": "01. Submit Solution (Body Params)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/submission",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "submission"
               ]
+            },
+            "description": "Submits or updates answer for MCQ or Written problem.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"attemptId\": \"{{attemptId}}\",\n  \"problemId\": \"{{problemId}}\",\n  \"selectedOptionId\": \"opt_mcq_example_id\",\n  \"writtenAnswer\": \"A binary search tree maintains sorted invariant.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "02. Get All Submissions for Attempt",
+          "name": "02. Submit Solution (Attempt Param Route)",
           "request": {
-            "method": "GET",
-            "header": [],
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/submission/attempts/{{attemptId}}",
               "host": [
@@ -1495,28 +1903,55 @@
                 "attempts",
                 "{{attemptId}}"
               ]
+            },
+            "description": "Submits code solution with attemptId in URL path.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"problemId\": \"{{problemId}}\",\n  \"code\": \"function solution() { return true; }\",\n  \"language\": \"JAVASCRIPT\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "03. Get My Submissions History",
+          "name": "03. Finalize Submission Answer (Body Params)",
           "request": {
-            "method": "GET",
-            "header": [],
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/submission/my-submissions",
+              "raw": "{{baseUrl}}/submission/submit",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "submission",
-                "my-submissions"
+                "submit"
               ]
+            },
+            "description": "Marks a submission as finalized.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"submissionId\": \"{{submissionId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "04. Finalize Individual Submission Answer",
+          "name": "04. Finalize Submission Answer (Path Param Route)",
           "request": {
             "method": "POST",
             "header": [],
@@ -1530,17 +1965,97 @@
                 "{{submissionId}}",
                 "submit"
               ]
-            }
-          }
+            },
+            "description": "Finalizes individual question submission by URL param ID.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "05. Evaluate Coding Submission",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/submission/{{submissionId}}/evaluate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "submission",
+                "{{submissionId}}",
+                "evaluate"
+              ]
+            },
+            "description": "Triggers execution against test cases on Judge0.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "06. Get My Submissions History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/submission/my-submissions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "submission",
+                "my-submissions"
+              ]
+            },
+            "description": "Candidate retrieves full log of their submitted answers.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "07. Get All Submissions for Attempt",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/submission/attempts/{{attemptId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "submission",
+                "attempts",
+                "{{attemptId}}"
+              ]
+            },
+            "description": "Retrieves all question answers belonging to an attempt.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "08. Get Submission by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/submission/{{submissionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "submission",
+                "{{submissionId}}"
+              ]
+            },
+            "description": "Retrieves detailed submission record and evaluation breakdown.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "06. Anti-Cheating Telemetry & Risk Scoring",
-      "description": "Endpoints for real-time telemetry ingestion during live assessments, automated risk score calculation, and manual flagging.",
+      "description": "Real-time client telemetry, anomaly detection, tab switches, copy-paste events, and risk scoring",
       "item": [
         {
-          "name": "01. Report Tab Switch Event",
+          "name": "01. Report Generic Anti-Cheat Violation",
           "request": {
             "method": "POST",
             "header": [
@@ -1549,15 +2064,41 @@
                 "value": "application/json"
               }
             ],
+            "url": {
+              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/violation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "anti-cheating",
+                "attempt",
+                "{{attemptId}}",
+                "violation"
+              ]
+            },
+            "description": "Ingests client integrity anomaly.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"clientTimestamp\": \"2026-09-09T09:03:57.507Z\",\n  \"details\": \"Candidate navigated away to external Chrome window\"\n}",
+              "raw": "{\n  \"clientTimestamp\": \"2026-10-07T12:00:00.000Z\",\n  \"violationType\": \"DEVTOOLS_OPEN\",\n  \"details\": \"Developer tools inspect opened during live test\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "02. Report Tab Switch / Visibility Loss",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/tab-switch",
               "host": [
@@ -1569,11 +2110,22 @@
                 "{{attemptId}}",
                 "tab-switch"
               ]
+            },
+            "description": "Logs window blur or browser tab switch event.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientTimestamp\": \"2026-10-07T12:01:00.000Z\",\n  \"durationSeconds\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "02. Report Copy / Paste Event",
+          "name": "03. Report Multiple Concurrent Tabs",
           "request": {
             "method": "POST",
             "header": [
@@ -1582,81 +2134,6 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"clientTimestamp\": \"2026-09-09T09:03:57.507Z\",\n  \"details\": \"Pasted large block of text into editor\",\n  \"metadata\": {\n    \"characterCount\": 180\n  }\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/copy-paste",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "anti-cheating",
-                "attempt",
-                "{{attemptId}}",
-                "copy-paste"
-              ]
-            }
-          }
-        },
-        {
-          "name": "03. Report Fullscreen Exit Event",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"clientTimestamp\": \"2026-09-09T09:03:57.507Z\",\n  \"details\": \"Candidate exited fullscreen view\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/fullscreen-exit",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "anti-cheating",
-                "attempt",
-                "{{attemptId}}",
-                "fullscreen-exit"
-              ]
-            }
-          }
-        },
-        {
-          "name": "04. Report Multiple Concurrent Tabs",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"clientTimestamp\": \"2026-09-09T09:03:57.507Z\",\n  \"details\": \"Secondary tab heartbeat detected on same user session\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/multiple-tabs",
               "host": [
@@ -1668,11 +2145,22 @@
                 "{{attemptId}}",
                 "multiple-tabs"
               ]
+            },
+            "description": "Detects candidate running multiple session tabs.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientTimestamp\": \"2026-10-07T12:02:00.000Z\",\n  \"tabCount\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "05. Report Suspicious Activity (DevTools Hook)",
+          "name": "04. Report Copy / Paste Event",
           "request": {
             "method": "POST",
             "header": [
@@ -1681,15 +2169,76 @@
                 "value": "application/json"
               }
             ],
+            "url": {
+              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/copy-paste",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "anti-cheating",
+                "attempt",
+                "{{attemptId}}",
+                "copy-paste"
+              ]
+            },
+            "description": "Records clipboard usage in restricted editor.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"clientTimestamp\": \"2026-09-09T09:03:57.507Z\",\n  \"details\": \"Browser developer tools opened during active assessment\"\n}",
+              "raw": "{\n  \"clientTimestamp\": \"2026-10-07T12:03:00.000Z\",\n  \"operation\": \"PASTE\",\n  \"contentLength\": 120\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "05. Report Fullscreen Exit Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/fullscreen-exit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "anti-cheating",
+                "attempt",
+                "{{attemptId}}",
+                "fullscreen-exit"
+              ]
             },
+            "description": "Logs candidate exiting required fullscreen mode.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientTimestamp\": \"2026-10-07T12:04:00.000Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "06. Report Suspicious Activity (DevTools Hook)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/suspicious-activity",
               "host": [
@@ -1701,11 +2250,22 @@
                 "{{attemptId}}",
                 "suspicious-activity"
               ]
+            },
+            "description": "Ingests low-level debugger or window hook alerts.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientTimestamp\": \"2026-10-07T12:05:00.000Z\",\n  \"anomaly\": \"DEBUGGER_ATTACHED\",\n  \"meta\": {\n    \"screenWidth\": 1920,\n    \"screenHeight\": 1080\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "06. Calculate Real-Time Cheating Risk Score",
+          "name": "07. Calculate Real-Time Cheating Risk Score",
           "request": {
             "method": "GET",
             "header": [],
@@ -1720,11 +2280,13 @@
                 "{{attemptId}}",
                 "risk"
               ]
-            }
-          }
+            },
+            "description": "Calculates AI composite integrity risk score (0-100%).\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "07. Flag Attempt for Review (Proctor / Recruiter)",
+          "name": "08. Flag Attempt for Manual Review",
           "request": {
             "method": "POST",
             "header": [
@@ -1733,15 +2295,6 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"reason\": \"Excessive window switching and multiple tabs opened during test\",\n  \"severity\": \"HIGH\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/flag",
               "host": [
@@ -1753,16 +2306,48 @@
                 "{{attemptId}}",
                 "flag"
               ]
+            },
+            "description": "Proctor manually flags candidate attempt for integrity disqualification.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Excessive tab switches and clipboard injection detected\",\n  \"flagSeverity\": \"HIGH\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "07. Automated & Manual Evaluation Engine",
+      "description": "Evaluation engine for Judge0 code grading, automated MCQ scoring, and manual examiner reviews",
       "item": [
         {
-          "name": "01. Automated MCQ Evaluation",
+          "name": "01. Evaluate Coding Submission (Judge0)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/evaluation/coding/{{submissionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "evaluation",
+                "coding",
+                "{{submissionId}}"
+              ]
+            },
+            "description": "Runs code test cases and computes execution time, memory, and status.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "02. Evaluate MCQ Submission",
           "request": {
             "method": "POST",
             "header": [],
@@ -1776,11 +2361,33 @@
                 "mcq",
                 "{{submissionId}}"
               ]
-            }
-          }
+            },
+            "description": "Validates chosen option against question key and assigns marks.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "02. Manual Written Question Evaluation (Evaluator)",
+          "name": "03. Evaluate Written Submission",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/evaluation/written/{{submissionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "evaluation",
+                "written",
+                "{{submissionId}}"
+              ]
+            },
+            "description": "Triggers automated semantic evaluation for written response.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "04. Manual Written Question Evaluation (Evaluator)",
           "request": {
             "method": "POST",
             "header": [
@@ -1789,15 +2396,6 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"marksObtained\": 9,\n  \"feedback\": \"Comprehensive understanding of PostgreSQL indexing and algorithmic complexity.\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "{{baseUrl}}/evaluation/manual/{{submissionId}}",
               "host": [
@@ -1808,11 +2406,22 @@
                 "manual",
                 "{{submissionId}}"
               ]
+            },
+            "description": "Examiner enters manual marks and qualitative feedback.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"obtainedMarks\": 18,\n  \"feedback\": \"Great algorithmic explanation and clear time complexity analysis.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "03. Aggregate Total Attempt Score",
+          "name": "05. Aggregate Total Attempt Score (POST)",
           "request": {
             "method": "POST",
             "header": [],
@@ -1827,27 +2436,52 @@
                 "{{attemptId}}",
                 "score"
               ]
-            }
-          }
+            },
+            "description": "Aggregates total score across all submissions.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "04. Get All Evaluations (Paginated & Filtered)",
+          "name": "06. Get Attempt Evaluation Score (GET)",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/evaluation/",
+              "raw": "{{baseUrl}}/evaluation/attempt/{{attemptId}}/score",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "evaluation",
+                "attempt",
+                "{{attemptId}}",
+                "score"
+              ]
+            },
+            "description": "Fetches aggregated score for the attempt.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "07. Get All Evaluations (Paginated & Filtered)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/evaluation",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "evaluation"
               ]
-            }
-          }
+            },
+            "description": "Staff queries evaluation records across candidates.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "05. Get Evaluation by ID",
+          "name": "08. Get Evaluation by ID",
           "request": {
             "method": "GET",
             "header": [],
@@ -1860,16 +2494,19 @@
                 "evaluation",
                 "{{submissionId}}"
               ]
-            }
-          }
+            },
+            "description": "Retrieves specific evaluation breakdown.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "08. Score Calculation & Granular Breakdown",
+      "description": "Granular breakdown of marks by problem type and attempt",
       "item": [
         {
-          "name": "01. Unified Submission Score Breakdown",
+          "name": "01. Calculate Unified Submission Score (GET)",
           "request": {
             "method": "GET",
             "header": [],
@@ -1883,11 +2520,75 @@
                 "submission",
                 "{{submissionId}}"
               ]
-            }
-          }
+            },
+            "description": "Retrieves consolidated score breakdown for submission.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "02. Granular MCQ Score Calculation",
+          "name": "02. Calculate Unified Submission Score (POST)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/score-calculation/submission/{{submissionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "score-calculation",
+                "submission",
+                "{{submissionId}}"
+              ]
+            },
+            "description": "Recalculates consolidated score for submission.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "03. Granular Coding Score Breakdown (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/score-calculation/coding/{{submissionId}}/score",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "score-calculation",
+                "coding",
+                "{{submissionId}}",
+                "score"
+              ]
+            },
+            "description": "Inspects public vs private test case pass rates and marks.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "04. Granular Coding Score Breakdown (POST)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/score-calculation/coding/{{submissionId}}/score",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "score-calculation",
+                "coding",
+                "{{submissionId}}",
+                "score"
+              ]
+            },
+            "description": "Recomputes coding test case scores.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "05. Granular MCQ Score Breakdown (GET)",
           "request": {
             "method": "GET",
             "header": [],
@@ -1902,11 +2603,34 @@
                 "{{submissionId}}",
                 "score"
               ]
-            }
-          }
+            },
+            "description": "Inspects chosen option and marks earned.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "03. Granular Written Score Calculation",
+          "name": "06. Granular MCQ Score Breakdown (POST)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/score-calculation/mcq/{{submissionId}}/score",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "score-calculation",
+                "mcq",
+                "{{submissionId}}",
+                "score"
+              ]
+            },
+            "description": "Recomputes MCQ question marks.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "07. Granular Written Score Breakdown (GET)",
           "request": {
             "method": "GET",
             "header": [],
@@ -1921,11 +2645,34 @@
                 "{{submissionId}}",
                 "score"
               ]
-            }
-          }
+            },
+            "description": "Inspects word count, rubric metrics, and examiner marks.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "04. Aggregate Attempt Score Breakdown",
+          "name": "08. Granular Written Score Breakdown (POST)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/score-calculation/written/{{submissionId}}/score",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "score-calculation",
+                "written",
+                "{{submissionId}}",
+                "score"
+              ]
+            },
+            "description": "Recomputes written score metrics.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "09. Aggregate Attempt Score Breakdown (GET)",
           "request": {
             "method": "GET",
             "header": [],
@@ -1939,13 +2686,36 @@
                 "attempt",
                 "{{attemptId}}"
               ]
-            }
-          }
+            },
+            "description": "Consolidated attempt score calculation breakdown.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "10. Aggregate Attempt Score Breakdown (POST)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/score-calculation/attempt/{{attemptId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "score-calculation",
+                "attempt",
+                "{{attemptId}}"
+              ]
+            },
+            "description": "Triggers full attempt score re-aggregation.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "09. Ranking Engine & Leaderboards",
+      "description": "Competitive candidate percentiles, ranks, leaderboards, and official result publishing",
       "item": [
         {
           "name": "01. Generate / Finalize Result for Attempt",
@@ -1962,8 +2732,10 @@
                 "generate",
                 "{{attemptId}}"
               ]
-            }
-          }
+            },
+            "description": "Persists final result record for candidate attempt.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
           "name": "02. Calculate Competitive Rank & Percentile",
@@ -1980,8 +2752,10 @@
                 "rank",
                 "{{attemptId}}"
               ]
-            }
-          }
+            },
+            "description": "Calculates candidate rank and cohort percentile benchmark.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
           "name": "03. Get Assessment Leaderboard",
@@ -1998,14 +2772,21 @@
                 "leaderboard",
                 "{{assessmentId}}"
               ]
-            }
-          }
+            },
+            "description": "Fetches live ranked leaderboard of candidates.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "04. Publish Official Assessment Results",
+          "name": "04. Publish Official Assessment Results (POST)",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/ranking-result/publish/{{assessmentId}}",
               "host": [
@@ -2016,11 +2797,56 @@
                 "publish",
                 "{{assessmentId}}"
               ]
+            },
+            "description": "Publishes final ranks and makes them viewable to candidates.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"publishAll\": true,\n  \"recalculateRanks\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "05. Candidate My Results (Across All Tests)",
+          "name": "05. Publish Official Assessment Results (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ranking-result/publish/{{assessmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ranking-result",
+                "publish",
+                "{{assessmentId}}"
+              ]
+            },
+            "description": "PATCH method support for publishing assessment results.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"publishAll\": true,\n  \"recalculateRanks\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "06. Candidate My Results Across All Assessments",
           "request": {
             "method": "GET",
             "header": [],
@@ -2033,11 +2859,13 @@
                 "ranking-result",
                 "my-results"
               ]
-            }
-          }
+            },
+            "description": "Candidate retrieves their performance across all taken tests.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "06. Get Candidate Attempt Result",
+          "name": "07. Get Candidate Attempt Result",
           "request": {
             "method": "GET",
             "header": [],
@@ -2051,16 +2879,19 @@
                 "attempt",
                 "{{attemptId}}"
               ]
-            }
-          }
+            },
+            "description": "Fetches result card for a specific attempt.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "10. Reports & Analytics Intelligence",
+      "description": "Assessment statistical analysis, pass/fail diagnostics, cohort metrics, and recruitment reports",
       "item": [
         {
-          "name": "01. Generate Comprehensive Assessment Report",
+          "name": "01. Generate Assessment Report (GET)",
           "request": {
             "method": "GET",
             "header": [],
@@ -2075,11 +2906,34 @@
                 "{{assessmentId}}",
                 "report"
               ]
-            }
-          }
+            },
+            "description": "Generates executive report summarizing metrics, averages, and pass rate.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "02. Score Frequency Distribution & Variance",
+          "name": "02. Generate Assessment Report (POST)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reports-analytics/assessment/{{assessmentId}}/report",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reports-analytics",
+                "assessment",
+                "{{assessmentId}}",
+                "report"
+              ]
+            },
+            "description": "Forces a fresh recalculation of the assessment report.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        },
+        {
+          "name": "03. Score Frequency Distribution & Variance",
           "request": {
             "method": "GET",
             "header": [],
@@ -2094,11 +2948,13 @@
                 "{{assessmentId}}",
                 "score-distribution"
               ]
-            }
-          }
+            },
+            "description": "Fetches bell curve histogram of scores and standard deviation.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "03. Granular Pass / Fail Statistics",
+          "name": "04. Granular Pass / Fail Statistics",
           "request": {
             "method": "GET",
             "header": [],
@@ -2113,11 +2969,13 @@
                 "{{assessmentId}}",
                 "pass-fail"
               ]
-            }
-          }
+            },
+            "description": "Analyzes candidate pass/fail breakdown and near-miss candidates.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "04. Problem Difficulty Statistics & Metrics",
+          "name": "05. Problem Difficulty Statistics & Metrics",
           "request": {
             "method": "GET",
             "header": [],
@@ -2132,11 +2990,13 @@
                 "{{assessmentId}}",
                 "statistics"
               ]
-            }
-          }
+            },
+            "description": "Identifies question difficulty based on average solve time and success rate.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "05. Candidate Performance & Cohort Benchmark",
+          "name": "06. Candidate Performance Diagnostic & Benchmark",
           "request": {
             "method": "GET",
             "header": [],
@@ -2151,11 +3011,13 @@
                 "{{attemptId}}",
                 "performance"
               ]
-            }
-          }
+            },
+            "description": "Detailed individual radar chart vs cohort average.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "06. Candidate Career Analytical Report",
+          "name": "07. Candidate Career Analytical Report",
           "request": {
             "method": "GET",
             "header": [],
@@ -2170,11 +3032,13 @@
                 "{{candidateId}}",
                 "report"
               ]
-            }
-          }
+            },
+            "description": "Comprehensive analytical portfolio across candidate career tests.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "07. Organization Pipeline & Talent Report",
+          "name": "08. Organization Pipeline & Talent Report",
           "request": {
             "method": "GET",
             "header": [],
@@ -2189,13 +3053,16 @@
                 "{{companyId}}",
                 "report"
               ]
-            }
-          }
+            },
+            "description": "Executive report on candidate quality, hiring funnel, and benchmarks.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "11. Admin Management & System Telemetry",
+      "description": "Platform Administration: user accounts, company audit, system health, and cross-platform oversight",
       "item": [
         {
           "name": "01. Platform Dashboard Statistics",
@@ -2211,8 +3078,10 @@
                 "admin-management",
                 "dashboard-statistics"
               ]
-            }
-          }
+            },
+            "description": "Super Admin dashboard KPIs: total users, companies, active tests, attempts.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
           "name": "02. System & Infrastructure Telemetry",
@@ -2228,8 +3097,10 @@
                 "admin-management",
                 "system-statistics"
               ]
-            }
-          }
+            },
+            "description": "Server hardware metrics: memory usage, uptime, database connections.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
           "name": "03. Users Management Directory",
@@ -2245,8 +3116,10 @@
                 "admin-management",
                 "users"
               ]
-            }
-          }
+            },
+            "description": "Super Admin browses, filters, and searches all platform users.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
           "name": "04. User Profile Dossier by ID",
@@ -2263,11 +3136,13 @@
                 "users",
                 "{{userId}}"
               ]
-            }
-          }
+            },
+            "description": "Inspects full user record, active roles, and activity log.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
-          "name": "05. Update User Status (Activate/Deactivate)",
+          "name": "05. Update User Status (Activate / Deactivate)",
           "request": {
             "method": "PATCH",
             "header": [
@@ -2276,15 +3151,6 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"isActive\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "{{baseUrl}}/admin-management/users/{{userId}}/status",
               "host": [
@@ -2296,8 +3162,19 @@
                 "{{userId}}",
                 "status"
               ]
+            },
+            "description": "Activates, suspends, or deactivates user account access.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
-          }
+          },
+          "response": []
         },
         {
           "name": "06. Delete User",
@@ -2314,8 +3191,10 @@
                 "users",
                 "{{userId}}"
               ]
-            }
-          }
+            },
+            "description": "Permanently deletes user account (if no cascade conflicts).\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
           "name": "07. Companies Management Audit Log",
@@ -2331,8 +3210,10 @@
                 "admin-management",
                 "companies"
               ]
-            }
-          }
+            },
+            "description": "Super Admin reviews all registered companies and verification status.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
           "name": "08. Assessments Audit Directory",
@@ -2348,8 +3229,10 @@
                 "admin-management",
                 "assessments"
               ]
-            }
-          }
+            },
+            "description": "Platform-wide directory of all coding assessments created.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         },
         {
           "name": "09. Submissions Audit Log",
@@ -2365,39 +3248,11 @@
                 "admin-management",
                 "submissions"
               ]
-            }
-          }
+            },
+            "description": "Platform-wide audit log of all candidate solution submissions.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
         }
-      ]
-    },
-    {
-      "name": "12. Complete Route Coverage",
-      "description": "Additional requests for every backend route that was not previously represented in this collection.",
-      "item": [
-        { "name": "Verify Login OTP", "request": { "method": "POST", "url": "{{baseUrl}}/auth/verify-login-otp" } },
-        { "name": "Resend Login OTP", "request": { "method": "POST", "url": "{{baseUrl}}/auth/resend-login-otp" } },
-        { "name": "Google Login", "request": { "method": "POST", "url": "{{baseUrl}}/auth/google" } },
-        { "name": "Google Login Alias", "request": { "method": "POST", "url": "{{baseUrl}}/auth/google-login" } },
-        { "name": "Forgot Password", "request": { "method": "POST", "url": "{{baseUrl}}/auth/forgot-password" } },
-        { "name": "Reset Password", "request": { "method": "POST", "url": "{{baseUrl}}/auth/reset-password" } },
-        { "name": "Get All Problems Alias", "request": { "method": "GET", "url": "{{baseUrl}}/problem/all-problems" } },
-        { "name": "Get My Company Problems Alias", "request": { "method": "GET", "url": "{{baseUrl}}/problem/my-company-problems" } },
-        { "name": "Create Submission by Attempt", "request": { "method": "POST", "url": "{{baseUrl}}/submission/attempts/{{attemptId}}" } },
-        { "name": "Submit Submission by Body", "request": { "method": "POST", "url": "{{baseUrl}}/submission/submit" } },
-        { "name": "Evaluate Submission", "request": { "method": "POST", "url": "{{baseUrl}}/submission/{{submissionId}}/evaluate" } },
-        { "name": "Get Submission by ID", "request": { "method": "GET", "url": "{{baseUrl}}/submission/{{submissionId}}" } },
-        { "name": "Evaluate Coding Submission", "request": { "method": "POST", "url": "{{baseUrl}}/evaluation/coding/{{submissionId}}" } },
-        { "name": "Evaluate Written Submission", "request": { "method": "POST", "url": "{{baseUrl}}/evaluation/written/{{submissionId}}" } },
-        { "name": "Get Attempt Evaluation Score", "request": { "method": "GET", "url": "{{baseUrl}}/evaluation/attempt/{{attemptId}}/score" } },
-        { "name": "Calculate Submission Score", "request": { "method": "POST", "url": "{{baseUrl}}/score-calculation/submission/{{submissionId}}" } },
-        { "name": "Calculate Coding Score", "request": { "method": "GET", "url": "{{baseUrl}}/score-calculation/coding/{{submissionId}}/score" } },
-        { "name": "Calculate Coding Score POST", "request": { "method": "POST", "url": "{{baseUrl}}/score-calculation/coding/{{submissionId}}/score" } },
-        { "name": "Calculate MCQ Score POST", "request": { "method": "POST", "url": "{{baseUrl}}/score-calculation/mcq/{{submissionId}}/score" } },
-        { "name": "Calculate Written Score POST", "request": { "method": "POST", "url": "{{baseUrl}}/score-calculation/written/{{submissionId}}/score" } },
-        { "name": "Calculate Attempt Score POST", "request": { "method": "POST", "url": "{{baseUrl}}/score-calculation/attempt/{{attemptId}}" } },
-        { "name": "Publish Ranking Results PATCH", "request": { "method": "PATCH", "url": "{{baseUrl}}/ranking-result/publish/{{assessmentId}}" } },
-        { "name": "Generate Assessment Report POST", "request": { "method": "POST", "url": "{{baseUrl}}/reports-analytics/assessment/{{assessmentId}}/report" } },
-        { "name": "Report Generic Anti-Cheat Violation", "request": { "method": "POST", "url": "{{baseUrl}}/anti-cheating/attempt/{{attemptId}}/violation" } }
       ]
     }
   ]

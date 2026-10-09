@@ -1,0 +1,29 @@
+model Payment {
+  id                    String        @id @default(cuid())
+  paymentReference      String        @unique
+  companyId             String?
+  company               Company?      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  userId                String?
+  user                  User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email                 String
+  amount                Float
+  currency              String        @default("BDT")
+  paymentType           PaymentType   @default(COMPANY_REGISTRATION)
+  status                PaymentStatus @default(PENDING)
+  bkashPaymentId        String?       @unique
+  bkashTransactionId    String?       @unique
+  merchantInvoiceNumber String        @unique
+  customerMsisdn        String?
+  paymentExecuteTime    DateTime?
+  failureReason         String?
+  metadata              Json?
+
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  @@index([email])
+  @@index([paymentReference])
+  @@index([merchantInvoiceNumber])
+  @@index([companyId])
+  @@index([userId])
+}

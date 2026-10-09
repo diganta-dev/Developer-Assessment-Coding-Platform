@@ -1771,7 +1771,7 @@ const getAssessmentInvitations = async (
 		data: { status: InvitationStatus.EXPIRED },
 	});
 
-	const invitations = await prisma.assessmentInvitation.findMany({
+	const rawInvitations = await prisma.assessmentInvitation.findMany({
 		where: { assessmentId },
 		include: {
 			candidate: {
@@ -1780,7 +1780,7 @@ const getAssessmentInvitations = async (
 					name: true,
 					email: true,
 					profilePictureUrl: true,
-					assessmentAttempts: {
+					attempts: {
 						where: { assessmentId },
 						orderBy: { attemptNumber: "desc" },
 						take: 1,
@@ -1800,6 +1800,16 @@ const getAssessmentInvitations = async (
 		},
 		orderBy: { invitedAt: "desc" },
 	});
+
+	const invitations = rawInvitations.map((inv) => ({
+		...inv,
+		candidate: inv.candidate
+			? {
+					...inv.candidate,
+					assessmentAttempts: inv.candidate.attempts,
+			  }
+			: null,
+	}));
 
 	return invitations;
 };
@@ -3385,6 +3395,8 @@ const getDetailedResultReport = async (
 			totalMarks: attempt.assessment.totalMarks,
 			passingScore: attempt.assessment.passingScore,
 			durationMinutes: attempt.assessment.durationMinutes,
+			company: attempt.assessment.company,
+			problems: attempt.assessment.problems,
 		},
 		attempt: {
 			id: attempt.id,
