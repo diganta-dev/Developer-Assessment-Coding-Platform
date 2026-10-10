@@ -1,4 +1,5 @@
-import { Router } from "express";
+import { Router, type Request, type Response, type NextFunction } from "express";
+import { uploadProfilePicture } from "../../lib/multer";
 import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums";
 import { auth } from "../../middleware/checkAuth";
 import { validateRequest } from "../../middleware/validateRequest";
@@ -104,6 +105,102 @@ router.delete(
 		CompanyMemberRole.COMPANY_ADMIN,
 	),
 	CompanyController.removeCompanyMember,
+);
+
+
+// Middleware helper to normalize single logo from either logo, image, profilePicture, or file field
+const normalizeCompanyLogoUpload = (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	uploadProfilePicture.fields([
+		{ name: "logo", maxCount: 1 },
+		{ name: "image", maxCount: 1 },
+		{ name: "profilePicture", maxCount: 1 },
+		{ name: "file", maxCount: 1 },
+	])(req, res, (err: unknown) => {
+		if (err) return next(err);
+		if (req.files && typeof req.files === "object") {
+			const filesObj = req.files as Record<string, Express.Multer.File[]>;
+			req.file =
+				filesObj.logo?.[0] ||
+				filesObj.image?.[0] ||
+				filesObj.profilePicture?.[0] ||
+				filesObj.file?.[0] ||
+				req.file;
+		}
+		next();
+	});
+};
+
+router.patch(
+	"/logo",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+	),
+	normalizeCompanyLogoUpload,
+	CompanyController.updateCompanyLogo,
+);
+
+router.patch(
+	"/my-company/logo",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+	),
+	normalizeCompanyLogoUpload,
+	CompanyController.updateCompanyLogo,
+);
+
+router.patch(
+	"/:id/logo",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+	),
+	normalizeCompanyLogoUpload,
+	CompanyController.updateCompanyLogo,
+);
+
+router.delete(
+	"/logo",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+	),
+	CompanyController.removeCompanyLogo,
+);
+
+router.delete(
+	"/my-company/logo",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+	),
+	CompanyController.removeCompanyLogo,
+);
+
+router.delete(
+	"/:id/logo",
+	auth(
+		UserRole.SUPER_ADMIN,
+		UserRole.ADMIN,
+		CompanyMemberRole.COMPANY_OWNER,
+		CompanyMemberRole.COMPANY_ADMIN,
+	),
+	CompanyController.removeCompanyLogo,
 );
 
 export const CompanyRoutes = router;

@@ -7,7 +7,8 @@ model User {
 
   role UserRole @default(CANDIDATE)
 
-  profilePictureUrl  String?
+  profilePictureUrl      String?
+  profilePicturePublicId String?
   isVerified Boolean @default(false)  
   isActive   Boolean @default(true)
   tokenVersion Int     @default(1)

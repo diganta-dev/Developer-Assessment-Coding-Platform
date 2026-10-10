@@ -1,3 +1,5 @@
+import { uploadCompanyLogoToCloudinary, deleteFromCloudinary } from "../../lib/cloudinary";
+import { validateImageBuffer } from "../../lib/multer";
 import { createBkashPayment, type IBkashCreatePaymentResponse } from "../../lib/bkash";
 import type { Prisma } from "../../../generated/prisma/client";
 import crypto from "crypto";
@@ -943,7 +945,210 @@ const getCompanyMembers = async (
 	};
 };
 
+
+const updateCompanyLogo = async (
+	companyId: string,
+	user: { userId: string; role: UserRole },
+	file?: Express.Multer.File,
+) => {
+	if (!file || !file.buffer) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"Please select a valid image file to upload as the company logo.",
+		);
+	}
+
+	validateImageBuffer(file.buffer);
+
+	let targetCompanyId = companyId;
+	if (!targetCompanyId || targetCompanyId === "me" || targetCompanyId === "my-company") {
+		const member = await prisma.companyMember.findFirst({
+			where: {
+				userId: user.userId,
+				role: {
+					in: [CompanyMemberRole.COMPANY_OWNER, CompanyMemberRole.COMPANY_ADMIN],
+				},
+			},
+		});
+		if (!member) {
+			throw new AppError(
+				httpStatus.NOT_FOUND,
+				"You are not an owner or admin of any company.",
+			);
+		}
+		targetCompanyId = member.companyId;
+	}
+
+	const isExistCompany = await prisma.company.findUnique({
+		where: { id: targetCompanyId },
+	});
+
+	if (!isExistCompany) {
+		throw new AppError(httpStatus.NOT_FOUND, "Company not found");
+	}
+
+	if (user.role !== UserRole.SUPER_ADMIN && user.role !== UserRole.ADMIN) {
+		const member = await prisma.companyMember.findUnique({
+			where: {
+				userId_companyId: {
+					userId: user.userId,
+					companyId: targetCompanyId,
+				},
+			},
+		});
+
+		if (!member) {
+			throw new AppError(
+				httpStatus.FORBIDDEN,
+				"You are not a member of this company",
+			);
+		}
+
+		if (
+			member.role !== CompanyMemberRole.COMPANY_OWNER &&
+			member.role !== CompanyMemberRole.COMPANY_ADMIN
+		) {
+			throw new AppError(
+				httpStatus.FORBIDDEN,
+				"Only the company owner or admin can update the company logo.",
+			);
+		}
+	}
+
+	const uploadResult = await uploadCompanyLogoToCloudinary(
+		file.buffer,
+		file.originalname,
+	);
+
+	const oldPublicId = isExistCompany.logoPublicId;
+
+	try {
+		const updatedCompany = await prisma.company.update({
+			where: { id: targetCompanyId },
+			data: {
+				logoUrl: uploadResult.url,
+				logoPublicId: uploadResult.publicId,
+			},
+			include: {
+				members: {
+					include: {
+						user: {
+							select: {
+								id: true,
+								name: true,
+								email: true,
+								role: true,
+							},
+						},
+					},
+				},
+			},
+		});
+
+		if (oldPublicId && oldPublicId !== uploadResult.publicId) {
+			await deleteFromCloudinary(oldPublicId, "image");
+		}
+
+		return updatedCompany;
+	} catch (dbError) {
+		await deleteFromCloudinary(uploadResult.publicId, "image");
+		throw dbError;
+	}
+};
+
+const removeCompanyLogo = async (
+	companyId: string,
+	user: { userId: string; role: UserRole },
+) => {
+	let targetCompanyId = companyId;
+	if (!targetCompanyId || targetCompanyId === "me" || targetCompanyId === "my-company") {
+		const member = await prisma.companyMember.findFirst({
+			where: {
+				userId: user.userId,
+				role: {
+					in: [CompanyMemberRole.COMPANY_OWNER, CompanyMemberRole.COMPANY_ADMIN],
+				},
+			},
+		});
+		if (!member) {
+			throw new AppError(
+				httpStatus.NOT_FOUND,
+				"You are not an owner or admin of any company.",
+			);
+		}
+		targetCompanyId = member.companyId;
+	}
+
+	const isExistCompany = await prisma.company.findUnique({
+		where: { id: targetCompanyId },
+	});
+
+	if (!isExistCompany) {
+		throw new AppError(httpStatus.NOT_FOUND, "Company not found");
+	}
+
+	if (user.role !== UserRole.SUPER_ADMIN && user.role !== UserRole.ADMIN) {
+		const member = await prisma.companyMember.findUnique({
+			where: {
+				userId_companyId: {
+					userId: user.userId,
+					companyId: targetCompanyId,
+				},
+			},
+		});
+
+		if (!member) {
+			throw new AppError(
+				httpStatus.FORBIDDEN,
+				"You are not a member of this company",
+			);
+		}
+
+		if (
+			member.role !== CompanyMemberRole.COMPANY_OWNER &&
+			member.role !== CompanyMemberRole.COMPANY_ADMIN
+		) {
+			throw new AppError(
+				httpStatus.FORBIDDEN,
+				"Only the company owner or admin can remove the company logo.",
+			);
+		}
+	}
+
+	const oldPublicId = isExistCompany.logoPublicId;
+
+	const updatedCompany = await prisma.company.update({
+		where: { id: targetCompanyId },
+		data: {
+			logoUrl: null,
+			logoPublicId: null,
+		},
+		include: {
+			members: {
+				include: {
+					user: {
+						select: {
+							id: true,
+							name: true,
+							email: true,
+							role: true,
+						},
+					},
+				},
+			},
+		},
+	});
+
+	if (oldPublicId) {
+		await deleteFromCloudinary(oldPublicId, "image");
+	}
+
+	return updatedCompany;
+};
+
 export const CompanyService = {
+	updateCompanyLogo,
+	removeCompanyLogo,
 	createCompany,
 	verifyCompany,
 	updateCompany,

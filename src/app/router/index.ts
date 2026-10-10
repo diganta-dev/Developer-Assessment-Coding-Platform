@@ -1,16 +1,17 @@
-import { PaymentRoutes } from "../module/payment/payment.route";
 import { Router } from "express";
+import { AdminManagementRoutes } from "../module/admin-management/admin-management.route";
+import { AntiCheatingRoutes } from "../module/anti-cheating/anti-cheating.route";
 import { AssessmentRoutes } from "../module/assessment/assessment.route";
 import { AuthRoutes } from "../module/auth/auth.route";
 import { CompanyRoutes } from "../module/company/company.route";
 import { EvaluationRoutes } from "../module/evaluation/evaluation.route";
+import { PaymentRoutes } from "../module/payment/payment.route";
 import { ProblemRoute } from "../module/problem-bank/problem.route";
-import { CalculationRoutes } from "../module/score-calculation/calculation.route";
 import { RankingResultRoutes } from "../module/ranking-result/rankingresult.route";
 import { ReportsAnalyticsRoutes } from "../module/repostandAnalytics/reports-analytics.route";
-import { AdminManagementRoutes } from "../module/admin-management/admin-management.route";
-import { AntiCheatingRoutes } from "../module/anti-cheating/anti-cheating.route";
+import { CalculationRoutes } from "../module/score-calculation/calculation.route";
 import { SubmissionRoutes } from "../module/submission/submission.route";
+import { UserRoutes } from "../module/user/user.route";
 
 const router = Router();
 
@@ -18,6 +19,14 @@ const routes = [
 	{
 		path: "/auth",
 		route: AuthRoutes,
+	},
+	{
+		path: "/user",
+		route: UserRoutes,
+	},
+	{
+		path: "/users",
+		route: UserRoutes,
 	},
 	{
 		path: "/company",

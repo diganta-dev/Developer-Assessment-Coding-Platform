@@ -17,7 +17,8 @@
     "format:fix": "node ./node_modules/@biomejs/biome/bin/biome format --write ./src",
     "lint:check": "node ./node_modules/@biomejs/biome/bin/biome lint ./src",
     "lint:fix": "node ./node_modules/@biomejs/biome/bin/biome lint --write ./src",
-    "test:bkash": "tsx src/testBkashCompanyPayment.ts"
+    "test:bkash": "tsx src/testBkashCompanyPayment.ts",
+    "test:profile": "tsx src/testProfileUploadIntegration.ts"
   },
   "keywords": [],
   "author": "",

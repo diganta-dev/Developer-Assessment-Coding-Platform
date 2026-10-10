@@ -1,16 +1,13 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
-import { UserRole } from "../../../generated/prisma/enums";
 import { auth } from "../../middleware/checkAuth";
 import { validateRequest } from "../../middleware/validateRequest";
 import { uploadProfilePicture, uploadResume } from "../../lib/multer";
-import { UserController } from "../user/user.controller";
-import { UserValidation as UserProfileValidation } from "../user/user.validation";
-import { AuthController } from "./auth.controller";
-import { UserValidation } from "./auth.validation";
+import { UserController } from "./user.controller";
+import { UserValidation } from "./user.validation";
 
 const router = Router();
 
-// Multipart normalizers
+// Middleware helper to normalize single file from either profilePicture, image, or file field
 const normalizeProfilePictureUpload = (
 	req: Request,
 	res: Response,
@@ -34,6 +31,7 @@ const normalizeProfilePictureUpload = (
 	});
 };
 
+// Middleware helper to normalize single resume from either resume, document, or file field
 const normalizeResumeUpload = (
 	req: Request,
 	res: Response,
@@ -57,55 +55,31 @@ const normalizeResumeUpload = (
 	});
 };
 
-router.post(
-	"/register",
-	validateRequest(UserValidation.CandidateRegistrationZodSchema),
-	AuthController.registerCandidate,
+// 1. Get current authenticated user profile
+router.get("/me", auth(), UserController.getProfile);
+router.get("/profile", auth(), UserController.getProfile);
+
+// 2. Update basic profile fields
+router.patch(
+	"/profile",
+	auth(),
+	validateRequest(UserValidation.updateProfileZodSchema),
+	UserController.updateProfile,
 );
-
-router.post(
-	"/verify-email",
-	validateRequest(UserValidation.VerifyOtpZodSchema),
-	AuthController.verifyRegistrationEmail,
-);
-
-router.post(
-	"/login",
-	validateRequest(UserValidation.LoginZodSchema),
-	AuthController.loginUser,
-);
-
-router.post(
-	"/verify-login-otp",
-	validateRequest(UserValidation.VerifyOtpZodSchema),
-	AuthController.verifyLoginOtp,
-);
-
-router.post(
-	"/resend-login-otp",
-	validateRequest(UserValidation.ResendOtpZodSchema),
-	AuthController.resendLoginOtp,
-);
-
-router.post("/google", AuthController.googleLogin);
-router.post("/google-login", AuthController.googleLogin);
-
-router.post("/logout", AuthController.logoutUser);
-
-router.get(
-	"/me",
-	auth(UserRole.ADMIN, UserRole.CANDIDATE, UserRole.SUPER_ADMIN),
-	AuthController.getMe,
-);
-
-// Profile management routes
 router.patch(
 	"/me/profile",
 	auth(),
-	validateRequest(UserProfileValidation.updateProfileZodSchema),
+	validateRequest(UserValidation.updateProfileZodSchema),
 	UserController.updateProfile,
 );
 
+// 3. Profile Picture Upload & Removal
+router.patch(
+	"/profile-picture",
+	auth(),
+	normalizeProfilePictureUpload,
+	UserController.updateProfilePicture,
+);
 router.patch(
 	"/me/profile-picture",
 	auth(),
@@ -113,8 +87,16 @@ router.patch(
 	UserController.updateProfilePicture,
 );
 
+router.delete("/profile-picture", auth(), UserController.removeProfilePicture);
 router.delete("/me/profile-picture", auth(), UserController.removeProfilePicture);
 
+// 4. Resume Document Upload & Removal
+router.patch(
+	"/resume",
+	auth(),
+	normalizeResumeUpload,
+	UserController.updateResume,
+);
 router.patch(
 	"/me/resume",
 	auth(),
@@ -122,20 +104,7 @@ router.patch(
 	UserController.updateResume,
 );
 
+router.delete("/resume", auth(), UserController.removeResume);
 router.delete("/me/resume", auth(), UserController.removeResume);
 
-router.post("/refresh-token", AuthController.refreshToken);
-
-router.post(
-	"/forgot-password",
-	validateRequest(UserValidation.ForgotPasswordZodSchema),
-	AuthController.forgotPassword,
-);
-
-router.post(
-	"/reset-password",
-	validateRequest(UserValidation.ResetPasswordZodSchema),
-	AuthController.resetPassword,
-);
-
-export const AuthRoutes = router;
+export const UserRoutes = router;

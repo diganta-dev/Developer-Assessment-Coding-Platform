@@ -4,13 +4,16 @@ model CandidateProfile {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  phone        String?
-  bio          String?
-  location     String?
-  profileImage String?
-  resumeUrl    String?
-  githubUrl    String?
-  linkedinUrl  String?
+  phone                 String?
+  bio                   String?
+  location              String?
+  profileImage          String?
+  profileImagePublicId  String?
+  resumeUrl             String?
+  resumePublicId        String?
+  resumeFileName        String?
+  githubUrl             String?
+  linkedinUrl           String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

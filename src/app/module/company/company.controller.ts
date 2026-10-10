@@ -162,7 +162,38 @@ const getCompanyMembers = catchAsync(async (req, res) => {
 	});
 });
 
+
+const updateCompanyLogo = catchAsync(async (req, res) => {
+	const companyId = (req.params.id || req.params.companyId || "me") as string;
+	const user = req.user!;
+	const result = await CompanyService.updateCompanyLogo(
+		companyId,
+		user,
+		req.file,
+	);
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: "Company logo updated successfully",
+		data: result,
+	});
+});
+
+const removeCompanyLogo = catchAsync(async (req, res) => {
+	const companyId = (req.params.id || req.params.companyId || "me") as string;
+	const user = req.user!;
+	const result = await CompanyService.removeCompanyLogo(companyId, user);
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: "Company logo removed successfully",
+		data: result,
+	});
+});
+
 export const CompanyController = {
+	updateCompanyLogo,
+	removeCompanyLogo,
 	createCompany,
 	verifyCompany,
 	updateCompany,

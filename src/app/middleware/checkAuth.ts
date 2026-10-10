@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import type { JwtPayload } from "jsonwebtoken";
-import type { CompanyMemberRole, UserRole } from "../../generated/prisma/enums";
+import { CompanyMemberRole, UserRole } from "../../generated/prisma/enums";
 import config from "../config";
 import { prisma } from "../lib/prisma";
 import AppError from "../utils/AppError";
@@ -121,10 +121,12 @@ export const auth = (...requiredRoles: (UserRole | CompanyMemberRole)[]) => {
 				);
 			}
 
-			// Block company action if user was authorized via company role but company registration payment is pending
-			if (!hasUserRole && hasCompanyRole) {
+			// Block company action if user is accessing as a company member but company registration payment is pending
+			const isPlatformAdmin =
+				user.role === UserRole.SUPER_ADMIN || user.role === UserRole.ADMIN;
+			if (!isPlatformAdmin && hasCompanyRole) {
 				const targetCompany = primaryMembership?.company;
-				if (targetCompany && targetCompany.isPaymentVerified === false) {
+				if (targetCompany && !targetCompany.isPaymentVerified) {
 					throw new AppError(
 						httpStatus.PAYMENT_REQUIRED,
 						"Company registration payment is pending. Please complete bKash payment to activate your company.",

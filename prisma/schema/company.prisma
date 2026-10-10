@@ -6,8 +6,9 @@ model Company {
 
   email       String @unique
   isVerified         Boolean  @default(false)
-  isPaymentVerified  Boolean  @default(true)
+  isPaymentVerified  Boolean  @default(false)
   logoUrl     String?
+  logoPublicId String?
   description String?
   website     String?
 
