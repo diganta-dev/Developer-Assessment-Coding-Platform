@@ -1231,9 +1231,7 @@ const publishAssessment = async (user: RequestUser, assessmentId: string) => {
 	if (
 		assessment.status === AssessmentStatus.COMPLETED ||
 		assessment.status === AssessmentStatus.ARCHIVED ||
-		assessment.status === AssessmentStatus.EXPIRED ||
-		assessment.status === AssessmentStatus.EXPIRED ||
-		assessment.status === AssessmentStatus.EXPIRED
+		(assessment.status as AssessmentStatus) === AssessmentStatus.EXPIRED
 	) {
 		throw new AppError(
 			httpStatus.BAD_REQUEST,
@@ -1350,9 +1348,7 @@ const addProblemsToAssessment = async (
 	if (
 		assessment.status === AssessmentStatus.COMPLETED ||
 		assessment.status === AssessmentStatus.ARCHIVED ||
-		assessment.status === AssessmentStatus.EXPIRED ||
-		assessment.status === AssessmentStatus.EXPIRED ||
-		assessment.status === AssessmentStatus.EXPIRED
+		(assessment.status as AssessmentStatus) === AssessmentStatus.EXPIRED
 	) {
 		throw new AppError(
 			httpStatus.BAD_REQUEST,
@@ -1550,9 +1546,7 @@ const inviteCandidates = async (
 	if (
 		assessment.status === AssessmentStatus.COMPLETED ||
 		assessment.status === AssessmentStatus.ARCHIVED ||
-		assessment.status === AssessmentStatus.EXPIRED ||
-		assessment.status === AssessmentStatus.EXPIRED ||
-		assessment.status === AssessmentStatus.EXPIRED
+		(assessment.status as AssessmentStatus) === AssessmentStatus.EXPIRED
 	) {
 		throw new AppError(
 			httpStatus.BAD_REQUEST,
@@ -3432,6 +3426,7 @@ const calculateAttemptScore = async (attemptId: string, user?: RequestUser) => {
 
 export const AssessmentService = {
 	syncExpiredAssessments,
+	autoSubmitAttempt,
 	createAssessment,
 	getMyAssessments,
 	getSingleAssessment,

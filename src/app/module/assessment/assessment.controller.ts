@@ -1,3 +1,4 @@
+import AppError from "../../utils/AppError";
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
 import type { RequestUser } from "../../middleware/checkAuth";

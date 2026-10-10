@@ -1,10 +1,11 @@
+import { createBkashPayment, type IBkashCreatePaymentResponse } from "../../lib/bkash";
 import type { Prisma } from "../../../generated/prisma/client";
 import crypto from "crypto";
 import ejs from "ejs";
 import httpStatus from "http-status";
 import type { SignOptions } from "jsonwebtoken";
 import path from "path";
-import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums";
+import { CompanyMemberRole, PaymentStatus, PaymentType, UserRole } from "../../../generated/prisma/enums";
 import config from "../../config";
 import { transporter } from "../../lib/nodemailer";
 import { prisma } from "../../lib/prisma";
@@ -115,24 +116,36 @@ const createCompany = async (
 			value: expirationSeconds, // 5 minutes in seconds
 		},
 	});
-	const templatePath = path.join(
-		process.cwd(),
-		"src/app/templates/company-registration-otp.ejs",
-	);
-	const templateData = {
-		name: name,
-		otp: otp,
-	};
-	const html = await ejs.renderFile(templatePath, templateData);
-	await transporter.sendMail({
-		from: config.SENDER_EMAIL_USER,
-		to: email,
-		subject: "Company Registration verification",
-		html: html,
-	});
+	console.log("\n==================================================");
+	console.log(`🔑 [COMPANY REGISTRATION OTP] Email: ${email} | OTP: ${otp}`);
+	console.log("==================================================\n");
+
+	try {
+		const templatePath = path.join(
+			process.cwd(),
+			"src/app/templates/company-registration-otp.ejs",
+		);
+		const templateData = {
+			name: name,
+			otp: otp,
+		};
+		const html = await ejs.renderFile(templatePath, templateData);
+		const sender = config.SENDER_EMAIL_USER || config.smtp.user;
+		const mailInfo = await transporter.sendMail({
+			from: `"Developer Assessment Platform" <${sender}>`,
+			to: email,
+			subject: "Company Registration Verification OTP - Developer Assessment Platform",
+			html: html,
+		});
+		console.log(`📧 [EMAIL SENT] Company OTP dispatched to ${email}. MessageId: ${mailInfo.messageId}`);
+	} catch (mailError) {
+		console.error(`⚠️ [EMAIL WARNING] Failed to deliver company OTP to ${email}:`, mailError);
+	}
 
 	return {
 		message: "Verification OTP sent to your company email",
+		email,
+		...(config.node_env !== "production" ? { devOtp: otp } : {}),
 	};
 };
 
@@ -196,6 +209,7 @@ const verifyCompany = async (
 			name: userData.name,
 			slug,
 			isVerified: true,
+			isPaymentVerified: false,
 			description: userData?.description,
 			website: userData?.website,
 			logoUrl: userData?.logoUrl,
@@ -275,10 +289,47 @@ const verifyCompany = async (
 		config.jwt_refresh_expires_in as SignOptions,
 	);
 
+	// Initiate bKash payment for company registration
+	const fee = config.bkash_company_registration_fee_bdt || 1000;
+	const paymentReference = `PAY-COMP-${Date.now()}-${crypto.randomBytes(4).toString("hex")}`;
+	const merchantInvoiceNumber = `INV-${Date.now()}-${crypto.randomBytes(3).toString("hex")}`;
+
+	let bkashRes: IBkashCreatePaymentResponse | null = null;
+	try {
+		bkashRes = await createBkashPayment({
+			amount: fee,
+			merchantInvoiceNumber,
+			payerReference: ownerUser.email,
+		});
+	} catch (bkashErr) {
+		console.error("[verifyCompany] bKash payment initiation warning:", bkashErr);
+	}
+
+	const payment = await prisma.payment.create({
+		data: {
+			paymentReference,
+			companyId: createdCompany.id,
+			userId: ownerUser.id,
+			email: ownerUser.email,
+			amount: fee,
+			currency: "BDT",
+			paymentType: PaymentType.COMPANY_REGISTRATION,
+			status: PaymentStatus.PENDING,
+			merchantInvoiceNumber,
+			bkashPaymentId: bkashRes?.paymentID || null,
+			metadata: bkashRes ? (bkashRes as any) : undefined,
+		},
+	});
+
 	return {
 		...createdCompany,
 		accessToken,
 		refreshToken,
+		paymentReference: payment.paymentReference,
+		bkashURL: bkashRes?.bkashURL || null,
+		paymentId: bkashRes?.paymentID || null,
+		paymentStatus: payment.status,
+		registrationFee: payment.amount,
 	};
 };
 

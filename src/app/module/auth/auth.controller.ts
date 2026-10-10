@@ -19,14 +19,14 @@ const getCookieOptions = (maxAge: number) => ({
 
 const registerCandidate = catchAsync(async (req: Request, res: Response) => {
 	const payload = req.body;
-	await AuthService.registerCandidate(payload);
+	const result = await AuthService.registerCandidate(payload);
 
 	sendResponse(res, {
 		statusCode: httpStatus.CREATED,
 		success: true,
 		message:
 			"Verification email sent successfully, please check your email inbox or spam folder",
-		data: null,
+		data: result,
 	});
 });
 

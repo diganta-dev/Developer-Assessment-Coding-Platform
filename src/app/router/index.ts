@@ -1,3 +1,4 @@
+import { PaymentRoutes } from "../module/payment/payment.route";
 import { Router } from "express";
 import { AssessmentRoutes } from "../module/assessment/assessment.route";
 import { AuthRoutes } from "../module/auth/auth.route";
@@ -21,6 +22,10 @@ const routes = [
 	{
 		path: "/company",
 		route: CompanyRoutes,
+	},
+	{
+		path: "/payment",
+		route: PaymentRoutes,
 	},
 	{
 		path: "/problem",

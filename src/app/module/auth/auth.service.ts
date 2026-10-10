@@ -74,21 +74,36 @@ const registerCandidate = async (payload: IRegisterCandidatePayload) => {
 	);
 	console.log("OTP for registration:", otp);
 
-	const templatePath = path.join(
-		process.cwd(),
-		"src/app/templates/user-registration-otp.ejs",
-	);
-	const templateData = {
-		name: name,
-		otp: otp,
+	console.log("\n==================================================");
+	console.log(`🔑 [REGISTRATION OTP] Email: ${email} | OTP: ${otp}`);
+	console.log("==================================================\n");
+
+	try {
+		const templatePath = path.join(
+			process.cwd(),
+			"src/app/templates/user-registration-otp.ejs",
+		);
+		const templateData = {
+			name: name,
+			otp: otp,
+		};
+		const html = await ejs.renderFile(templatePath, templateData);
+		const sender = config.SENDER_EMAIL_USER || config.smtp.user;
+		const mailInfo = await transporter.sendMail({
+			from: `"Developer Assessment Platform" <${sender}>`,
+			to: email,
+			subject: "Registration Verification OTP - Developer Assessment Platform",
+			html: html,
+		});
+		console.log(`📧 [EMAIL SENT] OTP successfully dispatched to ${email}. MessageId: ${mailInfo.messageId}`);
+	} catch (mailError) {
+		console.error(`⚠️ [EMAIL WARNING] Failed to deliver OTP email to ${email}:`, mailError);
+	}
+
+	return {
+		email,
+		...(config.node_env !== "production" ? { devOtp: otp } : {}),
 	};
-	const html = await ejs.renderFile(templatePath, templateData);
-	await transporter.sendMail({
-		from: config.SENDER_EMAIL_USER,
-		to: email,
-		subject: "Registration Verification OTP",
-		html: html,
-	});
 };
 
 const verifyRegistrationEmail = async (

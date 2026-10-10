@@ -120,6 +120,17 @@ export const auth = (...requiredRoles: (UserRole | CompanyMemberRole)[]) => {
 					"You are not permitted to access this route.",
 				);
 			}
+
+			// Block company action if user was authorized via company role but company registration payment is pending
+			if (!hasUserRole && hasCompanyRole) {
+				const targetCompany = primaryMembership?.company;
+				if (targetCompany && targetCompany.isPaymentVerified === false) {
+					throw new AppError(
+						httpStatus.PAYMENT_REQUIRED,
+						"Company registration payment is pending. Please complete bKash payment to activate your company.",
+					);
+				}
+			}
 		}
 
 		req.user = {

@@ -22,6 +22,7 @@ export default {
 	bkash_username: process.env.BKASH_USERNAME!,
 	bkash_password: process.env.BKASH_PASSWORD!,
 	bkash_callback_url: process.env.BKASH_CALLBACK_URL!,
+	bkash_company_registration_fee_bdt: Number(process.env.BKASH_COMPANY_REGISTRATION_FEE_BDT) || 1000,
 
 	// Google OAuth
 	google_client_id: process.env.GOOGLE_CLIENT_ID,
