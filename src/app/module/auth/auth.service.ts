@@ -114,18 +114,100 @@ const verifyRegistrationEmail = async (
 
 	const user = await prisma.user.findUnique({
 		where: { email: cleanEmail },
+		include: { candidateProfile: true },
 	});
 
 	if (user) {
-		if (user.isVerified) {
-			throw new AppError(
-				httpStatus.BAD_REQUEST,
-				"User email is already verified",
-			);
-		}
 		if (!user.isActive) {
 			throw new AppError(httpStatus.FORBIDDEN, "User account is deactivated");
 		}
+
+		if (user.isVerified) {
+			const { candidateProfile, ...userData } = user;
+			const jwtPayload = {
+				userId: userData.id,
+				name: userData.name,
+				email: userData.email,
+				role: userData.role,
+			};
+
+			const accessToken = jwtUtils.createToken(
+				jwtPayload,
+				config.jwt_access_secret,
+				config.jwt_access_expires_in as SignOptions,
+			);
+
+			const refreshToken = jwtUtils.createToken(
+				jwtPayload,
+				config.jwt_refresh_secret,
+				config.jwt_refresh_expires_in as SignOptions,
+			);
+
+			return {
+				user: userData,
+				candidateProfile,
+				accessToken,
+				refreshToken,
+			};
+		}
+
+		// User exists but is unverified (e.g. from login challenge or partial registration)
+		let storedOtp = await redisClient.get(`register-verify-otp:${cleanEmail}`);
+		let isLoginOtp = false;
+		if (!storedOtp) {
+			storedOtp = await redisClient.get(`login-verify-otp:${cleanEmail}`);
+			if (storedOtp) {
+				isLoginOtp = true;
+			}
+		}
+
+		if (!storedOtp) {
+			throw new AppError(httpStatus.BAD_REQUEST, "Invalid or expired OTP");
+		}
+		if (storedOtp !== otp) {
+			throw new AppError(httpStatus.BAD_REQUEST, "Invalid OTP");
+		}
+
+		const updatedUser = await prisma.user.update({
+			where: { id: user.id },
+			data: { isVerified: true },
+			include: { candidateProfile: true },
+		});
+
+		if (isLoginOtp) {
+			await redisClient.del(`login-verify-otp:${cleanEmail}`);
+			await redisClient.del(`login-verify-otp-cooldown:${cleanEmail}`);
+		} else {
+			await redisClient.del(`register-verify-otp:${cleanEmail}`);
+			await redisClient.del(`register-user:${cleanEmail}`);
+		}
+
+		const { candidateProfile, ...userData } = updatedUser;
+		const jwtPayload = {
+			userId: userData.id,
+			name: userData.name,
+			email: userData.email,
+			role: userData.role,
+		};
+
+		const accessToken = jwtUtils.createToken(
+			jwtPayload,
+			config.jwt_access_secret,
+			config.jwt_access_expires_in as SignOptions,
+		);
+
+		const refreshToken = jwtUtils.createToken(
+			jwtPayload,
+			config.jwt_refresh_secret,
+			config.jwt_refresh_expires_in as SignOptions,
+		);
+
+		return {
+			user: userData,
+			candidateProfile,
+			accessToken,
+			refreshToken,
+		};
 	}
 
 	const redisOtp = await redisClient.get(`register-verify-otp:${cleanEmail}`);

@@ -13,17 +13,29 @@ import router from "./app/router/index.js";
 
 const app: Application = express();
 
+const cleanUrl = (url?: string) => url?.trim().replace(/\/+$/, "");
+
+const rawOrigins = (config.frontend_url || "")
+	.split(",")
+	.map((u) => cleanUrl(u))
+	.filter(Boolean) as string[];
+
 const allowedOrigins = [
-	config.frontend_url
-].filter(Boolean);
+	...rawOrigins,
+	"http://localhost:3000",
+	"http://localhost:5173",
+];
 
 app.use(
 	cors({
 		origin: (origin, callback) => {
+			const cleanOrigin = cleanUrl(origin);
 			if (
 				!origin ||
-				allowedOrigins.includes(origin) ||
-				config.node_env === "development"
+				(cleanOrigin && allowedOrigins.includes(cleanOrigin)) ||
+				(cleanOrigin && allowedOrigins.some((allowed) => cleanOrigin.startsWith(allowed))) ||
+				config.node_env === "development" ||
+				(origin && origin.endsWith(".vercel.app"))
 			) {
 				callback(null, true);
 			} else {

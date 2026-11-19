@@ -34,10 +34,33 @@ export const CandidateRegistrationZodSchema = z.object({
 
 export const PatientRegistrationZodSchema = CandidateRegistrationZodSchema;
 
-export const VerifyOtpZodSchema = z.object({
-	email: z.string().email("follow the email format"),
-	otp: z.string().length(6, "OTP must be exactly 6 digits"),
-});
+export const VerifyOtpZodSchema = z
+	.object({
+		email: z
+			.string()
+			.email("follow the email format")
+			.transform((val) => val.trim().toLowerCase()),
+		otp: z
+			.union([
+				z.string(),
+				z.number().transform((n) => n.toString()),
+			])
+			.optional(),
+		code: z
+			.union([
+				z.string(),
+				z.number().transform((n) => n.toString()),
+			])
+			.optional(),
+	})
+	.transform((data) => ({
+		email: data.email,
+		otp: (data.otp || data.code || "").trim(),
+	}))
+	.refine((data) => data.otp.length === 6, {
+		message: "OTP must be exactly 6 digits",
+		path: ["otp"],
+	});
 
 export const patientValidationZodSchema = VerifyOtpZodSchema;
 
