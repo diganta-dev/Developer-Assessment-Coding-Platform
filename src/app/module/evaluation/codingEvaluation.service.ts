@@ -1,20 +1,20 @@
 import httpStatus from "http-status";
-import type { Prisma } from "../../../generated/prisma/client";
+import type { Prisma } from "../../../generated/prisma/client.js";
 import {
 	AttemptStatus,
 	EvaluationStatus,
 	EvaluationType,
 	ProblemType,
 	SubmissionStatus,
-} from "../../../generated/prisma/enums";
-import { prisma } from "../../lib/prisma";
-import AppError from "../../utils/AppError";
-import { AttemptScoreService } from "./attemptScore.service";
+} from "../../../generated/prisma/enums.js";
+import { prisma } from "../../lib/prisma.js";
+import AppError from "../../utils/AppError.js";
+import { AttemptScoreService } from "./attemptScore.service.js";
 import type {
 	ICodingEvaluationResult,
 	ITestCaseExecutionResult,
-} from "./evaluation.interface";
-import { executeJudge0TestCase, getJudge0LanguageId } from "./judge0.helper";
+} from "./evaluation.interface.js";
+import { executeJudge0TestCase, getJudge0LanguageId } from "./judge0.helper.js";
 
 interface ExecutionSummary {
 	total: number;

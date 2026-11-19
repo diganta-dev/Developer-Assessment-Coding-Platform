@@ -2,7 +2,7 @@ import type {
 	AssessmentStatus,
 	ResultStatus,
 	TestCaseType,
-} from "../../../generated/prisma/enums";
+} from "../../../generated/prisma/enums.js";
 
 export interface IAssessmentProblemInput {
 	problemId: string;

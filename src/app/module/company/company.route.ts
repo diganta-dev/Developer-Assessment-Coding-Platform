@@ -1,10 +1,10 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
-import { uploadProfilePicture } from "../../lib/multer";
-import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums";
-import { auth } from "../../middleware/checkAuth";
-import { validateRequest } from "../../middleware/validateRequest";
-import { CompanyController } from "./company.controller";
-import { CompanyValidation } from "./company.validation";
+import { uploadProfilePicture } from "../../lib/multer.js";
+import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums.js";
+import { auth } from "../../middleware/checkAuth.js";
+import { validateRequest } from "../../middleware/validateRequest.js";
+import { CompanyController } from "./company.controller.js";
+import { CompanyValidation } from "./company.validation.js";
 
 const router = Router();
 

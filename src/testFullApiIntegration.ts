@@ -1,13 +1,13 @@
 import type { Server } from "http";
-import app from "./app";
-import config from "./app/config";
-import { prisma } from "./app/lib/prisma";
-import redisClient from "./app/lib/redis";
+import app from "./app.js";
+import config from "./app/config/index.js";
+import { prisma } from "./app/lib/prisma.js";
+import redisClient from "./app/lib/redis.js";
 import {
 	AntiCheatEventType,
 	AssessmentStatus,
 	AttemptStatus,
-} from "./generated/prisma/enums";
+} from "./generated/prisma/enums.js";
 
 // Test execution tracking
 let testsPassed = 0;
@@ -134,7 +134,7 @@ async function runFullIntegrationTest() {
 		});
 		assert(
 			superAdminLogin.status === 200 &&
-				Boolean(superAdminLogin.data?.data?.accessToken),
+			Boolean(superAdminLogin.data?.data?.accessToken),
 			"POST /api/v1/auth/login (Super Admin)",
 			superAdminLogin.data?.message,
 		);
@@ -150,7 +150,7 @@ async function runFullIntegrationTest() {
 		});
 		assert(
 			testerAdminLogin.status === 200 &&
-				Boolean(testerAdminLogin.data?.data?.accessToken),
+			Boolean(testerAdminLogin.data?.data?.accessToken),
 			"POST /api/v1/auth/login (Platform Admin)",
 			testerAdminLogin.data?.message,
 		);
@@ -166,7 +166,7 @@ async function runFullIntegrationTest() {
 		});
 		assert(
 			companyAdminLogin.status === 200 &&
-				Boolean(companyAdminLogin.data?.data?.accessToken),
+			Boolean(companyAdminLogin.data?.data?.accessToken),
 			"POST /api/v1/auth/login (Company Admin)",
 			companyAdminLogin.data?.message,
 		);
@@ -182,7 +182,7 @@ async function runFullIntegrationTest() {
 		});
 		assert(
 			recruiterLogin.status === 200 &&
-				Boolean(recruiterLogin.data?.data?.accessToken),
+			Boolean(recruiterLogin.data?.data?.accessToken),
 			"POST /api/v1/auth/login (Company Recruiter)",
 			recruiterLogin.data?.message,
 		);
@@ -198,7 +198,7 @@ async function runFullIntegrationTest() {
 		});
 		assert(
 			creatorLogin.status === 200 &&
-				Boolean(creatorLogin.data?.data?.accessToken),
+			Boolean(creatorLogin.data?.data?.accessToken),
 			"POST /api/v1/auth/login (Assessment Creator)",
 			creatorLogin.data?.message,
 		);
@@ -214,7 +214,7 @@ async function runFullIntegrationTest() {
 		});
 		assert(
 			evaluatorLogin.status === 200 &&
-				Boolean(evaluatorLogin.data?.data?.accessToken),
+			Boolean(evaluatorLogin.data?.data?.accessToken),
 			"POST /api/v1/auth/login (Evaluator)",
 			evaluatorLogin.data?.message,
 		);
@@ -230,7 +230,7 @@ async function runFullIntegrationTest() {
 		});
 		assert(
 			candidateLogin.status === 200 &&
-				Boolean(candidateLogin.data?.data?.accessToken),
+			Boolean(candidateLogin.data?.data?.accessToken),
 			"POST /api/v1/auth/login (Candidate)",
 			candidateLogin.data?.message,
 		);
@@ -244,7 +244,7 @@ async function runFullIntegrationTest() {
 		});
 		assert(
 			meRes.status === 200 &&
-				meRes.data?.data?.email === config.candidate_email,
+			meRes.data?.data?.email === config.candidate_email,
 			"GET /api/v1/auth/me (Candidate Profile)",
 		);
 
@@ -353,7 +353,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			createWrittenRes.status === 201 &&
-				Boolean(createWrittenRes.data?.data?.id),
+			Boolean(createWrittenRes.data?.data?.id),
 			"POST /api/v1/problem/create-problem (Written Problem)",
 			createWrittenRes.data?.message,
 		);
@@ -379,7 +379,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			companyProblemsRes.status === 200 &&
-				Array.isArray(companyProblemsRes.data?.data),
+			Array.isArray(companyProblemsRes.data?.data),
 			"GET /api/v1/problem/company-problems",
 		);
 
@@ -393,7 +393,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			singleProblemRes.status === 200 &&
-				singleProblemRes.data?.data?.id === mcqProblemId,
+			singleProblemRes.data?.data?.id === mcqProblemId,
 			`GET /api/v1/problem/${mcqProblemId}`,
 		);
 
@@ -411,7 +411,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			updateProblemRes.status === 200 &&
-				updateProblemRes.data?.data?.title.includes("(Updated)"),
+			updateProblemRes.data?.data?.title.includes("(Updated)"),
 			`PATCH /api/v1/problem/${mcqProblemId}`,
 		);
 
@@ -446,7 +446,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			createAssessmentRes.status === 201 &&
-				Boolean(createAssessmentRes.data?.data?.id),
+			Boolean(createAssessmentRes.data?.data?.id),
 			"POST /api/v1/assessment/ (Draft Assessment Created)",
 			createAssessmentRes.data?.message,
 		);
@@ -484,9 +484,9 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			publishAssessmentRes.status === 200 &&
-				(publishAssessmentRes.data?.data?.status ===
-					AssessmentStatus.PUBLISHED ||
-					publishAssessmentRes.data?.data?.status === AssessmentStatus.ACTIVE),
+			(publishAssessmentRes.data?.data?.status ===
+				AssessmentStatus.PUBLISHED ||
+				publishAssessmentRes.data?.data?.status === AssessmentStatus.ACTIVE),
 			`PATCH /api/v1/assessment/publish-assessment/${createdAssessmentId} (Published)`,
 			publishAssessmentRes.data?.message,
 		);
@@ -536,7 +536,7 @@ async function runFullIntegrationTest() {
 			startAttemptRes.data?.data?.attempt?.id || startAttemptRes.data?.data?.id;
 		assert(
 			(startAttemptRes.status === 201 || startAttemptRes.status === 200) &&
-				Boolean(attemptId),
+			Boolean(attemptId),
 			`POST /api/v1/assessment/start-attempt/${createdAssessmentId} (Attempt Started)`,
 			startAttemptRes.data?.message,
 		);
@@ -568,7 +568,7 @@ async function runFullIntegrationTest() {
 			attemptDetailsRes.data?.data?.id;
 		assert(
 			attemptDetailsRes.status === 200 &&
-				returnedAttemptId === createdAttemptId,
+			returnedAttemptId === createdAttemptId,
 			`GET /api/v1/assessment/attempts/${createdAttemptId}`,
 		);
 
@@ -601,7 +601,7 @@ async function runFullIntegrationTest() {
 		});
 		assert(
 			(submitMcqRes.status === 201 || submitMcqRes.status === 200) &&
-				Boolean(submitMcqRes.data?.data?.id),
+			Boolean(submitMcqRes.data?.data?.id),
 			"POST /api/v1/submission/ (Submit MCQ Solution)",
 			submitMcqRes.data?.message,
 		);
@@ -620,7 +620,7 @@ async function runFullIntegrationTest() {
 		});
 		assert(
 			(submitWrittenRes.status === 201 || submitWrittenRes.status === 200) &&
-				Boolean(submitWrittenRes.data?.data?.id),
+			Boolean(submitWrittenRes.data?.data?.id),
 			"POST /api/v1/submission/ (Submit Written Solution)",
 			submitWrittenRes.data?.message,
 		);
@@ -636,7 +636,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			attemptSubmissionsRes.status === 200 &&
-				Array.isArray(attemptSubmissionsRes.data?.data),
+			Array.isArray(attemptSubmissionsRes.data?.data),
 			`GET /api/v1/submission/attempts/${createdAttemptId} (Found ${attemptSubmissionsRes.data?.data?.length} answers)`,
 		);
 
@@ -650,7 +650,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			mySubmissionsRes.status === 200 &&
-				Array.isArray(mySubmissionsRes.data?.data),
+			Array.isArray(mySubmissionsRes.data?.data),
 			"GET /api/v1/submission/my-submissions",
 		);
 
@@ -693,7 +693,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			tabSwitchRes.status === 201 &&
-				tabSwitchRes.data?.data?.type === AntiCheatEventType.TAB_SWITCH,
+			tabSwitchRes.data?.data?.type === AntiCheatEventType.TAB_SWITCH,
 			`POST /api/v1/anti-cheating/attempt/${createdAttemptId}/tab-switch`,
 			tabSwitchRes.data?.message,
 		);
@@ -715,7 +715,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			copyPasteRes.status === 201 &&
-				copyPasteRes.data?.data?.type === AntiCheatEventType.PASTE,
+			copyPasteRes.data?.data?.type === AntiCheatEventType.PASTE,
 			`POST /api/v1/anti-cheating/attempt/${createdAttemptId}/copy-paste`,
 			copyPasteRes.data?.message,
 		);
@@ -736,8 +736,8 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			fullscreenExitRes.status === 201 &&
-				fullscreenExitRes.data?.data?.type ===
-					AntiCheatEventType.FULLSCREEN_EXIT,
+			fullscreenExitRes.data?.data?.type ===
+			AntiCheatEventType.FULLSCREEN_EXIT,
 			`POST /api/v1/anti-cheating/attempt/${createdAttemptId}/fullscreen-exit`,
 			fullscreenExitRes.data?.message,
 		);
@@ -757,7 +757,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			multiTabsRes.status === 201 &&
-				multiTabsRes.data?.data?.type === AntiCheatEventType.MULTIPLE_TAB,
+			multiTabsRes.data?.data?.type === AntiCheatEventType.MULTIPLE_TAB,
 			`POST /api/v1/anti-cheating/attempt/${createdAttemptId}/multiple-tabs`,
 			multiTabsRes.data?.message,
 		);
@@ -791,8 +791,8 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			riskRes.status === 200 &&
-				typeof riskRes.data?.data?.riskScore === "number" &&
-				riskRes.data?.data?.totalEvents >= 5,
+			typeof riskRes.data?.data?.riskScore === "number" &&
+			riskRes.data?.data?.totalEvents >= 5,
 			`GET /api/v1/anti-cheating/attempt/${createdAttemptId}/risk (Risk Score: ${riskRes.data?.data?.riskScore}, Level: ${riskRes.data?.data?.riskLevel})`,
 			riskRes.data?.message,
 		);
@@ -835,8 +835,8 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			evalMcqRes.status === 200 &&
-				(evalMcqRes.data?.data?.earnedMarks !== undefined ||
-					evalMcqRes.data?.data?.score !== undefined),
+			(evalMcqRes.data?.data?.earnedMarks !== undefined ||
+				evalMcqRes.data?.data?.score !== undefined),
 			`POST /api/v1/evaluation/mcq/${mcqSubmissionId}`,
 			evalMcqRes.data?.message,
 		);
@@ -859,8 +859,8 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			evalWrittenRes.status === 200 &&
-				(evalWrittenRes.data?.data?.marks === 9 ||
-					evalWrittenRes.data?.data?.score === 9),
+			(evalWrittenRes.data?.data?.marks === 9 ||
+				evalWrittenRes.data?.data?.score === 9),
 			`POST /api/v1/evaluation/manual/${writtenSubmissionId}`,
 			evalWrittenRes.data?.message,
 		);
@@ -876,8 +876,8 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			evalAttemptScoreRes.status === 200 &&
-				(evalAttemptScoreRes.data?.data?.obtainedMarks >= 9 ||
-					evalAttemptScoreRes.data?.data?.totalScore >= 9),
+			(evalAttemptScoreRes.data?.data?.obtainedMarks >= 9 ||
+				evalAttemptScoreRes.data?.data?.totalScore >= 9),
 			`POST /api/v1/evaluation/attempt/${createdAttemptId}/score`,
 			evalAttemptScoreRes.data?.message,
 		);
@@ -888,7 +888,7 @@ async function runFullIntegrationTest() {
 		});
 		assert(
 			allEvaluationsRes.status === 200 &&
-				Array.isArray(allEvaluationsRes.data?.data),
+			Array.isArray(allEvaluationsRes.data?.data),
 			"GET /api/v1/evaluation/ (Paginated Evaluation Records)",
 		);
 
@@ -903,7 +903,7 @@ async function runFullIntegrationTest() {
 			);
 			assert(
 				singleEvalRes.status === 200 &&
-					singleEvalRes.data?.data?.id === evaluationId,
+				singleEvalRes.data?.data?.id === evaluationId,
 				`GET /api/v1/evaluation/${evaluationId}`,
 			);
 		}
@@ -923,7 +923,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			calcSubRes.status === 200 &&
-				calcSubRes.data?.data?.obtainedMarks !== undefined,
+			calcSubRes.data?.data?.obtainedMarks !== undefined,
 			`GET /api/v1/score-calculation/submission/${mcqSubmissionId}`,
 			calcSubRes.data?.message,
 		);
@@ -938,8 +938,8 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			calcMcqRes.status === 200 &&
-				(calcMcqRes.data?.data?.totalMarks !== undefined ||
-					calcMcqRes.data?.data?.questionMarks !== undefined),
+			(calcMcqRes.data?.data?.totalMarks !== undefined ||
+				calcMcqRes.data?.data?.questionMarks !== undefined),
 			`GET /api/v1/score-calculation/mcq/${mcqSubmissionId}/score`,
 			calcMcqRes.data?.message,
 		);
@@ -954,8 +954,8 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			calcWrittenRes.status === 200 &&
-				(calcWrittenRes.data?.data?.earnedMarks === 9 ||
-					calcWrittenRes.data?.data?.obtainedMarks === 9),
+			(calcWrittenRes.data?.data?.earnedMarks === 9 ||
+				calcWrittenRes.data?.data?.obtainedMarks === 9),
 			`GET /api/v1/score-calculation/written/${writtenSubmissionId}/score`,
 			calcWrittenRes.data?.message,
 		);
@@ -970,7 +970,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			calcAttemptRes.status === 200 &&
-				calcAttemptRes.data?.data?.totalMarks !== undefined,
+			calcAttemptRes.data?.data?.totalMarks !== undefined,
 			`GET /api/v1/score-calculation/attempt/${createdAttemptId}`,
 			calcAttemptRes.data?.message,
 		);
@@ -994,9 +994,9 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			submitAttemptRes.status === 200 &&
-				(submitAttemptRes.data?.data?.status === AttemptStatus.SUBMITTED ||
-					submitAttemptRes.data?.data?.status === AttemptStatus.EVALUATED ||
-					Boolean(submitAttemptRes.data?.data)),
+			(submitAttemptRes.data?.data?.status === AttemptStatus.SUBMITTED ||
+				submitAttemptRes.data?.data?.status === AttemptStatus.EVALUATED ||
+				Boolean(submitAttemptRes.data?.data)),
 			`POST /api/v1/assessment/attempts/${createdAttemptId}/submit (Attempt Completed)`,
 			submitAttemptRes.data?.message,
 		);
@@ -1043,8 +1043,8 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			genResultRes.status === 200 &&
-				(genResultRes.data?.data?.status !== undefined ||
-					genResultRes.data?.data?.resultStatus !== undefined),
+			(genResultRes.data?.data?.status !== undefined ||
+				genResultRes.data?.data?.resultStatus !== undefined),
 			`POST /api/v1/ranking-result/generate/${createdAttemptId}`,
 			genResultRes.data?.message,
 		);
@@ -1073,8 +1073,8 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			leaderboardRes.status === 200 &&
-				(Array.isArray(leaderboardRes.data?.data?.rankings) ||
-					Array.isArray(leaderboardRes.data?.data?.leaderboard)),
+			(Array.isArray(leaderboardRes.data?.data?.rankings) ||
+				Array.isArray(leaderboardRes.data?.data?.leaderboard)),
 			`GET /api/v1/ranking-result/leaderboard/${createdAssessmentId}`,
 			leaderboardRes.data?.message,
 		);
@@ -1094,7 +1094,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			publishRes.status === 200 &&
-				Boolean(publishRes.data?.data?.publishedAt !== undefined),
+			Boolean(publishRes.data?.data?.publishedAt !== undefined),
 			`POST /api/v1/ranking-result/publish/${createdAssessmentId}`,
 			publishRes.data?.message,
 		);
@@ -1123,9 +1123,9 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			candidateResultRes.status === 200 &&
-				(candidateResultRes.data?.data?.status !== undefined ||
-					candidateResultRes.data?.data?.obtainedMarks !== undefined ||
-					Boolean(candidateResultRes.data?.data)),
+			(candidateResultRes.data?.data?.status !== undefined ||
+				candidateResultRes.data?.data?.obtainedMarks !== undefined ||
+				Boolean(candidateResultRes.data?.data)),
 			`GET /api/v1/ranking-result/attempt/${createdAttemptId}`,
 			candidateResultRes.data?.message,
 		);
@@ -1145,7 +1145,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			assessmentReportRes.status === 200 &&
-				assessmentReportRes.data?.data?.assessmentId === createdAssessmentId,
+			assessmentReportRes.data?.data?.assessmentId === createdAssessmentId,
 			`GET /api/v1/reports-analytics/assessment/${createdAssessmentId}/report`,
 			assessmentReportRes.data?.message,
 		);
@@ -1160,8 +1160,8 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			scoreDistRes.status === 200 &&
-				(scoreDistRes.data?.data?.mean !== undefined ||
-					scoreDistRes.data?.data?.buckets !== undefined),
+			(scoreDistRes.data?.data?.mean !== undefined ||
+				scoreDistRes.data?.data?.buckets !== undefined),
 			`GET /api/v1/reports-analytics/assessment/${createdAssessmentId}/score-distribution`,
 			scoreDistRes.data?.message,
 		);
@@ -1176,8 +1176,8 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			passFailRes.status === 200 &&
-				(passFailRes.data?.data?.passRate !== undefined ||
-					passFailRes.data?.data?.totalEvaluated !== undefined),
+			(passFailRes.data?.data?.passRate !== undefined ||
+				passFailRes.data?.data?.totalEvaluated !== undefined),
 			`GET /api/v1/reports-analytics/assessment/${createdAssessmentId}/pass-fail`,
 			passFailRes.data?.message,
 		);
@@ -1192,8 +1192,8 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			assessmentStatsRes.status === 200 &&
-				(assessmentStatsRes.data?.data?.attemptsByStatus !== undefined ||
-					assessmentStatsRes.data?.data?.difficultyDistribution !== undefined),
+			(assessmentStatsRes.data?.data?.attemptsByStatus !== undefined ||
+				assessmentStatsRes.data?.data?.difficultyDistribution !== undefined),
 			`GET /api/v1/reports-analytics/assessment/${createdAssessmentId}/statistics`,
 			assessmentStatsRes.data?.message,
 		);
@@ -1208,8 +1208,8 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			perfBenchRes.status === 200 &&
-				(perfBenchRes.data?.data?.cohortBenchmark !== undefined ||
-					perfBenchRes.data?.data?.benchmark !== undefined),
+			(perfBenchRes.data?.data?.cohortBenchmark !== undefined ||
+				perfBenchRes.data?.data?.benchmark !== undefined),
 			`GET /api/v1/reports-analytics/attempt/${createdAttemptId}/performance`,
 			perfBenchRes.data?.message,
 		);
@@ -1224,7 +1224,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			candidateReportRes.status === 200 &&
-				candidateReportRes.data?.data?.candidateId === testCandidateId,
+			candidateReportRes.data?.data?.candidateId === testCandidateId,
 			`GET /api/v1/reports-analytics/candidate/${testCandidateId}/report`,
 			candidateReportRes.data?.message,
 		);
@@ -1239,7 +1239,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			companyReportRes.status === 200 &&
-				companyReportRes.data?.data?.companyId === companyId,
+			companyReportRes.data?.data?.companyId === companyId,
 			`GET /api/v1/reports-analytics/company/${companyId}/report`,
 			companyReportRes.data?.message,
 		);
@@ -1259,7 +1259,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			dashStatsRes.status === 200 &&
-				dashStatsRes.data?.data?.users !== undefined,
+			dashStatsRes.data?.data?.users !== undefined,
 			"GET /api/v1/admin-management/dashboard-statistics",
 			dashStatsRes.data?.message,
 		);
@@ -1274,8 +1274,8 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			systemStatsRes.status === 200 &&
-				systemStatsRes.data?.data?.databaseCounts?.users !== undefined &&
-				systemStatsRes.data?.data?.processMemory?.heapUsedMb !== undefined,
+			systemStatsRes.data?.data?.databaseCounts?.users !== undefined &&
+			systemStatsRes.data?.data?.processMemory?.heapUsedMb !== undefined,
 			"GET /api/v1/admin-management/system-statistics (Telemetry Live)",
 			systemStatsRes.data?.message,
 		);
@@ -1303,7 +1303,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			userDetailsRes.status === 200 &&
-				userDetailsRes.data?.data?.id === testCandidateId,
+			userDetailsRes.data?.data?.id === testCandidateId,
 			`GET /api/v1/admin-management/users/${testCandidateId}`,
 		);
 
@@ -1317,7 +1317,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			adminCompaniesRes.status === 200 &&
-				Array.isArray(adminCompaniesRes.data?.data),
+			Array.isArray(adminCompaniesRes.data?.data),
 			"GET /api/v1/admin-management/companies",
 		);
 
@@ -1331,7 +1331,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			adminAssessmentsRes.status === 200 &&
-				Array.isArray(adminAssessmentsRes.data?.data),
+			Array.isArray(adminAssessmentsRes.data?.data),
 			"GET /api/v1/admin-management/assessments",
 		);
 
@@ -1345,7 +1345,7 @@ async function runFullIntegrationTest() {
 		);
 		assert(
 			adminSubmissionsRes.status === 200 &&
-				Array.isArray(adminSubmissionsRes.data?.data),
+			Array.isArray(adminSubmissionsRes.data?.data),
 			"GET /api/v1/admin-management/submissions",
 		);
 

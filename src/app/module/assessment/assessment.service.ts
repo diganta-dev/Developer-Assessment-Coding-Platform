@@ -20,13 +20,13 @@ import {
 	SubmissionStatus,
 	TestCaseType,
 	UserRole,
-} from "../../../generated/prisma/enums";
-import config from "../../config";
-import { transporter } from "../../lib/nodemailer";
-import { prisma } from "../../lib/prisma";
-import type { RequestUser } from "../../middleware/checkAuth";
-import AppError from "../../utils/AppError";
-import { AttemptScoreService } from "../evaluation/attemptScore.service";
+} from "../../../generated/prisma/enums.js";
+import config from "../../config/index.js";
+import { transporter } from "../../lib/nodemailer.js";
+import { prisma } from "../../lib/prisma.js";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import AppError from "../../utils/AppError.js";
+import { AttemptScoreService } from "../evaluation/attemptScore.service.js";
 import type {
 	IAddProblemsPayload,
 	IAssessmentFilterOptions,
@@ -39,7 +39,7 @@ import type {
 	IStartAttemptPayload,
 	ISubmitAttemptPayload,
 	IUpdateAssessmentPayload,
-} from "./assessment.interface";
+} from "./assessment.interface.js";
 
 /**
  * Standard relations to include when querying assessment details

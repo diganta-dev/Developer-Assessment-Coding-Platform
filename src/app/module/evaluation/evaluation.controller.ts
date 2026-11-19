@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
-import type { RequestUser } from "../../middleware/checkAuth";
-import { catchAsync } from "../../utils/catchAsync";
-import { sendResponse } from "../../utils/sendResponse";
-import type { IEvaluationFilterQuery } from "./evaluation.interface";
-import { EvaluationService } from "./evaluation.service";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { sendResponse } from "../../utils/sendResponse.js";
+import type { IEvaluationFilterQuery } from "./evaluation.interface.js";
+import { EvaluationService } from "./evaluation.service.js";
 
 /**
  * Triggers automated Judge0 evaluation for a coding submission.

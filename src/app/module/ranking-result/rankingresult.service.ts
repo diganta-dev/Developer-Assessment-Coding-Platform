@@ -4,11 +4,11 @@ import {
 	AttemptStatus,
 	ResultStatus,
 	UserRole,
-} from "../../../generated/prisma/enums";
-import { prisma } from "../../lib/prisma";
-import type { RequestUser } from "../../middleware/checkAuth";
-import AppError from "../../utils/AppError";
-import { AttemptScoreService } from "../evaluation/attemptScore.service";
+} from "../../../generated/prisma/enums.js";
+import { prisma } from "../../lib/prisma.js";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import AppError from "../../utils/AppError.js";
+import { AttemptScoreService } from "../evaluation/attemptScore.service.js";
 import type {
 	IAssessmentLeaderboard,
 	IAssessmentResultResponse,
@@ -16,7 +16,7 @@ import type {
 	IPublishResultResponse,
 	IRankedParticipant,
 	IRankingFilterQuery,
-} from "./rankingresult.interface";
+} from "./rankingresult.interface.js";
 
 // ============================================================================
 // Helper: Access Control & Authorization

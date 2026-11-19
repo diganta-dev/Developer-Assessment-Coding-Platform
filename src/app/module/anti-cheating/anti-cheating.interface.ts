@@ -1,7 +1,7 @@
 import type {
 	AntiCheatEventType,
 	AttemptStatus,
-} from "../../../generated/prisma/enums";
+} from "../../../generated/prisma/enums.js";
 
 // ============================================================================
 // Risk Assessment Enums & Types

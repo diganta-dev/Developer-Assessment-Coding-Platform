@@ -1,6 +1,6 @@
-import { prisma } from "./app/lib/prisma";
-import { CompanyService } from "./app/module/company/company.service";
-import { CompanyMemberRole, UserRole } from "./generated/prisma/enums";
+import { prisma } from "./app/lib/prisma.js";
+import { CompanyService } from "./app/module/company/company.service.js";
+import { CompanyMemberRole, UserRole } from "./generated/prisma/enums.js";
 import assert from "assert";
 
 async function runCompanyLogoTests() {

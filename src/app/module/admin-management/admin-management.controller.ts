@@ -1,16 +1,16 @@
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
-import type { RequestUser } from "../../middleware/checkAuth";
-import { catchAsync } from "../../utils/catchAsync";
-import { sendResponse } from "../../utils/sendResponse";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { sendResponse } from "../../utils/sendResponse.js";
 import type {
 	IAssessmentFilterQuery,
 	ICompanyFilterQuery,
 	ISubmissionFilterQuery,
 	IUpdateUserStatusPayload,
 	IUserFilterQuery,
-} from "./admin-management.interface";
-import { AdminManagementService } from "./admin-management.service";
+} from "./admin-management.interface.js";
+import { AdminManagementService } from "./admin-management.service.js";
 
 /**
  * 1. Get platform-wide dashboard statistics

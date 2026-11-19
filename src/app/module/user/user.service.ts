@@ -1,13 +1,13 @@
 import httpStatus from "http-status";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../lib/prisma.js";
 import {
 	uploadProfilePictureToCloudinary,
 	uploadResumeToCloudinary,
 	deleteFromCloudinary,
-} from "../../lib/cloudinary";
-import { validateImageBuffer, validatePdfBuffer } from "../../lib/multer";
-import AppError from "../../utils/AppError";
-import type { IUpdateProfilePayload } from "./user.interface";
+} from "../../lib/cloudinary.js";
+import { validateImageBuffer, validatePdfBuffer } from "../../lib/multer.js";
+import AppError from "../../utils/AppError.js";
+import type { IUpdateProfilePayload } from "./user.interface.js";
 
 /**
  * Standard user inclusion query

@@ -1,15 +1,15 @@
 import httpStatus from "http-status";
-import type { Prisma } from "../../../generated/prisma/client";
+import type { Prisma } from "../../../generated/prisma/client.js";
 import {
 	AssessmentStatus,
 	AttemptStatus,
 	ResultStatus,
 	SubmissionStatus,
 	UserRole,
-} from "../../../generated/prisma/enums";
-import { prisma } from "../../lib/prisma";
-import type { RequestUser } from "../../middleware/checkAuth";
-import AppError from "../../utils/AppError";
+} from "../../../generated/prisma/enums.js";
+import { prisma } from "../../lib/prisma.js";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import AppError from "../../utils/AppError.js";
 import type {
 	IAdminAssessmentListItem,
 	IAdminCompanyListItem,
@@ -24,7 +24,7 @@ import type {
 	ISystemStatistics,
 	IUpdateUserStatusPayload,
 	IUserFilterQuery,
-} from "./admin-management.interface";
+} from "./admin-management.interface.js";
 
 // ============================================================================
 // Pagination Helper

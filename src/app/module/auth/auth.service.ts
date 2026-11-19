@@ -5,14 +5,14 @@ import type { TokenPayload } from "google-auth-library";
 import httpStatus from "http-status";
 import type { JwtPayload, SignOptions } from "jsonwebtoken";
 import path from "path";
-import { UserRole } from "../../../generated/prisma/enums";
-import config from "../../config";
-import { googleClient } from "../../lib/googleAuth";
-import { transporter } from "../../lib/nodemailer";
-import { prisma } from "../../lib/prisma";
-import redisClient from "../../lib/redis";
-import AppError from "../../utils/AppError";
-import { jwtUtils } from "../../utils/jwt";
+import { UserRole } from "../../../generated/prisma/enums.js";
+import config from "../../config/index.js";
+import { googleClient } from "../../lib/googleAuth.js";
+import { transporter } from "../../lib/nodemailer.js";
+import { prisma } from "../../lib/prisma.js";
+import redisClient from "../../lib/redis.js";
+import AppError from "../../utils/AppError.js";
+import { jwtUtils } from "../../utils/jwt.js";
 import type {
 	IForgotPasswordPayload,
 	ILoginResult,
@@ -23,7 +23,7 @@ import type {
 	IResetPasswordPayload,
 	IVerifyLoginOtpPayload,
 	IVerifyRegistrationEmailPayload,
-} from "./auth.interface";
+} from "./auth.interface.js";
 
 const registerCandidate = async (payload: IRegisterCandidatePayload) => {
 	const { name, password, candidateProfile } = payload;

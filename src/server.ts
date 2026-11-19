@@ -1,10 +1,10 @@
-import { AssessmentService } from "./app/module/assessment/assessment.service";
-import app from "./app";
-import config from "./app/config";
+import { AssessmentService } from "./app/module/assessment/assessment.service.js";
+import app from "./app.js";
+import config from "./app/config/index.js";
 
-import { transporter } from "./app/lib/nodemailer";
-import { prisma } from "./app/lib/prisma";
-import redisClient from "./app/lib/redis";
+import { transporter } from "./app/lib/nodemailer.js";
+import { prisma } from "./app/lib/prisma.js";
+import redisClient from "./app/lib/redis.js";
 import {
 	seedAssessmentCreator,
 	seedCandidate,
@@ -13,7 +13,7 @@ import {
 	seedEvaluator,
 	seedSuperAdmin,
 	seedTesterAdmin,
-} from "./app/utils/seed";
+} from "./app/utils/seed.js";
 
 const PORT = config.port;
 

@@ -6,15 +6,15 @@ import {
 	ProblemType,
 	SubmissionStatus,
 	UserRole,
-} from "../../../generated/prisma/enums";
-import { prisma } from "../../lib/prisma";
-import type { RequestUser } from "../../middleware/checkAuth";
-import AppError from "../../utils/AppError";
-import { AttemptScoreService } from "./attemptScore.service";
+} from "../../../generated/prisma/enums.js";
+import { prisma } from "../../lib/prisma.js";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import AppError from "../../utils/AppError.js";
+import { AttemptScoreService } from "./attemptScore.service.js";
 import type {
 	IWrittenEvaluationPayload,
 	IWrittenEvaluationResult,
-} from "./evaluation.interface";
+} from "./evaluation.interface.js";
 
 /**
  * Evaluates a candidate's written submission by validating assigned marks,

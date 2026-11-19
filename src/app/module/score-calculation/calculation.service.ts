@@ -7,23 +7,23 @@ import {
 	SubmissionStatus,
 	TestCaseType,
 	UserRole,
-} from "../../../generated/prisma/enums";
-import { prisma } from "../../lib/prisma";
-import type { RequestUser } from "../../middleware/checkAuth";
-import AppError from "../../utils/AppError";
-import { AttemptScoreService } from "../evaluation/attemptScore.service";
-import { CodingEvaluationService } from "../evaluation/codingEvaluation.service";
-import { MCQEvaluationService } from "../evaluation/mcqEvaluation.service";
+} from "../../../generated/prisma/enums.js";
+import { prisma } from "../../lib/prisma.js";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import AppError from "../../utils/AppError.js";
+import { AttemptScoreService } from "../evaluation/attemptScore.service.js";
+import { CodingEvaluationService } from "../evaluation/codingEvaluation.service.js";
+import { MCQEvaluationService } from "../evaluation/mcqEvaluation.service.js";
 import type {
 	IAttemptScoreResult,
 	ITestCaseExecutionResult,
-} from "../evaluation/evaluation.interface";
+} from "../evaluation/evaluation.interface.js";
 import type {
 	ICodingScoreBreakdown,
 	IMCQScoreBreakdown,
 	ISubmissionScoreResult,
 	IWrittenScoreBreakdown,
-} from "./calculation.interface";
+} from "./calculation.interface.js";
 
 // ============================================================================
 // Types & Interfaces

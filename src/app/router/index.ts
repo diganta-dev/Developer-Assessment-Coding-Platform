@@ -1,17 +1,17 @@
 import { Router } from "express";
-import { AdminManagementRoutes } from "../module/admin-management/admin-management.route";
-import { AntiCheatingRoutes } from "../module/anti-cheating/anti-cheating.route";
-import { AssessmentRoutes } from "../module/assessment/assessment.route";
-import { AuthRoutes } from "../module/auth/auth.route";
-import { CompanyRoutes } from "../module/company/company.route";
-import { EvaluationRoutes } from "../module/evaluation/evaluation.route";
-import { PaymentRoutes } from "../module/payment/payment.route";
-import { ProblemRoute } from "../module/problem-bank/problem.route";
-import { RankingResultRoutes } from "../module/ranking-result/rankingresult.route";
-import { ReportsAnalyticsRoutes } from "../module/repostandAnalytics/reports-analytics.route";
-import { CalculationRoutes } from "../module/score-calculation/calculation.route";
-import { SubmissionRoutes } from "../module/submission/submission.route";
-import { UserRoutes } from "../module/user/user.route";
+import { AdminManagementRoutes } from "../module/admin-management/admin-management.route.js";
+import { AntiCheatingRoutes } from "../module/anti-cheating/anti-cheating.route.js";
+import { AssessmentRoutes } from "../module/assessment/assessment.route.js";
+import { AuthRoutes } from "../module/auth/auth.route.js";
+import { CompanyRoutes } from "../module/company/company.route.js";
+import { EvaluationRoutes } from "../module/evaluation/evaluation.route.js";
+import { PaymentRoutes } from "../module/payment/payment.route.js";
+import { ProblemRoute } from "../module/problem-bank/problem.route.js";
+import { RankingResultRoutes } from "../module/ranking-result/rankingresult.route.js";
+import { ReportsAnalyticsRoutes } from "../module/repostandAnalytics/reports-analytics.route.js";
+import { CalculationRoutes } from "../module/score-calculation/calculation.route.js";
+import { SubmissionRoutes } from "../module/submission/submission.route.js";
+import { UserRoutes } from "../module/user/user.route.js";
 
 const router = Router();
 

@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums";
-import { auth } from "../../middleware/checkAuth";
-import { validateRequest } from "../../middleware/validateRequest";
-import { SubmissionController } from "../submission/submission.controller";
-import { createSubmissionValidation } from "../submission/submission.validation";
-import { AssessmentController } from "./assessment.controller";
+import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums.js";
+import { auth } from "../../middleware/checkAuth.js";
+import { validateRequest } from "../../middleware/validateRequest.js";
+import { SubmissionController } from "../submission/submission.controller.js";
+import { createSubmissionValidation } from "../submission/submission.validation.js";
+import { AssessmentController } from "./assessment.controller.js";
 import {
 	addProblemsValidation,
 	createAssessmentValidation,
@@ -13,7 +13,7 @@ import {
 	startAttemptValidation,
 	submitAttemptValidation,
 	updateAssessmentValidation,
-} from "./assessment.validation";
+} from "./assessment.validation.js";
 
 const router = Router();
 

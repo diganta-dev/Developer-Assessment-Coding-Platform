@@ -4,7 +4,7 @@ import type {
 	Difficulty,
 	ProblemType,
 	ResultStatus,
-} from "../../../generated/prisma/enums";
+} from "../../../generated/prisma/enums.js";
 
 // ============================================================================
 // 1. Assessment Report Interfaces

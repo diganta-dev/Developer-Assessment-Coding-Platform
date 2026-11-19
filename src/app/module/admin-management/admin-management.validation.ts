@@ -4,7 +4,7 @@ import {
 	ProblemType,
 	SubmissionStatus,
 	UserRole,
-} from "../../../generated/prisma/enums";
+} from "../../../generated/prisma/enums.js";
 
 /**
  * Validates route parameters containing an ID

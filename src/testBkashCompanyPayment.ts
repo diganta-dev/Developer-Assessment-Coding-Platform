@@ -1,21 +1,21 @@
 import type { Server } from "http";
 import crypto from "crypto";
-import app from "./app";
-import config from "./app/config";
-import { prisma } from "./app/lib/prisma";
-import redisClient, { connectRedis } from "./app/lib/redis";
+import app from "./app.js";
+import config from "./app/config/index.js";
+import { prisma } from "./app/lib/prisma.js";
+import redisClient, { connectRedis } from "./app/lib/redis.js";
 import {
 	getBkashIdToken,
 	createBkashPayment,
 	executeBkashPayment,
 	queryBkashPayment,
-} from "./app/lib/bkash";
+} from "./app/lib/bkash.js";
 import {
 	PaymentStatus,
 	PaymentType,
 	UserRole,
 	CompanyMemberRole,
-} from "./generated/prisma/enums";
+} from "./generated/prisma/enums.js";
 
 let testsPassed = 0;
 let testsFailed = 0;

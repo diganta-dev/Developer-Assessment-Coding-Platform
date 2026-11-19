@@ -1,7 +1,7 @@
 import type {
 	AttemptStatus,
 	ResultStatus,
-} from "../../../generated/prisma/enums";
+} from "../../../generated/prisma/enums.js";
 
 export interface IResultBreakdownProblem {
 	problemId: string;

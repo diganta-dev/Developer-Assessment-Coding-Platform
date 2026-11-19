@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums";
-import { auth } from "../../middleware/checkAuth";
-import { validateRequest } from "../../middleware/validateRequest";
-import { AntiCheatingController } from "./anti-cheating.controller";
-import { AntiCheatingValidation } from "./anti-cheating.validation";
+import { CompanyMemberRole, UserRole } from "../../../generated/prisma/enums.js";
+import { auth } from "../../middleware/checkAuth.js";
+import { validateRequest } from "../../middleware/validateRequest.js";
+import { AntiCheatingController } from "./anti-cheating.controller.js";
+import { AntiCheatingValidation } from "./anti-cheating.validation.js";
 
 const router = Router();
 

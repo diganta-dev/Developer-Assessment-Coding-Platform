@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
-import { CompanyMemberRole, UserRole } from "../../generated/prisma/enums";
-import config from "../config";
-import { prisma } from "../lib/prisma";
+import { CompanyMemberRole, UserRole } from "../../generated/prisma/enums.js";
+import config from "../config/index.js";
+import { prisma } from "../lib/prisma.js";
 
 /**
  * Helper to ensure a verified test company exists before linking company members

@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
-import type { RequestUser } from "../../middleware/checkAuth";
-import { catchAsync } from "../../utils/catchAsync";
-import { sendResponse } from "../../utils/sendResponse";
-import { CalculationService } from "./calculation.service";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { sendResponse } from "../../utils/sendResponse.js";
+import { CalculationService } from "./calculation.service.js";
 
 /**
  * Calculates and resolves score breakdown for an individual submission.

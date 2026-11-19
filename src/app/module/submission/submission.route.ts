@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { auth } from "../../middleware/checkAuth";
-import { validateRequest } from "../../middleware/validateRequest";
-import { EvaluationController } from "../evaluation/evaluation.controller";
-import { SubmissionController } from "./submission.controller";
+import { auth } from "../../middleware/checkAuth.js";
+import { validateRequest } from "../../middleware/validateRequest.js";
+import { EvaluationController } from "../evaluation/evaluation.controller.js";
+import { SubmissionController } from "./submission.controller.js";
 import {
 	createSubmissionByParamValidation,
 	createSubmissionValidation,
 	submitSubmissionValidation,
-} from "./submission.validation";
+} from "./submission.validation.js";
 
 const router = Router();
 

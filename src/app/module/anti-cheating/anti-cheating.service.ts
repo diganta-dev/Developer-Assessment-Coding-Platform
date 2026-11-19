@@ -4,10 +4,10 @@ import {
 	AttemptStatus,
 	ResultStatus,
 	UserRole,
-} from "../../../generated/prisma/enums";
-import { prisma } from "../../lib/prisma";
-import type { RequestUser } from "../../middleware/checkAuth";
-import AppError from "../../utils/AppError";
+} from "../../../generated/prisma/enums.js";
+import { prisma } from "../../lib/prisma.js";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import AppError from "../../utils/AppError.js";
 import type {
 	CheatingRiskLevel,
 	IAntiCheatEventResponse,
@@ -20,7 +20,7 @@ import type {
 	IRecordViolationPayload,
 	ISuspiciousActivityPayload,
 	ITabSwitchPayload,
-} from "./anti-cheating.interface";
+} from "./anti-cheating.interface.js";
 
 // ============================================================================
 // Authorization & Verification Helpers

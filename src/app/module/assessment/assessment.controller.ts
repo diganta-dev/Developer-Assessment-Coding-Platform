@@ -1,10 +1,10 @@
-import AppError from "../../utils/AppError";
+import AppError from "../../utils/AppError.js";
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
-import type { RequestUser } from "../../middleware/checkAuth";
-import { catchAsync } from "../../utils/catchAsync";
-import { sendResponse } from "../../utils/sendResponse";
-import { AssessmentService } from "./assessment.service";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { sendResponse } from "../../utils/sendResponse.js";
+import { AssessmentService } from "./assessment.service.js";
 
 const createAssessment = catchAsync(async (req: Request, res: Response) => {
 	const user = req.user as RequestUser;

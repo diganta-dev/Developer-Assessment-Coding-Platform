@@ -2,7 +2,7 @@ import type {
 	EvaluationStatus,
 	ProblemType,
 	SubmissionStatus,
-} from "../../../generated/prisma/enums";
+} from "../../../generated/prisma/enums.js";
 
 export interface ISubmissionScoreResult {
 	submissionId: string;

@@ -5,11 +5,11 @@ import {
 	EvaluationType,
 	ProblemType,
 	SubmissionStatus,
-} from "../../../generated/prisma/enums";
-import { prisma } from "../../lib/prisma";
-import AppError from "../../utils/AppError";
-import { AttemptScoreService } from "./attemptScore.service";
-import type { IMCQEvaluationResult } from "./evaluation.interface";
+} from "../../../generated/prisma/enums.js";
+import { prisma } from "../../lib/prisma.js";
+import AppError from "../../utils/AppError.js";
+import { AttemptScoreService } from "./attemptScore.service.js";
+import type { IMCQEvaluationResult } from "./evaluation.interface.js";
 
 /**
  * Evaluates an MCQ submission against the configured question options.

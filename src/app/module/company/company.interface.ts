@@ -1,4 +1,4 @@
-import type { CompanyMemberRole } from "../../../generated/prisma/enums";
+import type { CompanyMemberRole } from "../../../generated/prisma/enums.js";
 
 export interface ICompanyPayload {
 	name: string;

@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
-import type { RequestUser } from "../../middleware/checkAuth";
-import { catchAsync } from "../../utils/catchAsync";
-import { sendResponse } from "../../utils/sendResponse";
-import { ReportsAnalyticsService } from "./reports-analytics.service";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { sendResponse } from "../../utils/sendResponse.js";
+import { ReportsAnalyticsService } from "./reports-analytics.service.js";
 
 /**
  * Generates an authoritative analytical report for an assessment.

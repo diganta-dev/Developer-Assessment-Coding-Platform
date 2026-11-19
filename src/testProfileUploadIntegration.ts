@@ -1,9 +1,9 @@
 import assert from "node:assert";
 import httpStatus from "http-status";
-import { prisma } from "./app/lib/prisma";
-import { jwtUtils } from "./app/utils/jwt";
-import config from "./app/config";
-import { UserRole } from "./generated/prisma/enums";
+import { prisma } from "./app/lib/prisma.js";
+import { jwtUtils } from "./app/utils/jwt.js";
+import config from "./app/config/index.js";
+import { UserRole } from "./generated/prisma/enums.js";
 
 const BASE_URL = "http://localhost:5000/api/v1";
 
@@ -67,7 +67,7 @@ async function runProfileUploadTests() {
 			tokenVersion: user.tokenVersion,
 		},
 		config.jwt_access_secret,
-		"1h",
+		{ expiresIn: "1h" },
 	);
 
 	const authHeaders = {

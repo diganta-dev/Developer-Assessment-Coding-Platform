@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
-import type { RequestUser } from "../../middleware/checkAuth";
-import { catchAsync } from "../../utils/catchAsync";
-import { sendResponse } from "../../utils/sendResponse";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { sendResponse } from "../../utils/sendResponse.js";
 import type {
 	ICopyPastePayload,
 	IFlagAttemptPayload,
@@ -11,8 +11,8 @@ import type {
 	IRecordViolationPayload,
 	ISuspiciousActivityPayload,
 	ITabSwitchPayload,
-} from "./anti-cheating.interface";
-import { AntiCheatingService } from "./anti-cheating.service";
+} from "./anti-cheating.interface.js";
+import { AntiCheatingService } from "./anti-cheating.service.js";
 
 /**
  * 1. Record generic anti-cheat event/violation

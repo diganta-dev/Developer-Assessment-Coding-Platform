@@ -1,6 +1,6 @@
 import crypto from "crypto";
-import config from "../config";
-import redisClient from "./redis";
+import config from "../config/index.js";
+import redisClient from "./redis.js";
 
 const ID_TOKEN_KEY = "bkash:idToken";
 const REFRESH_TOKEN_KEY = "bkash:refreshToken";

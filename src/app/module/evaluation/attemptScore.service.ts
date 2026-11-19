@@ -4,14 +4,14 @@ import {
 	ResultStatus,
 	SubmissionStatus,
 	UserRole,
-} from "../../../generated/prisma/enums";
-import { prisma } from "../../lib/prisma";
-import type { RequestUser } from "../../middleware/checkAuth";
-import AppError from "../../utils/AppError";
+} from "../../../generated/prisma/enums.js";
+import { prisma } from "../../lib/prisma.js";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import AppError from "../../utils/AppError.js";
 import type {
 	IAttemptProblemScoreBreakdown,
 	IAttemptScoreResult,
-} from "./evaluation.interface";
+} from "./evaluation.interface.js";
 
 /**
  * Calculates, aggregates, and updates the total score and results for an assessment attempt.

@@ -1,9 +1,9 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
-import { auth } from "../../middleware/checkAuth";
-import { validateRequest } from "../../middleware/validateRequest";
-import { uploadProfilePicture, uploadResume } from "../../lib/multer";
-import { UserController } from "./user.controller";
-import { UserValidation } from "./user.validation";
+import { auth } from "../../middleware/checkAuth.js";
+import { validateRequest } from "../../middleware/validateRequest.js";
+import { uploadProfilePicture, uploadResume } from "../../lib/multer.js";
+import { UserController } from "./user.controller.js";
+import { UserValidation } from "./user.validation.js";
 
 const router = Router();
 

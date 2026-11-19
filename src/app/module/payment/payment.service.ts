@@ -5,20 +5,20 @@ import {
 	PaymentStatus,
 	PaymentType,
 	UserRole,
-} from "../../../generated/prisma/enums";
-import config from "../../config";
+} from "../../../generated/prisma/enums.js";
+import config from "../../config/index.js";
 import {
 	createBkashPayment,
 	executeBkashPayment,
 	queryBkashPayment,
-} from "../../lib/bkash";
-import { prisma } from "../../lib/prisma";
-import type { RequestUser } from "../../middleware/checkAuth";
-import AppError from "../../utils/AppError";
+} from "../../lib/bkash.js";
+import { prisma } from "../../lib/prisma.js";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import AppError from "../../utils/AppError.js";
 import type {
 	IBkashCallbackQuery,
 	IRetryCompanyPaymentPayload,
-} from "./payment.interface";
+} from "./payment.interface.js";
 
 const getFrontendBaseUrl = (): string => {
 	const raw = config.frontend_url || "http://localhost:3000";

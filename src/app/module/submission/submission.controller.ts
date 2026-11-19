@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
-import type { RequestUser } from "../../middleware/checkAuth";
-import { catchAsync } from "../../utils/catchAsync";
-import { sendResponse } from "../../utils/sendResponse";
-import type { ISubmissionFilterQuery } from "./submission.interface";
-import { SubmissionService } from "./submission.service";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { sendResponse } from "../../utils/sendResponse.js";
+import type { ISubmissionFilterQuery } from "./submission.interface.js";
+import { SubmissionService } from "./submission.service.js";
 
 /**
  * Creates or upserts a submission for a problem within an assessment attempt.

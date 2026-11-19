@@ -1,10 +1,10 @@
 import type { Request } from "express";
 import httpStatus from "http-status";
-import config from "../../config";
-import { catchAsync } from "../../utils/catchAsync";
-import { jwtUtils } from "../../utils/jwt";
-import { sendResponse } from "../../utils/sendResponse";
-import { CompanyService } from "./company.service";
+import config from "../../config/index.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { jwtUtils } from "../../utils/jwt.js";
+import { sendResponse } from "../../utils/sendResponse.js";
+import { CompanyService } from "./company.service.js";
 
 const isProduction = config.node_env === "production";
 

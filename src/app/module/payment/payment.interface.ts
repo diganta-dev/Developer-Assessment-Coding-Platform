@@ -1,4 +1,4 @@
-import type { PaymentStatus, PaymentType } from "../../../generated/prisma/enums";
+import type { PaymentStatus, PaymentType } from "../../../generated/prisma/enums.js";
 
 export interface IRetryCompanyPaymentPayload {
 	companyId?: string;

@@ -1,12 +1,12 @@
 import type { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import type { JwtPayload } from "jsonwebtoken";
-import { CompanyMemberRole, UserRole } from "../../generated/prisma/enums";
-import config from "../config";
-import { prisma } from "../lib/prisma";
-import AppError from "../utils/AppError";
-import { catchAsync } from "../utils/catchAsync";
-import { jwtUtils } from "../utils/jwt";
+import { CompanyMemberRole, UserRole } from "../../generated/prisma/enums.js";
+import config from "../config/index.js";
+import { prisma } from "../lib/prisma.js";
+import AppError from "../utils/AppError.js";
+import { catchAsync } from "../utils/catchAsync.js";
+import { jwtUtils } from "../utils/jwt.js";
 
 declare global {
 	export interface RequestUser {
@@ -102,7 +102,7 @@ export const auth = (...requiredRoles: (UserRole | CompanyMemberRole)[]) => {
 
 		const primaryMembership = decoded.companyId
 			? user.companyMembers?.find((m) => m.companyId === decoded.companyId) ||
-				user.companyMembers?.[0]
+			user.companyMembers?.[0]
 			: user.companyMembers?.[0];
 
 		const companyRole = primaryMembership?.role;

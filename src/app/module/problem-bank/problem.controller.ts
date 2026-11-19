@@ -1,14 +1,14 @@
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
-import type { Difficulty, ProblemType } from "../../../generated/prisma/enums";
-import type { RequestUser } from "../../middleware/checkAuth";
-import { catchAsync } from "../../utils/catchAsync";
-import { sendResponse } from "../../utils/sendResponse";
+import type { Difficulty, ProblemType } from "../../../generated/prisma/enums.js";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { sendResponse } from "../../utils/sendResponse.js";
 import type {
 	IPaginationOptions,
 	IProblemFilterRequest,
-} from "./problem.interface";
-import { ProblemService } from "./problem.service";
+} from "./problem.interface.js";
+import { ProblemService } from "./problem.service.js";
 
 const createProblem = catchAsync(async (req: Request, res: Response) => {
 	const user = req.user as RequestUser;

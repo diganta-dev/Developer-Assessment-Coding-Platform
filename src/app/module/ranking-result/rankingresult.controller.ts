@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
-import type { RequestUser } from "../../middleware/checkAuth";
-import { catchAsync } from "../../utils/catchAsync";
-import { sendResponse } from "../../utils/sendResponse";
-import type { IRankingFilterQuery } from "./rankingresult.interface";
-import { RankingResultService } from "./rankingresult.service";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { sendResponse } from "../../utils/sendResponse.js";
+import type { IRankingFilterQuery } from "./rankingresult.interface.js";
+import { RankingResultService } from "./rankingresult.service.js";
 
 /**
  * Generates/re-calculates and persists the final result for an assessment attempt.

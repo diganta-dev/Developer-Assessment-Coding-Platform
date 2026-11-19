@@ -1,27 +1,27 @@
-import { uploadCompanyLogoToCloudinary, deleteFromCloudinary } from "../../lib/cloudinary";
-import { validateImageBuffer } from "../../lib/multer";
-import { createBkashPayment, type IBkashCreatePaymentResponse } from "../../lib/bkash";
-import type { Prisma } from "../../../generated/prisma/client";
+import { uploadCompanyLogoToCloudinary, deleteFromCloudinary } from "../../lib/cloudinary.js";
+import { validateImageBuffer } from "../../lib/multer.js";
+import { createBkashPayment, type IBkashCreatePaymentResponse } from "../../lib/bkash.js";
+import type { Prisma } from "../../../generated/prisma/client.js";
 import crypto from "crypto";
 import ejs from "ejs";
 import httpStatus from "http-status";
 import type { SignOptions } from "jsonwebtoken";
 import path from "path";
-import { CompanyMemberRole, PaymentStatus, PaymentType, UserRole } from "../../../generated/prisma/enums";
-import config from "../../config";
-import { transporter } from "../../lib/nodemailer";
-import { prisma } from "../../lib/prisma";
-import redisClient from "../../lib/redis";
-import AppError from "../../utils/AppError";
-import { jwtUtils } from "../../utils/jwt";
-import { slugify } from "../../utils/slug";
+import { CompanyMemberRole, PaymentStatus, PaymentType, UserRole } from "../../../generated/prisma/enums.js";
+import config from "../../config/index.js";
+import { transporter } from "../../lib/nodemailer.js";
+import { prisma } from "../../lib/prisma.js";
+import redisClient from "../../lib/redis.js";
+import AppError from "../../utils/AppError.js";
+import { jwtUtils } from "../../utils/jwt.js";
+import { slugify } from "../../utils/slug.js";
 import type {
 	IAddCompanyMemberPayload,
 	ICompanyPayload,
 	IUpdateCompanyPayload,
 	IVerifyCompanyPayload,
 	ICompanyMemberFilterQuery,
-} from "./company.interface";
+} from "./company.interface.js";
 
 const generateUniqueCompanySlug = async (name: string): Promise<string> => {
 	const baseSlug = slugify(name) || "company";

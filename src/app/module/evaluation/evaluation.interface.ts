@@ -7,7 +7,7 @@ import type {
 	ResultStatus,
 	SubmissionStatus,
 	TestCaseType,
-} from "../../../generated/prisma/enums";
+} from "../../../generated/prisma/enums.js";
 
 export interface IJudge0Status {
 	id: number;

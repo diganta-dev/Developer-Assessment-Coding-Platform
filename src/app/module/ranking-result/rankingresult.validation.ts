@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ResultStatus } from "../../../generated/prisma/enums";
+import { ResultStatus } from "../../../generated/prisma/enums.js";
 
 /**
  * Validates attemptId in request parameters

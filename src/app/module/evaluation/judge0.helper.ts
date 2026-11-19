@@ -1,11 +1,11 @@
 import httpStatus from "http-status";
-import type { TestCaseType } from "../../../generated/prisma/enums";
-import config from "../../config";
-import AppError from "../../utils/AppError";
+import type { TestCaseType } from "../../../generated/prisma/enums.js";
+import config from "../../config/index.js";
+import AppError from "../../utils/AppError.js";
 import type {
 	IJudge0SubmissionResponse,
 	ITestCaseExecutionResult,
-} from "./evaluation.interface";
+} from "./evaluation.interface.js";
 
 /**
  * Standard Judge0 Language ID Mapping

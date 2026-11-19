@@ -6,19 +6,15 @@ import express, {
 	type Response,
 } from "express";
 import httpStatus from "http-status";
-import config from "./app/config";
-import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
-import { notFound } from "./app/middleware/notFound";
-import router from "./app/router";
+import config from "./app/config/index.js";
+import { globalErrorHandler } from "./app/middleware/globalErrorHandler.js";
+import { notFound } from "./app/middleware/notFound.js";
+import router from "./app/router/index.js";
 
 const app: Application = express();
 
 const allowedOrigins = [
-	config.frontend_url,
-	"http://localhost:3000",
-	"http://127.0.0.1:3000",
-	"http://localhost:3001",
-	"http://127.0.0.1:3001",
+	config.frontend_url
 ].filter(Boolean);
 
 app.use(

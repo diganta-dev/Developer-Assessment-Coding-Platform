@@ -1,21 +1,21 @@
-import { AssessmentService } from "../assessment/assessment.service";
+import { AssessmentService } from "../assessment/assessment.service.js";
 import httpStatus from "http-status";
 import {
 	AttemptStatus,
 	ProblemType,
 	SubmissionStatus,
 	UserRole,
-} from "../../../generated/prisma/enums";
-import { prisma } from "../../lib/prisma";
-import type { RequestUser } from "../../middleware/checkAuth";
-import AppError from "../../utils/AppError";
-import { CodingEvaluationService } from "../evaluation/codingEvaluation.service";
-import { MCQEvaluationService } from "../evaluation/mcqEvaluation.service";
+} from "../../../generated/prisma/enums.js";
+import { prisma } from "../../lib/prisma.js";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import AppError from "../../utils/AppError.js";
+import { CodingEvaluationService } from "../evaluation/codingEvaluation.service.js";
+import { MCQEvaluationService } from "../evaluation/mcqEvaluation.service.js";
 import type {
 	ICreateSubmissionPayload,
 	ISubmissionFilterQuery,
 	ISubmitSubmissionPayload,
-} from "./submission.interface";
+} from "./submission.interface.js";
 
 /**
  * Creates or updates a submission for a specific problem within an assessment attempt.

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { AntiCheatEventType } from "../../../generated/prisma/enums";
+import { AntiCheatEventType } from "../../../generated/prisma/enums.js";
 
 /**
  * Validates route parameters containing an attemptId

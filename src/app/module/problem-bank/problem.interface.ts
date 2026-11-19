@@ -2,7 +2,7 @@ import type {
 	Difficulty,
 	ProblemType,
 	TestCaseType,
-} from "../../../generated/prisma/enums";
+} from "../../../generated/prisma/enums.js";
 
 // ==========================================
 // MCQ Interfaces

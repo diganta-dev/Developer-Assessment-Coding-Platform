@@ -6,7 +6,7 @@ import type {
 	ResultStatus,
 	SubmissionStatus,
 	UserRole,
-} from "../../../generated/prisma/enums";
+} from "../../../generated/prisma/enums.js";
 
 // ============================================================================
 // Pagination & Common Query Types

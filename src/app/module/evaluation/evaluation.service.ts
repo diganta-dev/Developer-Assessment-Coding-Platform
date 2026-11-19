@@ -4,19 +4,19 @@ import {
 	EvaluationType,
 	SubmissionStatus,
 	UserRole,
-} from "../../../generated/prisma/enums";
-import { prisma } from "../../lib/prisma";
-import type { RequestUser } from "../../middleware/checkAuth";
-import AppError from "../../utils/AppError";
-import { AttemptScoreService } from "./attemptScore.service";
-import { CodingEvaluationService } from "./codingEvaluation.service";
+} from "../../../generated/prisma/enums.js";
+import { prisma } from "../../lib/prisma.js";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import AppError from "../../utils/AppError.js";
+import { AttemptScoreService } from "./attemptScore.service.js";
+import { CodingEvaluationService } from "./codingEvaluation.service.js";
 import type {
 	IEvaluationFilterQuery,
 	IManualEvaluationPayload,
 	IWrittenEvaluationPayload,
-} from "./evaluation.interface";
-import { MCQEvaluationService } from "./mcqEvaluation.service";
-import { WrittenEvaluationService } from "./writtenEvaluation.service";
+} from "./evaluation.interface.js";
+import { MCQEvaluationService } from "./mcqEvaluation.service.js";
+import { WrittenEvaluationService } from "./writtenEvaluation.service.js";
 
 /**
  * Evaluates a coding submission using Judge0 CE sandbox execution.

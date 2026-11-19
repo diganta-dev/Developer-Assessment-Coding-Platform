@@ -1,4 +1,4 @@
-import type { SubmissionStatus } from "../../../generated/prisma/enums";
+import type { SubmissionStatus } from "../../../generated/prisma/enums.js";
 
 export interface ICreateSubmissionPayload {
 	attemptId: string;

@@ -75,6 +75,16 @@
       "key": "candidateId",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "paymentReference",
+      "value": "BKASH_REF_DEMO_123",
+      "type": "string"
+    },
+    {
+      "key": "paymentID",
+      "value": "TR0011223344",
+      "type": "string"
     }
   ],
   "item": [
@@ -201,7 +211,26 @@
               }
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data) {",
+                  "        if (res.data.accessToken) pm.collectionVariables.set(\"accessToken\", res.data.accessToken);",
+                  "        if (res.data.refreshToken) pm.collectionVariables.set(\"refreshToken\", res.data.refreshToken);",
+                  "        if (res.data.user && res.data.user.id) pm.collectionVariables.set(\"userId\", res.data.user.id);",
+                  "        if (res.data.user && res.data.user.companyId) pm.collectionVariables.set(\"companyId\", res.data.user.companyId);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "04. Verify Login OTP (2FA / Secure Login)",
@@ -234,7 +263,26 @@
               }
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data) {",
+                  "        if (res.data.accessToken) pm.collectionVariables.set(\"accessToken\", res.data.accessToken);",
+                  "        if (res.data.refreshToken) pm.collectionVariables.set(\"refreshToken\", res.data.refreshToken);",
+                  "        if (res.data.user && res.data.user.id) pm.collectionVariables.set(\"userId\", res.data.user.id);",
+                  "        if (res.data.user && res.data.user.companyId) pm.collectionVariables.set(\"companyId\", res.data.user.companyId);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "05. Resend Login OTP",
@@ -404,7 +452,23 @@
               }
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data && res.data.accessToken) {",
+                  "        pm.collectionVariables.set(\"accessToken\", res.data.accessToken);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "11. Forgot Password Request",
@@ -509,7 +573,25 @@
               }
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data) {",
+                  "        if (res.data.id) pm.collectionVariables.set(\"companyId\", res.data.id);",
+                  "        if (res.data.company && res.data.company.id) pm.collectionVariables.set(\"companyId\", res.data.company.id);",
+                  "        if (res.data.payment && res.data.payment.paymentReference) pm.collectionVariables.set(\"paymentReference\", res.data.payment.paymentReference);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "02. Verify Company Registration OTP",
@@ -542,7 +624,26 @@
               }
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data) {",
+                  "        if (res.data.accessToken) pm.collectionVariables.set(\"accessToken\", res.data.accessToken);",
+                  "        if (res.data.refreshToken) pm.collectionVariables.set(\"refreshToken\", res.data.refreshToken);",
+                  "        if (res.data.user && res.data.user.id) pm.collectionVariables.set(\"userId\", res.data.user.id);",
+                  "        if (res.data.company && res.data.company.id) pm.collectionVariables.set(\"companyId\", res.data.company.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "03. Update Company Details",
@@ -740,6 +841,157 @@
             "description": "Revokes organization access and deletes company membership.\n\n**Frontend Status:** ✅ Implemented in frontend (`removeMember (company.api.ts)`)"
           },
           "response": []
+        },
+        {
+          "name": "10. Upload / Update Company Logo (Direct Route)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/company/logo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "logo"
+              ]
+            },
+            "description": "Upload or update organization brand logo image (PNG/JPEG/WebP) via Cloudinary CDN.\n\n**Allowed Roles:** `SUPER_ADMIN`, `ADMIN`, `COMPANY_OWNER`, `COMPANY_ADMIN`\n**Fields supported:** `logo`, `image`, `profilePicture`, `file`",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "logo",
+                  "type": "file",
+                  "src": [],
+                  "description": "Company brand logo image (JPEG/PNG/WebP, max 5MB)"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "11. Upload / Update Company Logo (Alias Route)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/company/my-company/logo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "my-company",
+                "logo"
+              ]
+            },
+            "description": "Upload or update company logo image via alias path `/company/my-company/logo`.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "logo",
+                  "type": "file",
+                  "src": [],
+                  "description": "Company brand logo image (JPEG/PNG/WebP, max 5MB)"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "12. Upload / Update Company Logo by ID",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/company/{{companyId}}/logo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "{{companyId}}",
+                "logo"
+              ]
+            },
+            "description": "Upload or update company logo image specifying company ID parameter.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "logo",
+                  "type": "file",
+                  "src": [],
+                  "description": "Company brand logo image (JPEG/PNG/WebP, max 5MB)"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "13. Remove Company Logo (Direct Route)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/company/logo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "logo"
+              ]
+            },
+            "description": "Remove organization brand logo and restore default placeholder image.\n\n**Allowed Roles:** `SUPER_ADMIN`, `ADMIN`, `COMPANY_OWNER`, `COMPANY_ADMIN`"
+          },
+          "response": []
+        },
+        {
+          "name": "14. Remove Company Logo (Alias Route)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/company/my-company/logo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "my-company",
+                "logo"
+              ]
+            },
+            "description": "Remove organization brand logo via alias path `/company/my-company/logo`."
+          },
+          "response": []
+        },
+        {
+          "name": "15. Remove Company Logo by ID",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/company/{{companyId}}/logo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "company",
+                "{{companyId}}",
+                "logo"
+              ]
+            },
+            "description": "Remove organization brand logo specifying target company ID."
+          },
+          "response": []
         }
       ]
     },
@@ -778,7 +1030,23 @@
               }
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data && res.data.id) {",
+                  "        pm.collectionVariables.set(\"problemId\", res.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "02. Get All Problems (Root Route - Admin Only)",
@@ -962,7 +1230,23 @@
               }
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data && res.data.id) {",
+                  "        pm.collectionVariables.set(\"assessmentId\", res.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "02. Create Assessment (Alias Route)",
@@ -995,7 +1279,23 @@
               }
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data && res.data.id) {",
+                  "        pm.collectionVariables.set(\"assessmentId\", res.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "03. Get All Assessments (Root Route)",
@@ -1493,7 +1793,23 @@
               }
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data && res.data.id) {",
+                  "        pm.collectionVariables.set(\"attemptId\", res.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "23. Start Assessment Attempt (Alias Route)",
@@ -1527,7 +1843,23 @@
               }
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data && res.data.id) {",
+                  "        pm.collectionVariables.set(\"attemptId\", res.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "24. Get Candidate My Attempts (Standard Route)",
@@ -1881,7 +2213,23 @@
               }
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data && res.data.id) {",
+                  "        pm.collectionVariables.set(\"submissionId\", res.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "02. Submit Solution (Attempt Param Route)",
@@ -1915,7 +2263,23 @@
               }
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data && res.data.id) {",
+                  "        pm.collectionVariables.set(\"submissionId\", res.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "03. Finalize Submission Answer (Body Params)",
@@ -3250,6 +3614,438 @@
               ]
             },
             "description": "Platform-wide audit log of all candidate solution submissions.\n\n**Frontend Status:** ⏳ Pending / Remaining to implement in frontend"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "12. User Profile & Resume Management",
+      "item": [
+        {
+          "name": "01. Get Current User Profile (/user/me)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "me"
+              ]
+            },
+            "description": "Retrieve authenticated user profile dossier including contact information, bio, social links, role, company membership, and uploaded media URLs.\n\n**Allowed Roles:** Authenticated User (Any role)"
+          },
+          "response": []
+        },
+        {
+          "name": "02. Get Current User Profile (Alias Route)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "profile"
+              ]
+            },
+            "description": "Alias endpoint to retrieve authenticated user profile dossier via `/user/profile`."
+          },
+          "response": []
+        },
+        {
+          "name": "03. Update User Profile Details (Direct Route)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "profile"
+              ]
+            },
+            "description": "Update basic user profile details (name, phone, bio, location, githubUrl, linkedinUrl).\n\n**Allowed Roles:** Authenticated User (Any role)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Candidate\",\n  \"phone\": \"+1-555-0199\",\n  \"bio\": \"Senior Full-Stack Engineer specializing in React, TypeScript, Node.js, and cloud platforms.\",\n  \"location\": \"San Francisco, CA\",\n  \"githubUrl\": \"https://github.com/janecandidate\",\n  \"linkedinUrl\": \"https://linkedin.com/in/janecandidate\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "04. Update User Profile Details (Alias Route)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/me/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "me",
+                "profile"
+              ]
+            },
+            "description": "Alias endpoint to update basic user profile details via `/user/me/profile`.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Candidate\",\n  \"phone\": \"+1-555-0199\",\n  \"bio\": \"Senior Full-Stack Engineer specializing in React, TypeScript, Node.js, and cloud platforms.\",\n  \"location\": \"San Francisco, CA\",\n  \"githubUrl\": \"https://github.com/janecandidate\",\n  \"linkedinUrl\": \"https://linkedin.com/in/janecandidate\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "05. Upload Profile Picture (Direct Route)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/profile-picture",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "profile-picture"
+              ]
+            },
+            "description": "Upload avatar / profile image (JPEG/PNG/WebP, max 5MB) via multipart/form-data. Automatically uploaded to Cloudinary CDN.\n\n**Fields supported:** `profilePicture`, `image`, `file`",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "profilePicture",
+                  "type": "file",
+                  "src": [],
+                  "description": "Avatar image file (JPEG/PNG/WebP, max 5MB)"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "06. Upload Profile Picture (Alias Route)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/me/profile-picture",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "me",
+                "profile-picture"
+              ]
+            },
+            "description": "Upload avatar / profile image via alias path `/user/me/profile-picture`.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "profilePicture",
+                  "type": "file",
+                  "src": [],
+                  "description": "Avatar image file (JPEG/PNG/WebP, max 5MB)"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "07. Remove Profile Picture (Direct Route)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/profile-picture",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "profile-picture"
+              ]
+            },
+            "description": "Remove uploaded profile picture and revert to initial-based avatar fallback."
+          },
+          "response": []
+        },
+        {
+          "name": "08. Remove Profile Picture (Alias Route)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/me/profile-picture",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "me",
+                "profile-picture"
+              ]
+            },
+            "description": "Remove uploaded profile picture via alias path `/user/me/profile-picture`."
+          },
+          "response": []
+        },
+        {
+          "name": "09. Upload Candidate Resume PDF (Direct Route)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/resume",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "resume"
+              ]
+            },
+            "description": "Upload candidate resume document (PDF, max 10MB) via multipart/form-data. Stored securely on Cloudinary CDN.\n\n**Fields supported:** `resume`, `document`, `file`",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "resume",
+                  "type": "file",
+                  "src": [],
+                  "description": "Candidate resume file (PDF document, max 10MB)"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "10. Upload Candidate Resume PDF (Alias Route)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/me/resume",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "me",
+                "resume"
+              ]
+            },
+            "description": "Upload candidate resume document via alias path `/user/me/resume`.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "resume",
+                  "type": "file",
+                  "src": [],
+                  "description": "Candidate resume file (PDF document, max 10MB)"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "11. Remove Candidate Resume (Direct Route)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/resume",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "resume"
+              ]
+            },
+            "description": "Remove candidate resume document."
+          },
+          "response": []
+        },
+        {
+          "name": "12. Remove Candidate Resume (Alias Route)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/me/resume",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "me",
+                "resume"
+              ]
+            },
+            "description": "Remove candidate resume document via alias path `/user/me/resume`."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "13. Payment & bKash Gateway",
+      "item": [
+        {
+          "name": "01. Handle bKash Gateway Callback (GET Redirect)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/payment/bkash/callback?paymentID={{paymentID}}&status=success",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "payment",
+                "bkash",
+                "callback"
+              ],
+              "query": [
+                {
+                  "key": "paymentID",
+                  "value": "{{paymentID}}"
+                },
+                {
+                  "key": "status",
+                  "value": "success"
+                }
+              ]
+            },
+            "description": "bKash PGW browser redirect callback upon user checkout completion/cancellation/failure."
+          },
+          "response": []
+        },
+        {
+          "name": "02. Handle bKash Gateway Webhook (POST Callback)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/payment/bkash/callback",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "payment",
+                "bkash",
+                "callback"
+              ]
+            },
+            "description": "bKash IPN / server-to-server webhook callback verification payload.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paymentID\": \"TR0011223344\",\n  \"status\": \"success\",\n  \"signature\": \"bkash_signature_hash_value\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "03. Get Payment Transaction Status by Reference",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/payment/status/{{paymentReference}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "payment",
+                "status",
+                "{{paymentReference}}"
+              ]
+            },
+            "description": "Retrieve payment verification status and lifecycle details for a given payment reference.\n\n**Allowed Roles:** Authenticated User (Owner or Admin)"
+          },
+          "response": []
+        },
+        {
+          "name": "04. Retry / Resume Pending Company Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/payment/retry-company-payment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "payment",
+                "retry-company-payment"
+              ]
+            },
+            "description": "Retry or resume an incomplete bKash checkout session for an unverified company registration.\n\n**Allowed Roles:** Authenticated User",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyId\": \"{{companyId}}\",\n  \"paymentReference\": \"{{paymentReference}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
           },
           "response": []
         }

@@ -1,21 +1,21 @@
 import httpStatus from "http-status";
-import type { Prisma } from "../../../generated/prisma/client";
+import type { Prisma } from "../../../generated/prisma/client.js";
 import {
 	CompanyMemberRole,
 	ProblemType,
 	TestCaseType,
 	UserRole,
-} from "../../../generated/prisma/enums";
-import type { ProblemWhereInput } from "../../../generated/prisma/models";
-import { prisma } from "../../lib/prisma";
-import type { RequestUser } from "../../middleware/checkAuth";
-import AppError from "../../utils/AppError";
+} from "../../../generated/prisma/enums.js";
+import type { ProblemWhereInput } from "../../../generated/prisma/models.js";
+import { prisma } from "../../lib/prisma.js";
+import type { RequestUser } from "../../middleware/checkAuth.js";
+import AppError from "../../utils/AppError.js";
 import type {
 	ICreateProblemPayload,
 	IPaginationOptions,
 	IProblemFilterRequest,
 	IUpdateProblemPayload,
-} from "./problem.interface";
+} from "./problem.interface.js";
 
 // Standard relation inclusion for detailed problem response
 const problemInclude = {

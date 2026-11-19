@@ -1,5 +1,5 @@
 import { v2 as cloudinary, type UploadApiResponse, type UploadApiErrorResponse } from "cloudinary";
-import config from "../config";
+import config from "../config/index.js";
 
 // Initialize Cloudinary with project configuration
 cloudinary.config({
